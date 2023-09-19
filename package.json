@@ -2,10 +2,10 @@
   "name": "chess-app-gui",
   "version": "1.0.0",
   "description": "A web socket based chess application",
-  "main": "app.js",
+  "main": "backend/src/index.js",
   "scripts": {
-    "start": "node backend/index.js",
-    "dev": "concurrently \"nodemon backend/index.js\" \"npm run jest:watch\" ",
+    "start": "node backend/src/index.js",
+    "dev": "concurrently \"nodemon backend/src/index.js\" \"npm run jest:watch\" ",
     "jest:watch": "jest --watchAll"
   },
   "jest": {

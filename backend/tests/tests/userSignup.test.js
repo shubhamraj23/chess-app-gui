@@ -1,7 +1,7 @@
 // Import all the relevant modules.
 const request = require('supertest')
-const app = require('../../app')
-const User = require('../../models/userModel')
+const app = require('../../src/app')
+const User = require('../../src/models/userModel')
 const { 
   user1, user2, user3,
   missing1, missing2, missing3, missing4, missing5, missing6
