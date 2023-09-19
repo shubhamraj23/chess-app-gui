@@ -4,7 +4,8 @@ const app = require('../../src/app')
 const User = require('../../src/models/userModel')
 const { 
   user1, user2, user3,
-  missing1, missing2, missing3, missing4, missing5, missing6
+  missing1, missing2, missing3, missing4, missing5, missing6,
+  dummy1, dummy2, dummy3, duplicate1, duplicate2, duplicate3
 } = require('../mock/mockUserSignup')
 
 // Create a test to signup a new valid user.
@@ -23,7 +24,7 @@ describe('Signup a new valid user', () => {
     await User.deleteMany({ userId: user3.userId })
   })
 
-  test.each(testCases)('Should signup a new valid user', async (testUser) => {
+  test.each(testCases)('Signup a new valid user', async (testUser) => {
     // Send a valid user and expect a valid response.
     const response = await request(app).post('/user/signup').send(testUser)
     
@@ -34,7 +35,7 @@ describe('Signup a new valid user', () => {
     })
   
     // Search for the object in the database.
-    const user = await User.find({ userId: testUser.userId})
+    const user = await User.findOne({ userId: testUser.userId})
     expect(user).not.toBeNull()
   
     // The password stored should not be the same.
@@ -62,11 +63,33 @@ describe('Signup a new user with missing details', () => {
     expect(response.body).toMatchObject({
       error: expectedResponse
     })
-  
-    // Search for the object in the database.
-    const user = await User.find({ testUser })
-    expect(user).not.toBeNull()
-  
+  })
+})
+
+// Create tests to signup users with an existing user ID.
+describe('Signup a new user with existing user ID', () => {
+  const testCases = [duplicate1, duplicate2, duplicate3]
+
+  beforeEach(async () => {
+    await User(dummy1).save()
+    await User(dummy2).save()
+    await User(dummy3).save()
   })
 
+  afterEach(async () => {
+    await User.deleteMany({ userId: dummy1.userId })
+    await User.deleteMany({ userId: dummy2.userId })
+    await User.deleteMany({ userId: dummy3.userId })
+  })
+
+  test.each(testCases)('Signup a user with existing user ID', async (testUser) => {
+    // Send a user with missing details.
+    const response = await request(app).post('/user/signup').send(testUser)
+
+    // Check the response.
+    expect(response.statusCode).toBe(400)
+    expect(response.body).toMatchObject({
+      error: "This user ID is already taken. Please try a new one."
+    })
+  })
 })

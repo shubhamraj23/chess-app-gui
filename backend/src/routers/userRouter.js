@@ -30,6 +30,13 @@ router.post('/signup', async (request, response) => {
       })
     }
 
+    const existingUser = await User.findOne({ userId: data.userId })
+    if (existingUser) {
+      return response.status(400).send({
+        error: "This user ID is already taken. Please try a new one."
+      })
+    }
+
     data = {
       name: data.name,
       userId: data.userId,
