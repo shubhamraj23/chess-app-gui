@@ -1,14 +1,8 @@
-// Load all the environment variables in dev environment
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config()
-}
-
-// Import all the relevant modules.
-require('./mongoose')
+// Import all the express application instance.
 const app = require('./app')
 
-// Setup the port for running
-const PORT = 8080
+// Setup the port for running the app.
+const PORT = process.env.PORT || 8080
 
 // Run the application.
 app.listen(PORT, () => {

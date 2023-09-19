@@ -4,12 +4,15 @@
   "description": "A web socket based chess application",
   "main": "app.js",
   "scripts": {
-    "start": "node backend/app.js",
-    "dev": "concurrently \"npm run jest:watch\" \"nodemon backend/app.js\"",
+    "start": "node backend/index.js",
+    "dev": "concurrently \"nodemon backend/index.js\" \"npm run jest:watch\" ",
     "jest:watch": "jest --watchAll"
   },
   "jest": {
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "setupFiles": [
+      "./backend/tests/testSetup.js"
+    ]
   },
   "repository": {
     "type": "git",
