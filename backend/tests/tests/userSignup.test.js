@@ -7,7 +7,9 @@ const {
   user1, user2, user3,
   missing1, missing2, missing3, missing4, missing5, missing6,
   dummy1, dummy2, dummy3, duplicate1, duplicate2, duplicate3,
-  invalidUser1, invalidUser2, invalidUser3, invalidUserOutput1, invalidUserOutput2, invalidUserOutput3
+  invalidUser1, invalidUser2, invalidUser3, invalidUserOutput1, invalidUserOutput2, invalidUserOutput3,
+  invalidPassword1, invalidPassword2, invalidPassword3, invalidPassword4, invalidPassword5,
+  invalidPasswordOutput1, invalidPasswordOutput2, invalidPasswordOutput3, invalidPasswordOutput4, invalidPasswordOutput5
 } = require('../mock/mockUserSignup')
 
 // Create a test to signup a new valid user.
@@ -77,6 +79,28 @@ describe('Signup a new user with invalid user ID', () => {
   ]
 
   test.each(testCases)('Signup a new user with invalid user ID', async (testUser, expectedError) => {
+    // Send a user with missing details.
+    const response = await request(app).post('/user/signup').send(testUser)
+    
+    // Check the response.
+    expect(response.statusCode).toBe(400)
+    expect(response.body).toMatchObject({
+      error: expectedError
+    })
+  })
+})
+
+// Create tests to signup users with invalid password.
+describe('Signup a new user with invalid password', () => {
+  const testCases = [
+    [invalidPassword1, invalidPasswordOutput1],
+    [invalidPassword2, invalidPasswordOutput2],
+    [invalidPassword3, invalidPasswordOutput3],
+    [invalidPassword4, invalidPasswordOutput4],
+    [invalidPassword5, invalidPasswordOutput5],
+  ]
+
+  test.each(testCases)('Signup a new user with invalid password', async (testUser, expectedError) => {
     // Send a user with missing details.
     const response = await request(app).post('/user/signup').send(testUser)
     

@@ -104,9 +104,47 @@ const invalidUserOutput1 = "User ID must only contain alphanumeric characters an
 const invalidUserOutput2 = "The User ID must contain at least one alphanumeric character."
 const invalidUserOutput3 = "User ID must only contain alphanumeric characters and/or underscores(_)."
 
+const invalidPassword1 = {
+  name: "Shubham Raj Pandit",
+  userId: "jali_batti",
+  password: "sS9#"
+}
+
+const invalidPassword2 = {
+  name: "Shubham Raj Pandit",
+  userId: "jali_batti",
+  password: "S53GKE9#"
+}
+
+const invalidPassword3 = {
+  name: "Shubham Raj Pandit",
+  userId: "jali_batti",
+  password: "stue9_9#"
+}
+
+const invalidPassword4 = {
+  name: "Shubham Raj Pandit",
+  userId: "jali_batti",
+  password: "sSsmU)#"
+}
+
+const invalidPassword5 = {
+  name: "Shubham Raj Pandit",
+  userId: "jali_batti",
+  password: "sS9S78df"
+}
+
+const invalidPasswordOutput1 = "Password must contain at least 7 characters."
+const invalidPasswordOutput2 = "Password must contain at least one lower case character."
+const invalidPasswordOutput3 = "Password must contain at least one upper case character."
+const invalidPasswordOutput4 = "Password must contain at least one number."
+const invalidPasswordOutput5 = "Password must contain at least one special character."
+
 module.exports = {
   user1, user2, user3,
   missing1, missing2, missing3, missing4, missing5, missing6,
   dummy1, dummy2, dummy3, duplicate1, duplicate2, duplicate3,
-  invalidUser1, invalidUser2, invalidUser3, invalidUserOutput1, invalidUserOutput2, invalidUserOutput3
+  invalidUser1, invalidUser2, invalidUser3, invalidUserOutput1, invalidUserOutput2, invalidUserOutput3,
+  invalidPassword1, invalidPassword2, invalidPassword3, invalidPassword4, invalidPassword5,
+  invalidPasswordOutput1, invalidPasswordOutput2, invalidPasswordOutput3, invalidPasswordOutput4, invalidPasswordOutput5
 }

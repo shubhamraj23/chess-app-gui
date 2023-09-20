@@ -35,6 +35,14 @@ const signupValidation = async (request, response, next) => {
       })
     }
 
+    // Invalid Password.
+    const invalidPassword = validatePassword(data.password)
+    if (invalidPassword) {
+      return response.status(400).send({
+        error: invalidPassword.error
+      })
+    }
+
     // A user exists with the same username.
     const existingUser = await User.findOne({ userId: data.userId })
     if (existingUser) {
@@ -65,6 +73,43 @@ const validateID = (id) => {
   if (!pattern.test(id)) {
     return {
       error: "User ID must only contain alphanumeric characters and/or underscores(_)."
+    }
+  }
+}
+
+// Helper function to check if a password is valid or not.
+const validatePassword = (password) => {
+  if (password.length < 7) {
+    return {
+      error: "Password must contain at least 7 characters."
+    }
+  }
+
+  const lowerCase = /[a-z]/
+  if (!lowerCase.test(password)) {
+    return {
+      error: "Password must contain at least one lower case character."
+    }
+  }
+
+  const upperCase = /[A-Z]/
+  if (!upperCase.test(password)) {
+    return {
+      error: "Password must contain at least one upper case character."
+    }
+  }
+
+  const number = /[0-9]/
+  if (!number.test(password)) {
+    return {
+      error: "Password must contain at least one number."
+    }
+  }
+
+  const specialCharacter = /[^a-zA-Z0-9]+/
+  if (!specialCharacter.test(password)) {
+    return {
+      error: "Password must contain at least one special character."
     }
   }
 }
