@@ -2,41 +2,15 @@
 const crypto = require('crypto')
 const express = require('express')
 const User = require('../models/userModel')
+const { signupValidation } = require('../middleware/validation')
 
 // Create a router
 const router = new express.Router()
 
 // Route to create a new user
-router.post('/signup', async (request, response) => {
+router.post('/signup', signupValidation, async (request, response) => {
   try {
-    let data =  request.body
-
-    // Data Validation
-    if (!data.name || data.name.trim() === "") {
-      return response.status(400).send({
-        error: "Name is a mandatory field."
-      })
-    }
-
-    if (!data.userId || data.userId.trim() === "") {
-      return response.status(400).send({
-        error: "User ID is a mandatory field."
-      })
-    }
-
-    if (!data.password || data.password.trim() === "") {
-      return response.status(400).send({
-        error: "Password is a mandatory field."
-      })
-    }
-
-    const existingUser = await User.findOne({ userId: data.userId })
-    if (existingUser) {
-      return response.status(400).send({
-        error: "This user ID is already taken. Please try a new one."
-      })
-    }
-
+    let data = request.body
     data = {
       name: data.name,
       userId: data.userId,

@@ -2,10 +2,12 @@
 const request = require('supertest')
 const app = require('../../src/app')
 const User = require('../../src/models/userModel')
+
 const { 
   user1, user2, user3,
   missing1, missing2, missing3, missing4, missing5, missing6,
-  dummy1, dummy2, dummy3, duplicate1, duplicate2, duplicate3
+  dummy1, dummy2, dummy3, duplicate1, duplicate2, duplicate3,
+  invalidUser1, invalidUser2, invalidUser3, invalidUserOutput1, invalidUserOutput2, invalidUserOutput3
 } = require('../mock/mockUserSignup')
 
 // Create a test to signup a new valid user.
@@ -62,6 +64,26 @@ describe('Signup a new user with missing details', () => {
     expect(response.statusCode).toBe(400)
     expect(response.body).toMatchObject({
       error: expectedResponse
+    })
+  })
+})
+
+// Create tests to signup users with invalid user ID.
+describe('Signup a new user with invalid user ID', () => {
+  const testCases = [
+    [invalidUser1, invalidUserOutput1],
+    [invalidUser2, invalidUserOutput2],
+    [invalidUser3, invalidUserOutput3],
+  ]
+
+  test.each(testCases)('Signup a new user with invalid user ID', async (testUser, expectedError) => {
+    // Send a user with missing details.
+    const response = await request(app).post('/user/signup').send(testUser)
+    
+    // Check the response.
+    expect(response.statusCode).toBe(400)
+    expect(response.body).toMatchObject({
+      error: expectedError
     })
   })
 })

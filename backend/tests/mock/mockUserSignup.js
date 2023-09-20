@@ -82,8 +82,31 @@ const duplicate3 = {
   password: "sgdhG!23"
 }
 
+const invalidUser1 = {
+  name: "Shubham Raj Pandit",
+  userId: "asf#",
+  password: "sgdhG!23"
+}
+
+const invalidUser2 = {
+  name: "There",
+  userId: "__#",
+  password: "sssgdhG!23"
+}
+
+const invalidUser3 = {
+  name: "Go Somewhere Else",
+  userId: "asf_#",
+  password: "sgdhG!23"
+}
+
+const invalidUserOutput1 = "User ID must only contain alphanumeric characters and/or underscores(_)."
+const invalidUserOutput2 = "The User ID must contain at least one alphanumeric character."
+const invalidUserOutput3 = "User ID must only contain alphanumeric characters and/or underscores(_)."
+
 module.exports = {
   user1, user2, user3,
   missing1, missing2, missing3, missing4, missing5, missing6,
-  dummy1, dummy2, dummy3, duplicate1, duplicate2, duplicate3
+  dummy1, dummy2, dummy3, duplicate1, duplicate2, duplicate3,
+  invalidUser1, invalidUser2, invalidUser3, invalidUserOutput1, invalidUserOutput2, invalidUserOutput3
 }
