@@ -1,8 +1,9 @@
 // Import all the required modules
 const crypto = require('crypto')
+const jwt = require('jsonwebtoken')
 const express = require('express')
 const User = require('../models/userModel')
-const { signupValidation } = require('../middleware/validation')
+const { signupValidation, loginValidation } = require('../middleware/validation')
 
 // Create a router
 const router = new express.Router()
@@ -26,6 +27,29 @@ router.post('/signup', signupValidation, async (request, response) => {
 
     response.status(201).send({
       message: "User successfully created."
+    })
+
+  } catch (error) {
+    response.status(500).send({
+      error: "Something unprecedented happened. Please try again."
+    })
+  }
+})
+
+// Route to login an existing user
+router.post('/login', loginValidation, async (request, response) => {
+  try {
+    const user = request.user
+    const secret = process.env.JWT_SECRET
+    const payload = { userId: user.userId }
+
+    const token = jwt.sign(payload, secret, { expiresIn: '1h' })
+    user.tokens.push(token)
+    await user.save()
+
+    response.status(200).send({
+      message: "User successfully logged in.",
+      token: token
     })
 
   } catch (error) {

@@ -100,9 +100,9 @@ const invalidUser3 = {
   password: "sgdhG!23"
 }
 
-const invalidUserOutput1 = "User ID must only contain alphanumeric characters and/or underscores(_)."
-const invalidUserOutput2 = "The User ID must contain at least one alphanumeric character."
-const invalidUserOutput3 = "User ID must only contain alphanumeric characters and/or underscores(_)."
+const invalidUserOutput1 = "Username must only contain alphanumeric characters and/or underscores(_)."
+const invalidUserOutput2 = "The username must contain at least one alphanumeric character."
+const invalidUserOutput3 = "Username must only contain alphanumeric characters and/or underscores(_)."
 
 const invalidPassword1 = {
   name: "Shubham Raj Pandit",
