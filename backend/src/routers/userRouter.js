@@ -59,4 +59,29 @@ router.post('/login', loginValidation, async (request, response) => {
   }
 })
 
+// Route to logout an existing user
+router.post('/logout', async (request, response) => {
+  try {
+    const token = request.header('Authorization').replace('Bearer ', '')
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    const user = await User.findOne({ userId: decoded.userId })
+
+    if (user) {
+      user.tokens = user.tokens.filter((savedToken) => {
+        return token !== savedToken
+      })
+      await user.save()
+    }
+
+    response.status(200).send({
+      message: "Logout successful."
+    })
+
+  } catch (error) {
+    response.status(500).send({
+      error: "Something unprecedented happened. Please try again."
+    })
+  }
+})
+
 module.exports = router
