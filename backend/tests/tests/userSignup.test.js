@@ -1,8 +1,8 @@
 // Import all the relevant modules.
 const request = require('supertest')
-const crypto = require('crypto')
 const app = require('../../src/app')
 const User = require('../../src/models/userModel')
+const { createUser, deleteUser } = require('../utils/userFunctions')
 
 // Import the mock users
 const {
@@ -137,15 +137,3 @@ describe('Signup a new user with existing user ID', () => {
     await deleteUser(dummy)
   })
 })
-
-// Helper functions go here.
-const createUser = async (user) => {
-  const hash = crypto.createHash('sha256')
-  hash.update(user.password)
-  user.password = hash.digest('hex')
-  await User(user).save()
-}
-
-const deleteUser = async (user) => {
-  await User.deleteMany({ userId: user.userId })
-}
