@@ -5,8 +5,12 @@
   "main": "backend/src/index.js",
   "scripts": {
     "start": "node backend/src/index.js",
-    "dev": "concurrently \"nodemon backend/src/index.js\" \"npm run jest:watch\" ",
-    "jest:watch": "jest --watchAll"
+    "build:css": "tailwindcss -i ./frontend/src/input.css -o ./frontend/src/styles.css --watch",
+    "client": "npm start --prefix frontend",
+    "server": "nodemon backend/src/index.js",
+    "jest:watch": "jest --watchAll",
+    "test": "npm run jest:watch",
+    "dev": "concurrently \"npm run build:css\" \"npm run client\" \"npm run server\" \"npm run test\" "
   },
   "jest": {
     "testEnvironment": "node",
@@ -34,6 +38,7 @@
     "concurrently": "^8.2.1",
     "jest": "^29.7.0",
     "nodemon": "^3.0.1",
-    "supertest": "^6.3.3"
+    "supertest": "^6.3.3",
+    "tailwindcss": "^3.3.3"
   }
 }
