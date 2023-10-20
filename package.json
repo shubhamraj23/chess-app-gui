@@ -8,9 +8,11 @@
     "build:css": "tailwindcss -i ./frontend/src/input.css -o ./frontend/src/styles.css --watch",
     "client": "npm start --prefix frontend",
     "server": "nodemon backend/src/index.js",
+    "frontend": "concurrently \"npm run build:css\" \"npm run client\"",
     "jest:watch": "jest --watchAll",
     "test": "npm run jest:watch",
-    "dev": "concurrently \"npm run build:css\" \"npm run client\" \"npm run server\" \"npm run test\" "
+    "backend": "concurrently \"npm run server\" \"npm run test\"",
+    "dev": "concurrently \"npm run frontend\" \"npm run backend\""
   },
   "jest": {
     "testEnvironment": "node",

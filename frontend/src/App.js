@@ -1,7 +1,19 @@
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import HomePage from './components/HomePage'
+
 const App = () => {
   return (
     <div>
-      <h1>Let's Play Chess</h1>
+      <Router>
+        <Routes>
+          {/* Default Route to the home page */}
+          <Route path="/" element={
+            <>
+              <HomePage />
+            </>
+          }></Route>
+        </Routes>
+      </Router>  
     </div>
   )
 }
