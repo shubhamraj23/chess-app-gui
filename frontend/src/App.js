@@ -7,7 +7,7 @@ const App = () => {
       <Router>
         <Routes>
           {/* Default Route to the home page */}
-          <Route path="/" element={
+          <Route exact path="/" element={
             <>
               <HomePage />
             </>

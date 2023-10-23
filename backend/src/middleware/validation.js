@@ -22,7 +22,7 @@ const signupValidation = async (request, response, next) => {
     }
 
     // Password is missing
-    if (!data.password || data.password.trim() === "") {
+    if (!data.password) {
       return response.status(400).send({
         error: "Password is a mandatory field."
       })
