@@ -47,9 +47,14 @@ router.post('/login', loginValidation, async (request, response) => {
     user.tokens.push(token)
     await user.save()
 
+    response.cookie('jwt', token, {
+      expires: new Date(Date.now() + 3600*1000),
+      secure: process.env.SECURE_COOKIE,
+      httpOnly: true
+    })
+
     response.status(200).send({
       message: "User successfully logged in.",
-      token: token
     })
 
   } catch (error) {

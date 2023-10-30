@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const HomePage = () => {
   // React states to describe the status of the home page.
@@ -18,6 +19,9 @@ const HomePage = () => {
   const [signupID, setSignupID] = useState('')
   const [signupPassword, setSignupPassword] = useState('')
   const [signupName, setSignupName] = useState('')
+
+  // Using the useHistory hook to navigate
+  const navigate = useNavigate()
 
   // Variables to specify the classes of forms and labels.
   const labelClasses = 'block text-gray-600 text-sm font-semibold mb-2'
@@ -54,8 +58,8 @@ const HomePage = () => {
         password: loginPassword
       }
       axios.post('user/login', loginData)
-        .then((data) => {
-          // Successfully login the user.
+        .then(() => {
+          return navigate('/dashboard')
         })
         .catch((error) => {
           setErrorState('')
@@ -69,7 +73,7 @@ const HomePage = () => {
         password: signupPassword
       }
       axios.post('user/signup', signupData)
-        .then((data) => {
+        .then(() => {
           setErrorState('')
           setColor('emerald')
           setErrorMessage('User successfully created. Please login')
