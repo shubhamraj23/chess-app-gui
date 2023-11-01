@@ -2,7 +2,7 @@
 const request = require('supertest')
 const app = require('../../src/app')
 const User = require('../../src/models/userModel')
-const { createUser, deleteUser } = require('../utils/userFunctions')
+const { createUser, deleteUser, getCookieValue } = require('../utils/userFunctions')
 
 // Import the mock users
 const {
@@ -28,13 +28,18 @@ describe('Login a valid user', () => {
 
     // Send a valid user and expect a valid response.
     const response = await request(app).post('/user/login').send(testUser)
-    
+
     // Check the response
     expect(response.statusCode).toBe(200)
   
-    // Check the token returned.
+    // Check for the token's presence in the cookies.
+    const token = getCookieValue(response, 'jwt')
+    expect(token).not.toBe('')
+
+    // Check for the token in the database.
     const user = await User.findOne({ userId: testUser.userId })
     expect(user.tokens.length).toBeGreaterThan(0)
+    expect(token).toBe(user.tokens[user.tokens.length - 1])
 
     // Clear the environment after test
     // Delete the user

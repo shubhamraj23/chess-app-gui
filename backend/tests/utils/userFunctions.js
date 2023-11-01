@@ -1,8 +1,11 @@
 // Import all the required modules
+const request = require('supertest')
+const cookie = require('cookie')
 const crypto = require('crypto')
-const jwt = require('jsonwebtoken')
+const app = require('../../src/app')
 const User = require('../../src/models/userModel')
 
+// Utility function to create a new user.
 const createUser = async (user) => {
   const hash = crypto.createHash('sha256')
   hash.update(user.password)
@@ -10,22 +13,33 @@ const createUser = async (user) => {
   await User(user).save()
 }
 
+// Utility function to delete a new user.
 const deleteUser = async (user) => {
   await User.deleteMany({ userId: user.userId })
 }
 
-const loginUser = async (credentials) => {
-  const user = await User.findOne({ userId: credentials.userId })
-  const secret = process.env.JWT_SECRET
-  const payload = { userId: user.userId }
-  const token = jwt.sign(payload, secret, { expiresIn: '1h' })
-  user.tokens.push(token)
-  await user.save()
-  return token
+// Utility function to login an existing user.
+const loginUser = async (testUser) => {
+  const response = await request(app).post('/user/login').send(testUser)
+  return response
+}
+
+// Utility function to return a cookie value from response
+const getCookieValue = (response, cookieName) => {
+  const cookieHeaders = response.headers['set-cookie']
+  if (!cookieHeaders) return ''
+  const cookies = cookieHeaders.map(cookie.parse)
+  let cookieValue = ''
+  for (const parsedCookie of cookies) {
+    const name = Object.keys(parsedCookie)[0]
+    if (name == cookieName) cookieValue = parsedCookie[cookieName]
+  }
+  return cookieValue
 }
 
 module.exports = {
   createUser,
   deleteUser,
-  loginUser
+  loginUser,
+  getCookieValue
 }
