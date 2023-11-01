@@ -12,7 +12,7 @@
     "jest:watch": "jest --watchAll",
     "test": "npm run jest:watch",
     "backend": "concurrently \"npm run server\" \"npm run test\"",
-    "dev": "concurrently \"npm run frontend\" \"npm run backend\""
+    "dev": "concurrently \"npm run frontend\" \"npm run server\""
   },
   "jest": {
     "testEnvironment": "node",
