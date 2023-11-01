@@ -872,6 +872,18 @@ video {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
+.error-colour {
+  background-color: rgb(254 226 226);
+  border-color: rgb(239 68 68);
+  color: rgb(185 28 28);
+}
+
+.success-colour {
+  background-color: rgb(209 250 229);
+  border-color: rgb(16 185 129);
+  color: rgb(4 120 87);
+}
+
 .hover\:bg-blue-600:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(37 99 235 / var(--tw-bg-opacity));

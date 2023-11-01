@@ -12,7 +12,7 @@ const HomePage = () => {
   const [signupForm, setSignupForm] = useState('hidden mt-8')
   const [errorState, setErrorState] = useState('hidden')
   const [errorMessage, setErrorMessage] = useState('')
-  const [color, setColor] = useState('red')
+  const [color, setColor] = useState('error-colour')
   const [loading, setLoading] = useState('hidden')
   
   // React states to capture the input entered by the user.
@@ -86,7 +86,7 @@ const HomePage = () => {
       axios.post('user/signup', signupData)
         .then(() => {
           setErrorState('')
-          setColor('emerald')
+          setColor('success-colour')
           setErrorMessage('User successfully created. Please login')
           setSignupID('')
           setSignupPassword('')
@@ -119,7 +119,7 @@ const HomePage = () => {
             <div className={loginForm}>
               <h2 className="text-2xl font-semibold text-gray-700">Login</h2>
 
-              <div className={`${errorState} bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mt-2`}>
+              <div className={`${errorState} error-colour border-l-4 p-4 mt-2`}>
                 <p><strong>{errorMessage}</strong></p>
               </div>
 
@@ -143,7 +143,7 @@ const HomePage = () => {
             <div className={signupForm}>
               <h2 className="text-2xl font-semibold text-gray-700">Signup</h2>
 
-              <div className={`${errorState} bg-${color}-100 border-l-4 border-${color}-500 text-${color}-700 p-4 mt-2`}>
+              <div className={`${errorState} ${color} border-l-4 p-4 mt-2`}>
                 <p><strong>{errorMessage}</strong></p>
               </div>
               
