@@ -21,7 +21,7 @@ const HomePage = () => {
   const [signupPassword, setSignupPassword] = useState('')
   const [signupName, setSignupName] = useState('')
 
-  // Using the useHistory hook to navigate
+  // Using the useNavigate hook to navigate
   const navigate = useNavigate()
 
   // Variables to specify the classes of forms and labels.
