@@ -1,11 +1,12 @@
 import axios from "axios"
 import { useNavigate } from 'react-router-dom'
 
-const Logout = () => {
+const Logout = ({setLoading}) => {
   // Using the useNavigate hook to navigate
   const navigate = useNavigate()
 
   const logoutUser = () => {
+    setLoading('')
     axios.post('user/logout')
       .then(() => {
         return navigate('/')

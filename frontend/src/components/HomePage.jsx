@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Spinner from './Spinner'
 
 const HomePage = () => {
   // React states to describe the status of the home page.
@@ -172,11 +173,7 @@ const HomePage = () => {
         </div>
       </div>
 
-      <div className={`${loading} absolute top-0`}>
-        <div className="h-screen w-screen bg-gray-100 bg-opacity-50 flex items-center justify-center">
-          <div className="w-16 h-16 border-t-4 border-blue-500 rounded-full animate-spin"></div>
-        </div>
-      </div>
+      <Spinner status={loading} />
     </div>
   )
 }
