@@ -96,4 +96,49 @@ router.post('/logout', async (request, response) => {
   }
 })
 
+// Route to validate a cookie
+router.get('/checkCookie', async (request, response) => {
+  try {
+    const token = request.cookies.jwt
+    if (!token) {
+      return response.status(401).send({
+        message: "Unauthorized access."
+      })
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    if (!decoded.userId) {
+      response.clearCookie('jwt')
+      return response.status(401).send({
+        message: "Unauthorized access."
+      })
+    }
+
+    const user = await User.findOne({ userId: decoded.userId })
+    if (!user) {
+      response.clearCookie('jwt')
+      return response.status(401).send({
+        message: "Unauthorized access."
+      })
+    }
+
+    const present = user.tokens.includes(token)
+    if (!present) {
+      response.clearCookie('jwt')
+      return response.status(401).send({
+        message: "Unauthorized access."
+      })
+    }
+
+    return response.status(200).send({
+      message: "Token valid."
+    })
+
+  } catch (e) {
+    response.status(500).send({
+      error: "Something unprecedented happened. Please try again."
+    })
+  }
+})
+
 module.exports = router
