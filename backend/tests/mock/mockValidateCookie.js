@@ -1,56 +1,57 @@
 const user1 = {
   name: "Shubham Raj Pandit",
-  userId: "j_batti23",
+  userId: "abcd45",
   password: "s_gdhG!23"
 }
 
 const user2 = {
   name: "Here There",
-  userId: "bcfd_23",
+  userId: "abcd67",
   password: "sg_dhG!23"
 }
 
 const user3 = {
   name: "Go Somewhere",
-  userId: "gds_d_i34w56",
+  userId: "abcd09",
   password: "sgd_hG!23"
 }
 
 const user4 = {
-  name: "Go Somewhere",
-  userId: "xcfwe",
-  password: "sgd_hG!23"
+  name: "Shubham Raj Pandit",
+  userId: "sdabcd45",
+  password: "s_gdhG!23"
 }
 
 const user5 = {
-  name: "Go Somewhere",
-  userId: "hus03d",
-  password: "sgd_hG!23"
+  name: "Here There",
+  userId: "ab45cd67",
+  password: "sg_dhG!23"
 }
 
 const user6 = {
   name: "Go Somewhere",
-  userId: "jkdl09",
+  userId: "abcd__09",
   password: "sgd_hG!23"
 }
 
 const user7 = {
-  name: "Go Somewhere",
-  userId: "xcfwe3",
-  password: "sgd_hG!23"
+  name: "Shubham Raj Pandit",
+  userId: "s_dabcd45",
+  password: "s_gdhG!23"
 }
 
 const user8 = {
-  name: "Go Somewhere",
-  userId: "hus034d",
-  password: "sgd_hG!23"
+  name: "Here There",
+  userId: "ab45c_67",
+  password: "sg_dhG!23"
 }
 
 const user9 = {
   name: "Go Somewhere",
-  userId: "jkdl09s",
+  userId: "acd_1_09",
   password: "sgd_hG!23"
 }
+
 module.exports = {
   user1, user2, user3,
   user4, user5, user6,

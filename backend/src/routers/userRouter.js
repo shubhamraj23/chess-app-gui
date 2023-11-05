@@ -73,10 +73,21 @@ router.post('/logout', async (request, response) => {
         message: "Logout successful."
       })
     }
+    
+    let decoded, user;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET)
+    }
+    catch (error) {
+      if (error.name === 'JsonWebTokenError') {
+        response.clearCookie('jwt')
+        return response.status(200).send({
+          message: "Logout successful."
+        })
+      }
+    }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
-    const user = await User.findOne({ userId: decoded.userId })
-
+    if (decoded) user = await User.findOne({ userId: decoded.userId })
     if (user) {
       user.tokens = user.tokens.filter((savedToken) => {
         return token !== savedToken
@@ -90,6 +101,7 @@ router.post('/logout', async (request, response) => {
     })
 
   } catch (error) {
+    console.log(error)
     response.status(500).send({
       error: "Something unprecedented happened. Please try again."
     })
@@ -97,7 +109,7 @@ router.post('/logout', async (request, response) => {
 })
 
 // Route to validate a cookie
-router.get('/checkCookie', async (request, response) => {
+router.get('/validateCookie', async (request, response) => {
   try {
     const token = request.cookies.jwt
     if (!token) {
@@ -134,7 +146,15 @@ router.get('/checkCookie', async (request, response) => {
       message: "Token valid."
     })
 
-  } catch (e) {
+  } catch (error) {
+    console.log(error)
+    if (error.name === 'JsonWebTokenError') {
+      response.clearCookie('jwt')
+      return response.status(401).send({
+        message: "Unauthorized access."
+      })
+    }
+    
     response.status(500).send({
       error: "Something unprecedented happened. Please try again."
     })
