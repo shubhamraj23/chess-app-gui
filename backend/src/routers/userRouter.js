@@ -101,7 +101,6 @@ router.post('/logout', async (request, response) => {
     })
 
   } catch (error) {
-    console.log(error)
     response.status(500).send({
       error: "Something unprecedented happened. Please try again."
     })
@@ -147,7 +146,6 @@ router.get('/validateCookie', async (request, response) => {
     })
 
   } catch (error) {
-    console.log(error)
     if (error.name === 'JsonWebTokenError') {
       response.clearCookie('jwt')
       return response.status(401).send({

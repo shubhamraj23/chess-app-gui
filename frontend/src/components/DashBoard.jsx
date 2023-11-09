@@ -1,9 +1,22 @@
-import { useState } from 'react'
+import axios from 'axios'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Logout from './Logout'
 import Spinner from './Spinner'
 
 const DashBoard = () => {
   const [loading, setLoading] = useState('hidden')
+
+  // Using the useNavigate hook to navigate
+  const navigate = useNavigate()
+
+  // Validate the cookies on component load.
+  useEffect(() => {
+    axios.get('user/validateCookie')
+      .catch(() => {
+        return navigate('/')
+      })
+  }, [])
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
