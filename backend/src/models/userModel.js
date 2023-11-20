@@ -19,7 +19,12 @@ const userSchema = mongoose.Schema({
   },
   tokens: [{
     type: String
-  }]
+  }],
+  playStatus: {
+    type: String,
+    enum: ['not-playing', 'playing', 'requested'],
+    default: 'not-playing'
+  }
 })
 
 // Creating a model from the schema.
