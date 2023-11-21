@@ -2,9 +2,10 @@ const mongoose = require('mongoose')
 
 // Creating the schema for Match model
 const matchSchema = mongoose.Schema({
-  queue: [{
-    type: String
-  }]
+  user: {
+    type: String,
+    required: true
+  }
 })
 
 // Creating a model from the schema.
