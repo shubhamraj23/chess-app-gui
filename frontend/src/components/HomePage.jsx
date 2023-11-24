@@ -30,6 +30,15 @@ const HomePage = () => {
   const inputClasses = 'w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500'
   const buttonClasses = 'w-full bg-blue-500 text-white text-sm font-semibold py-2 rounded-lg hover:bg-blue-700 focus:outline-none'
 
+  // Validate the cookies on component load.
+  useEffect(() => {
+    axios.get('user/validateCookie')
+      .then(() => {
+        return navigate('/dashboard')
+      })
+      .catch(() => {})
+  }, [])
+
   // Change the status of home page.
   useEffect(() => {
     if (pageCondition === "login") {
@@ -94,7 +103,7 @@ const HomePage = () => {
         })
         .catch((error) => {
           setErrorState('')
-          setColor('red')
+          setColor('error-colour')
           if (error.response) {
             setErrorMessage(error.response.data.error)
           }
