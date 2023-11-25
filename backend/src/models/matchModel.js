@@ -5,6 +5,10 @@ const matchSchema = mongoose.Schema({
   user: {
     type: String,
     required: true
+  },
+  socketId: { 
+    type: String, 
+    required: true
   }
 })
 

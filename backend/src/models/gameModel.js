@@ -2,13 +2,15 @@ const mongoose = require('mongoose')
 
 // Creating the schema for Game model
 const gameSchema = mongoose.Schema({
-  player1: {
-    type: String,
-    required: true
-  },
-  player2: {
-    type: String,
-    required: true
+  players: {
+    white: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true
+    },
+    black: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true
+    }
   },
   moves: [{
     move: {
@@ -25,7 +27,7 @@ const gameSchema = mongoose.Schema({
       type: Boolean
     },
     winner: {
-      type: String
+      type: mongoose.Schema.Types.ObjectId
     }
   }
 })

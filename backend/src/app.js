@@ -28,4 +28,4 @@ app.use(cookieParser())
 app.use('/user', userRouter)
 app.use('/match', matchingRouter(io))
 
-module.exports = app
+module.exports = server
