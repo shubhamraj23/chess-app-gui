@@ -46,6 +46,7 @@ const matchingRouter = (io) => {
       const matchedUser = await Match.findOne({})
       
       if (!matchedUser) {
+        // If there is no other request, keep the player in waiting.
         const oldUser = new Match({
           user: player1.userId,
           socketId: socket.id
@@ -53,14 +54,17 @@ const matchingRouter = (io) => {
         await oldUser.save()
       }
       else {
+        // Delete the match request
         await Match.findByIdAndDelete(matchedUser._id)
+
+        // Update the status of the two players and save it.
         const player2 = await User.findOne({userId: matchedUser.user})
         player2.playStatus = 'playing'
         player1.playStatus = 'playing'
-  
         await player1.save()
         await player2.save()
 
+        // Create a game and send the id to the client.
         const game = new Game({
           players: {
             white: player1._id,

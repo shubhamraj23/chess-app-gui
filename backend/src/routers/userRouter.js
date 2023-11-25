@@ -3,6 +3,7 @@ const crypto = require('crypto')
 const jwt = require('jsonwebtoken')
 const express = require('express')
 const User = require('../models/userModel')
+const Game = require('../models/gameModel')
 const { signupValidation, loginValidation } = require('../middleware/validation')
 const authenticate = require('../middleware/authenticate')
 
@@ -113,6 +114,25 @@ router.get('/validateCookie', authenticate, async (request, response) => {
   response.status(200).send({
     message: "Token valid."
   })
+})
+
+// Route to fetch user stats
+router.get('/stats', authenticate, async (request, response) => {
+  try {
+    const id = request.user._id
+    const name = request.user.name
+    const firstPlayer = await Game.countDocuments({'players.white': id })
+    const secondPlayer = await Game.countDocuments({'players.black': id })
+    const games = firstPlayer + secondPlayer
+    const wins = await Game.countDocuments({'result.winner': id })
+
+    response.status(200).send({ name, games, wins })
+  }
+  catch (error) {
+    response.status(500).send({
+      error: "Something unprecedented happened. Please try again."
+    })
+  }
 })
 
 module.exports = router
