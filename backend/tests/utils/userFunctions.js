@@ -12,7 +12,9 @@ const createUser = async (user) => {
   const hash = crypto.createHash('sha256')
   hash.update(copyUser.password)
   copyUser.password = hash.digest('hex')
-  await User(copyUser).save()
+  const savedUser = new User(copyUser)
+  await savedUser.save()
+  return savedUser._id
 }
 
 // Utility function to delete a new user.
