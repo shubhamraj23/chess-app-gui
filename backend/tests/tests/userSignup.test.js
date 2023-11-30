@@ -1,6 +1,6 @@
 // Import all the relevant modules.
 const request = require('supertest')
-const app = require('../../src/app')
+const { server } = require('../../src/app')
 const User = require('../../src/models/userModel')
 const { createUser, deleteUser } = require('../utils/userFunctions')
 
@@ -24,7 +24,7 @@ describe('Signup a new valid user', () => {
     await deleteUser(testUser)
 
     // Send a valid user and expect a valid response.
-    const response = await request(app).post('/user/signup').send(testUser)
+    const response = await request(server).post('/user/signup').send(testUser)
     
     // Check the response
     expect(response.statusCode).toBe(201)
@@ -51,7 +51,7 @@ describe('Signup a new user with missing details', () => {
 
   test.each(testCases)('Signup a user with missing details', async (testUser) => {
     // Send a user with missing details.
-    const response = await request(app).post('/user/signup').send(testUser)
+    const response = await request(server).post('/user/signup').send(testUser)
     
     // Generate the expected response.
     let missing = ''
@@ -78,7 +78,7 @@ describe('Signup a new user with invalid user ID', () => {
 
   test.each(testCases)('Signup a new user with invalid user ID', async (testUser, expectedError) => {
     // Send a user with missing details.
-    const response = await request(app).post('/user/signup').send(testUser)
+    const response = await request(server).post('/user/signup').send(testUser)
     
     // Check the response.
     expect(response.statusCode).toBe(400)
@@ -100,7 +100,7 @@ describe('Signup a new user with invalid password', () => {
 
   test.each(testCases)('Signup a new user with invalid password', async (testUser, expectedError) => {
     // Send a user with missing details.
-    const response = await request(app).post('/user/signup').send(testUser)
+    const response = await request(server).post('/user/signup').send(testUser)
     
     // Check the response.
     expect(response.statusCode).toBe(400)
@@ -124,7 +124,7 @@ describe('Signup a new user with existing user ID', () => {
     await createUser(dummy)
 
     // Send a user with missing details.
-    const response = await request(app).post('/user/signup').send(testUser)
+    const response = await request(server).post('/user/signup').send(testUser)
 
     // Check the response.
     expect(response.statusCode).toBe(400)

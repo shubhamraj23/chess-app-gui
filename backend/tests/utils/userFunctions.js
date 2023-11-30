@@ -3,7 +3,7 @@ const request = require('supertest')
 const cookie = require('cookie')
 const crypto = require('crypto')
 const jwt = require('jsonwebtoken')
-const app = require('../../src/app')
+const { server } = require('../../src/app')
 const User = require('../../src/models/userModel')
 
 // Utility function to create a new user.
@@ -24,7 +24,7 @@ const deleteUser = async (user) => {
 
 // Utility function to login an existing user.
 const loginUser = async (testUser) => {
-  const response = await request(app).post('/user/login').send({
+  const response = await request(server).post('/user/login').send({
     userId: testUser.userId,
     password: testUser.password
   })

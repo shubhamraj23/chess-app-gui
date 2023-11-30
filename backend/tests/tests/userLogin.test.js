@@ -1,6 +1,6 @@
 // Import all the relevant modules.
 const request = require('supertest')
-const app = require('../../src/app')
+const { server } = require('../../src/app')
 const User = require('../../src/models/userModel')
 const { createUser, deleteUser, getCookieValue } = require('../utils/userFunctions')
 
@@ -27,7 +27,7 @@ describe('Login a valid user', () => {
     await createUser(signUser)
 
     // Send a valid user and expect a valid response.
-    const response = await request(app).post('/user/login').send(testUser)
+    const response = await request(server).post('/user/login').send(testUser)
 
     // Check the response
     expect(response.statusCode).toBe(200)
@@ -53,7 +53,7 @@ describe('Login a user with missing details', () => {
 
   test.each(testCases)('Login a user with missing details', async (testUser) => {
     // Send a user with missing details.
-    const response = await request(app).post('/user/login').send(testUser)
+    const response = await request(server).post('/user/login').send(testUser)
     
     // Generate the expected response.
     let missing = ''
@@ -83,7 +83,7 @@ describe('Login a valid user', () => {
     await createUser(signUser)
 
     // Send a valid user and expect a valid response.
-    const response = await request(app).post('/user/login').send(testUser)
+    const response = await request(server).post('/user/login').send(testUser)
     
     // Check the response
     expect(response.statusCode).toBe(400)

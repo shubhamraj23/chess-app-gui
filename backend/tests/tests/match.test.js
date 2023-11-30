@@ -1,6 +1,6 @@
 // Import all the relevant modules.
 const request = require('supertest')
-const app = require('../../src/app')
+const { server } = require('../../src/app')
 const User = require('../../src/models/userModel')
 const { createUser, deleteUser, loginUser, getCookieValue } = require('../utils/userFunctions')
 
@@ -23,7 +23,7 @@ describe('Match a valid user', () => {
     const token = getCookieValue(loginResponse, 'jwt')
 
     // Send the request and get the response
-    const response = await request(app).post('/match').set('Cookie', `jwt=${token}`)
+    const response = await request(server).post('/match').set('Cookie', `jwt=${token}`)
 
     // Check the response.
     expect(response.statusCode).toBe(200)
@@ -44,7 +44,7 @@ describe('Match a valid user', () => {
 describe('Match an unauthenticated user', () => {
   test('Match an unauthenticated user', async () => {
     // Send the request and get the response
-    const response = await request(app).post('/match')
+    const response = await request(server).post('/match')
 
     // Check the response
     expect(response.statusCode).toBe(401)
@@ -66,7 +66,7 @@ describe('Match a user who has already requested for a match', () => {
     const token = getCookieValue(loginResponse, 'jwt')
 
     // Send the request and get the response
-    const response = await request(app).post('/match').set('Cookie', `jwt=${token}`)
+    const response = await request(server).post('/match').set('Cookie', `jwt=${token}`)
 
     // Check the response.
     expect(response.statusCode).toBe(400)
@@ -92,7 +92,7 @@ describe('Match a user playing the game', () => {
     const token = getCookieValue(loginResponse, 'jwt')
 
     // Send the request and get the response
-    const response = await request(app).post('/match').set('Cookie', `jwt=${token}`)
+    const response = await request(server).post('/match').set('Cookie', `jwt=${token}`)
 
     // Check the response.
     expect(response.statusCode).toBe(400)

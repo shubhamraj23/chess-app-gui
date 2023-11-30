@@ -1,6 +1,6 @@
 // Import all the relevant modules.
 const request = require('supertest')
-const app = require('../../src/app')
+const { server } = require('../../src/app')
 const User = require('../../src/models/userModel')
 const { createUser, deleteUser, loginUser, getCookieValue, tamperToken } = require('../utils/userFunctions')
 
@@ -23,7 +23,7 @@ describe('Logout a user', () => {
     const token = getCookieValue(loginResponse, 'jwt')
 
     // Send a request to logout the user.
-    const response = await request(app).post('/user/logout').set('Cookie', `jwt=${token}`)
+    const response = await request(server).post('/user/logout').set('Cookie', `jwt=${token}`)
     
     // Check the response
     expect(response.statusCode).toBe(200)
@@ -60,7 +60,7 @@ describe('Logout a user without a token', () => {
     await loginUser(testUser)
 
     // Send a request to logout the user.
-    const response = await request(app).post('/user/logout')
+    const response = await request(server).post('/user/logout')
     
     // Check the response
     expect(response.statusCode).toBe(200)
@@ -91,7 +91,7 @@ describe('Logout a user with an invalid token', () => {
     const tamperedToken = tamperToken(token)
 
     // Send a request to logout the user.
-    const response = await request(app).post('/user/logout').set('Cookie', `jwt=${tamperedToken}`)
+    const response = await request(server).post('/user/logout').set('Cookie', `jwt=${tamperedToken}`)
     
     // Check the response
     expect(response.statusCode).toBe(200)

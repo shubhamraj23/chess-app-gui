@@ -1,6 +1,6 @@
 // Import all the relevant modules.
 const request = require('supertest')
-const app = require('../../src/app')
+const { server } = require('../../src/app')
 const { createUser, loginUser, getCookieValue, deleteUser } = require('../utils/userFunctions')
 const { createGame, deleteGame } = require('../utils/gameFunctions')
 
@@ -33,25 +33,25 @@ describe('Check game stats for a user', () => {
     // Login the users, send the requests and check the results.
     const loginResponse1 = await loginUser(user1)
     const token1 = getCookieValue(loginResponse1, 'jwt')
-    const response1 = await request(app).get('/user/stats').set('Cookie', `jwt=${token1}`)
+    const response1 = await request(server).get('/user/stats').set('Cookie', `jwt=${token1}`)
     expect(response1.statusCode).toBe(200)
     expect(response1.body).toMatchObject(result1)
 
     const loginResponse2 = await loginUser(user2)
     const token2 = getCookieValue(loginResponse2, 'jwt')
-    const response2 = await request(app).get('/user/stats').set('Cookie', `jwt=${token2}`)
+    const response2 = await request(server).get('/user/stats').set('Cookie', `jwt=${token2}`)
     expect(response2.statusCode).toBe(200)
     expect(response2.body).toMatchObject(result2)
 
     const loginResponse3 = await loginUser(user3)
     const token3 = getCookieValue(loginResponse3, 'jwt')
-    const response3 = await request(app).get('/user/stats').set('Cookie', `jwt=${token3}`)
+    const response3 = await request(server).get('/user/stats').set('Cookie', `jwt=${token3}`)
     expect(response3.statusCode).toBe(200)
     expect(response3.body).toMatchObject(result3)
 
     const loginResponse4 = await loginUser(user4)
     const token4 = getCookieValue(loginResponse4, 'jwt')
-    const response4 = await request(app).get('/user/stats').set('Cookie', `jwt=${token4}`)
+    const response4 = await request(server).get('/user/stats').set('Cookie', `jwt=${token4}`)
     expect(response4.statusCode).toBe(200)
     expect(response4.body).toMatchObject(result4)
 

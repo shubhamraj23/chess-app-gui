@@ -1,6 +1,6 @@
 // Import all relevant modules
 const request = require('supertest')
-const app = require('../../src/app')
+const { server } = require('../../src/app')
 const { createUser, loginUser, deleteUser, getCookieValue, tamperToken, removeToken } = require('../utils/userFunctions')
 
 // Import the mock users
@@ -22,7 +22,7 @@ describe('Check for a valid cookie', () => {
     const token = getCookieValue(loginResponse, 'jwt')
 
     // Send a request to validate the cookie.
-    const response = await request(app).get('/user/validateCookie').set('Cookie', `jwt=${token}`)
+    const response = await request(server).get('/user/validateCookie').set('Cookie', `jwt=${token}`)
 
     // Check the response
     expect(response.statusCode).toBe(200)
@@ -40,7 +40,7 @@ describe('Check for a valid cookie', () => {
 describe('Check response without cookie', () => {
   test('Check for a valid cookie', async () => {
     //Send a request without the cookie.
-    const response = await request(app).get('/user/validateCookie')
+    const response = await request(server).get('/user/validateCookie')
 
     // Check the response
     expect(response.statusCode).toBe(401)
@@ -63,7 +63,7 @@ describe('Check for an invalid cookie', () => {
     const tamperedToken = tamperToken(token)
 
     // Send a request to validate the cookie.
-    const response = await request(app).get('/user/validateCookie').set('Cookie', `jwt=${tamperedToken}`)
+    const response = await request(server).get('/user/validateCookie').set('Cookie', `jwt=${tamperedToken}`)
 
     // Check the response
     expect(response.statusCode).toBe(401)
@@ -90,7 +90,7 @@ describe('Check for a valid cookie not present on server', () => {
     await removeToken(token)
 
     // Send a request to validate the cookie.
-    const response = await request(app).get('/user/validateCookie').set('Cookie', `jwt=${token}`)
+    const response = await request(server).get('/user/validateCookie').set('Cookie', `jwt=${token}`)
 
     // Check the response
     expect(response.statusCode).toBe(401)
