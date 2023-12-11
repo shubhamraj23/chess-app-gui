@@ -30,7 +30,7 @@ const DashBoard = () => {
         setGames(data.data.games)
         setWins(data.data.wins)
       })
-      .catch()
+      .catch(() => {})
   }, [])
 
   // Create a match request on button click.
