@@ -12,6 +12,7 @@ const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const userRouter = require('./routers/userRouter')
 const matchingRouter = require('./routers/matchingRouter')
+const handleSocket = require('./routers/socket')
 
 // Create an express application.
 const app = express()
@@ -26,6 +27,9 @@ app.use(cookieParser())
 
 // Setup the routers
 app.use('/user', userRouter)
-app.use('/match', matchingRouter(io))
+app.use('/match', matchingRouter)
+
+// Integrate socket handler.
+handleSocket(io)
 
 module.exports = {server, io}
