@@ -19,7 +19,7 @@ const Logout = ({setLoading}) => {
   return (
     <button
         className="absolute top-0 right-0 m-4 px-3 py-2 rounded bg-red-500 text-white font-semibold hover:bg-red-600"
-        onClick={logoutUser}
+        onClick={logoutUser} data-testid="logout"
       >
         Logout
       </button>
