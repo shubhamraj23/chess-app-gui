@@ -37,6 +37,7 @@ const HomePage = () => {
         return navigate('/dashboard')
       })
       .catch(() => {})
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Change the status of home page.

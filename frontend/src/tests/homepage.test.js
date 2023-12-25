@@ -72,7 +72,7 @@ describe('HomePage Component', () => {
     // Check that the homepage component has been rendered.
     expect(screen.getByTestId('homepage')).toBeInTheDocument()
     
-    // Check that the login component has been rendered and is visible.
+    // Check that the login container has been rendered and is visible.
     const loginContainer = screen.getByTestId('login')
     expect(loginContainer).toBeInTheDocument()
     expect(loginContainer).not.toHaveClass()
@@ -105,13 +105,13 @@ describe('HomePage Component', () => {
     expect(loginButton).toBeInTheDocument()
     expect(loginButton).toHaveClass('text-blue-500 hover:text-blue-700 border-b-2 border-blue-500')
     
-    // Check that the signup button has been rendered but is not visible.
+    // Check that the signup button has been rendered and is visible.
     const signupButton = screen.getByTestId('signup-button')
     expect(signupButton).toBeInTheDocument()
     expect(signupButton).toHaveClass('text-gray-500 hover:text-gray-700')
   })
 
-  test('Validate default homepage error states', async () => {
+  test('Check default homepage error states', async () => {
     // Mock axios get route to be rejected.
     axios.get.mockRejectedValueOnce(new Error())
     
@@ -128,16 +128,99 @@ describe('HomePage Component', () => {
     // Check that the homepage component has been rendered.
     expect(screen.getByTestId('homepage')).toBeInTheDocument()
     
-    // Check that the login component has been rendered and is visible.
+    // Check that the login error container has been rendered but is not visible.
     const loginError = screen.getByTestId('login-error')
     expect(loginError).toBeInTheDocument()
     expect(loginError).toHaveClass('hidden')
     expect(loginError.textContent).toBe('')
     
-    // Check that the signup container has been rendered but is not visible.
+    // Check that the signup error container has been rendered but is not visible.
     const signupError = screen.getByTestId('signup-error')
     expect(signupError).toBeInTheDocument()
     expect(signupError).toHaveClass('hidden')
     expect(signupError.textContent).toBe('')
+  })
+
+  test('Check state change from login to signup', async () => {
+    // Mock axios get route to be rejected.
+    axios.get.mockRejectedValueOnce(new Error())
+    
+    // Render the HomePage component on the screen.
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      render(
+        <Router>
+          <HomePage />
+        </Router>
+      )
+    })
+
+    // Check that the homepage component has been rendered.
+    expect(screen.getByTestId('homepage')).toBeInTheDocument()
+    
+    // Check that the login button and signup button have been rendered and are visible.
+    const loginButton = screen.getByTestId('login-button')
+    expect(loginButton).toBeInTheDocument()
+    const signupButton = screen.getByTestId('signup-button')
+    expect(signupButton).toBeInTheDocument()
+
+    // Click on the button.
+    fireEvent.click(signupButton)
+
+    // Check that the signup container has been rendered and is visible.
+    const signupContainer = screen.getByTestId('signup')
+    expect(signupContainer).toBeInTheDocument()
+    expect(signupContainer).not.toHaveClass()
+    
+    // Check that the login container has been rendered but is not visible.
+    const loginContainer = screen.getByTestId('login')
+    expect(loginContainer).toBeInTheDocument()
+    expect(loginContainer).toHaveClass('hidden mt-8')
+
+    // Check that the classes on the buttons have been changed.
+    expect(signupButton).toHaveClass('text-blue-500 hover:text-blue-700 border-b-2 border-blue-500')
+    expect(loginButton).toHaveClass('text-gray-500 hover:text-gray-700')
+  })
+
+  test('Check state change from signup to login', async () => {
+    // Mock axios get route to be rejected.
+    axios.get.mockRejectedValueOnce(new Error())
+    
+    // Render the HomePage component on the screen.
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      render(
+        <Router>
+          <HomePage />
+        </Router>
+      )
+    })
+
+    // Check that the homepage component has been rendered.
+    expect(screen.getByTestId('homepage')).toBeInTheDocument()
+    
+    // Check that the login button and signup button have been rendered and are visible.
+    const loginButton = screen.getByTestId('login-button')
+    expect(loginButton).toBeInTheDocument()
+    const signupButton = screen.getByTestId('signup-button')
+    expect(signupButton).toBeInTheDocument()
+
+    // Click on the button.
+    fireEvent.click(signupButton)
+    fireEvent.click(loginButton)
+
+    // Check that the login container has been rendered and is visible.
+    const loginContainer = screen.getByTestId('login')
+    expect(loginContainer).toBeInTheDocument()
+    expect(loginContainer).not.toHaveClass()
+    
+    // Check that the signup container has been rendered but is not visible.
+    const signupContainer = screen.getByTestId('signup')
+    expect(signupContainer).toBeInTheDocument()
+    expect(signupContainer).toHaveClass('hidden mt-8')
+
+    // Check that the classes on the buttons have been changed.
+    expect(loginButton).toHaveClass('text-blue-500 hover:text-blue-700 border-b-2 border-blue-500')
+    expect(signupButton).toHaveClass('text-gray-500 hover:text-gray-700')
   })
 })

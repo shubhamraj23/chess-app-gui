@@ -31,6 +31,7 @@ const DashBoard = () => {
         setWins(data.data.wins)
       })
       .catch(() => {})
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Create a match request on button click.
