@@ -116,7 +116,7 @@ const HomePage = () => {
   }
 
   return (
-    <div className="">
+    <div data-testid="homepage">
       <div className="bg-gray-100 flex items-center justify-center min-h-screen relative">
         <div className="bg-white w-96 rounded-lg shadow-lg">
           <div className="flex justify-between items-center px-4 py-3 border-b">

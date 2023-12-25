@@ -74,12 +74,12 @@ describe('Logout Component', () => {
     // Fire the function call.
     // eslint-disable-next-line testing-library/no-unnecessary-act
     await act(async () => {
-      fireEvent.click(logoutButton);
+      fireEvent.click(logoutButton)
     })
 
-    expect(setLoadingMock).toHaveBeenCalledWith('');
-    expect(axios.post).toHaveBeenCalledWith('user/logout');
-    expect(mockNavigate).toHaveBeenCalledWith('/');
+    expect(setLoadingMock).toHaveBeenCalledWith('')
+    expect(axios.post).toHaveBeenCalledWith('user/logout')
+    expect(mockNavigate).toHaveBeenCalledWith('/')
   })
 
   test('Call navigate on unsuccessful logout', async () => {
@@ -103,11 +103,11 @@ describe('Logout Component', () => {
     // Fire the function call.
     // eslint-disable-next-line testing-library/no-unnecessary-act
     await act(async () => {
-      fireEvent.click(logoutButton);
+      fireEvent.click(logoutButton)
     })
 
-    expect(setLoadingMock).toHaveBeenCalledWith('');
-    expect(axios.post).toHaveBeenCalledWith('user/logout');
-    expect(mockNavigate).toHaveBeenCalledWith('/');
+    expect(setLoadingMock).toHaveBeenCalledWith('')
+    expect(axios.post).toHaveBeenCalledWith('user/logout')
+    expect(mockNavigate).toHaveBeenCalledWith('/')
   })
 })
