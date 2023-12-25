@@ -138,17 +138,17 @@ const HomePage = () => {
               <form className="mt-4" onSubmit={handleSubmit}>
                 <div className="mb-4">
                   <label className={labelClasses}>Username</label>
-                  <input className={inputClasses} type="text" placeholder="Username" 
-                    value={loginID} onChange={(e) => setLoginID(e.target.value)} required />
+                  <input className={inputClasses} type="text" placeholder="Username" value={loginID}
+                    onChange={(e) => setLoginID(e.target.value)} required data-testid="login-id" />
                 </div>
 
                 <div className="mb-4">
                   <label className={labelClasses}>Password</label>
-                  <input className={inputClasses} type="password" placeholder="Password"
-                    value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} required />
+                  <input className={inputClasses} type="password" placeholder="Password" value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)} required data-testid="login-password" />
                 </div>
                 
-                <button className={buttonClasses}>Login</button>
+                <button className={buttonClasses} data-testid="login-submit">Login</button>
               </form>
             </div>
 
@@ -162,23 +162,23 @@ const HomePage = () => {
               <form className="mt-4" onSubmit={handleSubmit}>
                 <div className="mb-4">
                   <label className={labelClasses}>Name</label>
-                  <input className={inputClasses} type="text" placeholder="Name"
-                    value={signupName} onChange={(e) => setSignupName(e.target.value)} required />
+                  <input className={inputClasses} type="text" placeholder="Name" value={signupName}
+                    onChange={(e) => setSignupName(e.target.value)} required data-testid="signup-name" />
                 </div>
                       
                 <div className="mb-4">
                   <label className={labelClasses}>Username</label>
-                  <input className={inputClasses} type="text" placeholder="Username"
-                    value={signupID} onChange={(e) => setSignupID(e.target.value)} required />
+                  <input className={inputClasses} type="text" placeholder="Username" value={signupID}
+                    onChange={(e) => setSignupID(e.target.value)} required data-testid="signup-id" />
                 </div>
                       
                 <div className="mb-4">
                   <label className={labelClasses}>Password</label>
-                  <input className={inputClasses} type="password" placeholder="Password"
-                    value={signupPassword} onChange={(e) => setSignupPassword(e.target.value)} required />
+                  <input className={inputClasses} type="password" placeholder="Password" value={signupPassword}
+                    onChange={(e) => setSignupPassword(e.target.value)} required data-testid="signup-password" />
                 </div>
 
-                <button className={buttonClasses}>Signup</button>
+                <button className={buttonClasses} data-testid="signup-submit">Signup</button>
               </form>
             </div>
           </div>

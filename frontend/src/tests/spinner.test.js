@@ -21,6 +21,7 @@ describe('Spinner Component', () => {
     expect(screen.getByText('Loading...')).toBeInTheDocument()
   })
 
+
   test('Check for appropriate classes in the component', () => {
     // Render the spinner on the screen.
     render(<Spinner status='' text='Loading...'/>)
@@ -35,6 +36,7 @@ describe('Spinner Component', () => {
     expect(animationContainer).toHaveClass('rounded-full animate-spin')
   })
 
+  
   test('Check for hidden spinner', () => {
     // Render the spinner on the screen.
     render(<Spinner status='hidden' text='Loading...'/>)

@@ -30,6 +30,7 @@ describe('Logout Component', () => {
     expect(container).toHaveClass('absolute top-0 bg-red-500 text-white')
   })
 
+
   test('Check setLoading call on button click', () => {
     // Mock a function.
     const setLoadingMock = jest.fn()
@@ -52,6 +53,7 @@ describe('Logout Component', () => {
     fireEvent.click(logoutButton)
     expect(setLoadingMock).toHaveBeenCalledWith('')
   })
+
 
   test('Call navigate on successful logout', async () => {
     // Mock the functions.
@@ -82,6 +84,7 @@ describe('Logout Component', () => {
     expect(mockNavigate).toHaveBeenCalledWith('/')
   })
 
+  
   test('Call navigate on unsuccessful logout', async () => {
     // Mock the functions.
     const setLoadingMock = jest.fn()
