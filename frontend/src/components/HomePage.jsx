@@ -120,15 +120,17 @@ const HomePage = () => {
       <div className="bg-gray-100 flex items-center justify-center min-h-screen relative">
         <div className="bg-white w-96 rounded-lg shadow-lg">
           <div className="flex justify-between items-center px-4 py-3 border-b">
-            <button className={`px-4 py-2 font-semibold focus:outline-none ${loginButton}`} onClick={()=>setPageCondition('login')}>Login</button>
-            <button className={`px-4 py-2 font-semibold focus:outline-none ${signupButton}`} onClick={()=>setPageCondition('signup')}>Signup</button>
+            <button className={`px-4 py-2 font-semibold focus:outline-none ${loginButton}`} 
+              onClick={()=>setPageCondition('login')} data-testid="login-button">Login</button>
+            <button className={`px-4 py-2 font-semibold focus:outline-none ${signupButton}`}
+              onClick={()=>setPageCondition('signup')} data-testid="signup-button">Signup</button>
           </div>
           
           <div className="p-6">
-            <div className={loginForm}>
+            <div className={loginForm} data-testid="login">
               <h2 className="text-2xl font-semibold text-gray-700">Login</h2>
 
-              <div className={`${errorState} error-colour border-l-4 p-4 mt-2`}>
+              <div className={`${errorState} error-colour border-l-4 p-4 mt-2`} data-testid="login-error">
                 <p><strong>{errorMessage}</strong></p>
               </div>
 
@@ -149,10 +151,10 @@ const HomePage = () => {
               </form>
             </div>
 
-            <div className={signupForm}>
+            <div className={signupForm} data-testid="signup">
               <h2 className="text-2xl font-semibold text-gray-700">Signup</h2>
 
-              <div className={`${errorState} ${color} border-l-4 p-4 mt-2`}>
+              <div className={`${errorState} ${color} border-l-4 p-4 mt-2`} data-testid="signup-error">
                 <p><strong>{errorMessage}</strong></p>
               </div>
               
