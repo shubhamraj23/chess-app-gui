@@ -185,7 +185,7 @@ const HomePage = () => {
         </div>
       </div>
 
-      <Spinner status={loading} />
+      <Spinner status={loading} data-testid="spinner" />
     </div>
   )
 }

@@ -33,7 +33,7 @@ describe('Logout Component', () => {
 
   test('Check setLoading call on button click', () => {
     // Mock a function.
-    const setLoadingMock = jest.fn()
+    const mockSetLoading = jest.fn()
 
     // Mock axios post route to be resolved.
     axios.post.mockResolvedValueOnce()
@@ -41,7 +41,7 @@ describe('Logout Component', () => {
     // Render the Logout component on the screen.
     render(
       <Router>
-        <Logout setLoading={setLoadingMock}/>
+        <Logout setLoading={mockSetLoading}/>
       </Router>
     )
 
@@ -51,13 +51,13 @@ describe('Logout Component', () => {
 
     // Fire the function call by clicking on the button.
     fireEvent.click(logoutButton)
-    expect(setLoadingMock).toHaveBeenCalledWith('')
+    expect(mockSetLoading).toHaveBeenCalledWith('')
   })
 
 
   test('Call navigate on successful logout', async () => {
     // Mock the functions.
-    const setLoadingMock = jest.fn()
+    const mockSetLoading = jest.fn()
 
     // Mock axios post route to be resolved.
     axios.post.mockResolvedValueOnce()
@@ -65,7 +65,7 @@ describe('Logout Component', () => {
     // Render the Logout component on the screen
     render(
       <Router>
-        <Logout setLoading={setLoadingMock}/>
+        <Logout setLoading={mockSetLoading}/>
       </Router>
     )
 
@@ -79,7 +79,7 @@ describe('Logout Component', () => {
       fireEvent.click(logoutButton)
     })
 
-    expect(setLoadingMock).toHaveBeenCalledWith('')
+    expect(mockSetLoading).toHaveBeenCalledWith('')
     expect(axios.post).toHaveBeenCalledWith('user/logout')
     expect(mockNavigate).toHaveBeenCalledWith('/')
   })
@@ -87,7 +87,7 @@ describe('Logout Component', () => {
   
   test('Call navigate on unsuccessful logout', async () => {
     // Mock the functions.
-    const setLoadingMock = jest.fn()
+    const mockSetLoading = jest.fn()
 
     // Mock axios post route to be resolved.
     axios.post.mockRejectedValueOnce(new Error())
@@ -95,7 +95,7 @@ describe('Logout Component', () => {
     // Render the Logout component on the screen
     render(
       <Router>
-        <Logout setLoading={setLoadingMock}/>
+        <Logout setLoading={mockSetLoading}/>
       </Router>
     )
 
@@ -109,7 +109,7 @@ describe('Logout Component', () => {
       fireEvent.click(logoutButton)
     })
 
-    expect(setLoadingMock).toHaveBeenCalledWith('')
+    expect(mockSetLoading).toHaveBeenCalledWith('')
     expect(axios.post).toHaveBeenCalledWith('user/logout')
     expect(mockNavigate).toHaveBeenCalledWith('/')
   })
