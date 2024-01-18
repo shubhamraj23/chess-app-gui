@@ -37,7 +37,7 @@ describe('HomePage Component', () => {
 
 
   test('Call useNavigate on successful axios get call', async () => {
-    // Mock axios get route to be rejected.
+    // Mock axios get route to be resolved.
     axios.get.mockResolvedValueOnce()
     
     // Render the HomePage component on the screen.

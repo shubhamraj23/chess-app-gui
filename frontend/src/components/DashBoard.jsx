@@ -20,17 +20,18 @@ const DashBoard = () => {
   // Validate the cookies on component load.
   useEffect(() => {
     axios.get('/user/validateCookie')
+      .then(() => {
+        axios.get('/user/stats')
+          .then((data) => {
+            setName(data.data.name)
+            setGames(data.data.games)
+            setWins(data.data.wins)
+          })
+          .catch(() => {})
+      })
       .catch(() => {
         return navigate('/')
       })
-
-    axios.get('/user/stats')
-      .then((data) => {
-        setName(data.data.name)
-        setGames(data.data.games)
-        setWins(data.data.wins)
-      })
-      .catch(() => {})
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -65,10 +66,10 @@ const DashBoard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center" data-testid="dashboard">
       <Logout setLoading={setLoading} />
 
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md">
+      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md" data-testid="stats">
         <h2 className="text-2xl font-semibold text-center">Welcome, {name}!</h2>
         <p className="text-gray-600 text-center">Here are your stats:</p>
         <ul className="text-gray-700">
@@ -78,19 +79,19 @@ const DashBoard = () => {
         <div className="flex justify-center">
           <button
             className="mt-6 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-full focus:outline-none"
-            onClick={matchRequest}
+            onClick={matchRequest} data-testid="button"
           >
             Start a new game
           </button>
         </div>
       </div>
 
-      <div className={`${errorState} max-w-md w-full error-colour border-l-4 p-4 mt-2`}>
+      <div className={`${errorState} max-w-md w-full error-colour border-l-4 p-4 mt-2`} data-testid="error">
         <p><strong>{errorMessage}</strong></p>
       </div>
 
       <Spinner status={loading} />
-      <Spinner status={findingMatch} text="Finding a match for you..."/>
+      <Spinner status={findingMatch} text="Finding a match for you..." />
     </div>
   )
 }
