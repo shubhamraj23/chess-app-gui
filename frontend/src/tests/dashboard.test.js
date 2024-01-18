@@ -62,6 +62,7 @@ describe('DashBoard Component', () => {
     expect(mockNavigate).not.toHaveBeenCalled()
   })
 
+
   test('Check components have been rendered', async () => {
     // Mock axios get route to be resolved.
     axios.get.mockResolvedValue()
@@ -82,10 +83,8 @@ describe('DashBoard Component', () => {
     expect(screen.getByTestId('stats')).toBeInTheDocument()
     expect(screen.getByTestId('button')).toBeInTheDocument()
     expect(screen.getByTestId('error')).toBeInTheDocument()
-
-    // Find and test for the spinner components.
-    const spinners = screen.getAllByTestId('spinner')
-    spinners.forEach((spinner) => {expect(spinner).toBeInTheDocument()})
+    expect(screen.getByTestId('spinner-normal')).toBeInTheDocument()
+    expect(screen.getByTestId('spinner-text')).toBeInTheDocument()
   })
 
 
@@ -156,5 +155,62 @@ describe('DashBoard Component', () => {
     expect(screen.getByText(/Welcome, User!/)).toBeInTheDocument()
     expect(screen.getByText(/Total Games Played: 0/)).toBeInTheDocument()
     expect(screen.getByText(/Total Games Won: 0/)).toBeInTheDocument()
+  })
+
+  test('Spinner visible on logout button click', async () => {
+    // Mock axios get routes to be resolved.
+    axios.get.mockResolvedValue()
+    axios.post.mockResolvedValue()
+
+    // Render the DashBoard component on the screen.
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      render(
+        <Router>
+          <DashBoard />
+        </Router>
+      )
+    })
+
+    // Check that the dashboard component has been rendered.
+    expect(screen.getByTestId('dashboard')).toBeInTheDocument()
+
+    // Click on the logout button.
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('logout'))
+    })
+    
+    // Check that the spinner is visible.
+    expect(screen.getByTestId('spinner-normal')).not.toHaveClass('hidden')
+  })
+
+  test('Spinner visible on match button click', async () => {
+    // Mock axios get routes to be resolved.
+    axios.get.mockResolvedValue()
+    axios.post.mockResolvedValue()
+
+    // Render the DashBoard component on the screen.
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      render(
+        <Router>
+          <DashBoard />
+        </Router>
+      )
+    })
+
+    // Check that the dashboard component has been rendered.
+    expect(screen.getByTestId('dashboard')).toBeInTheDocument()
+
+    // Click on the logout button.
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('button'))
+    })
+    
+    // Check that the spinner is visible.
+    expect(screen.getByTestId('spinner-text')).not.toHaveClass('hidden')
+    expect(screen.getByText(/Finding a match for you/)).toBeInTheDocument()
   })
 })

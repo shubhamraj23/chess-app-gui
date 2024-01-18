@@ -90,8 +90,13 @@ const DashBoard = () => {
         <p><strong>{errorMessage}</strong></p>
       </div>
 
-      <Spinner status={loading} />
-      <Spinner status={findingMatch} text="Finding a match for you..." />
+      <div data-testid="spinner-normal">
+        <Spinner status={loading} />
+      </div>
+  
+      <div data-testid="spinner-text">
+        <Spinner status={findingMatch} text="Finding a match for you..." />
+      </div>
     </div>
   )
 }
