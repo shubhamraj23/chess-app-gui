@@ -72,9 +72,8 @@ const HomePage = () => {
       }
       axios.post('user/login', loginData)
         .then(() => {
-          setSignupID('')
-          setSignupPassword('')
-          setSignupName('')
+          setLoginID('')
+          setLoginPassword('')
           return navigate('/dashboard')
         })
         .catch((error) => {

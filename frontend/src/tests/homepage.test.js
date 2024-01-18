@@ -170,7 +170,10 @@ describe('HomePage Component', () => {
     expect(signupButton).toBeInTheDocument()
 
     // Click on the button to toggle to signup page.
-    fireEvent.click(signupButton)
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      fireEvent.click(signupButton)
+    })
 
     // Check that the signup container has been rendered and is visible.
     const signupContainer = screen.getByTestId('signup')
@@ -187,7 +190,10 @@ describe('HomePage Component', () => {
     expect(loginButton).toHaveClass('text-gray-500 hover:text-gray-700')
 
     // Click on the button to toggle to login page.
-    fireEvent.click(loginButton)
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      fireEvent.click(loginButton)
+    })
 
     // Check that the login container is visible.
     expect(loginContainer).not.toHaveClass()
@@ -225,15 +231,21 @@ describe('HomePage Component', () => {
     expect(loginPassword).toBeInTheDocument()
 
     // Simulate typing in input.
-    fireEvent.change(loginID, { target: { value: 'jali_batti' } })
-    fireEvent.change(loginPassword, { target: { value: 'Shubham23' } })
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      fireEvent.change(loginID, { target: { value: 'jali_batti' } })
+      fireEvent.change(loginPassword, { target: { value: 'Shubham23' } })
+    })
 
     // Access the states and test the value.
     expect(loginID.value).toBe('jali_batti')
     expect(loginPassword.value).toBe('Shubham23')
 
     // Click on the button to toggle to signup page.
-    fireEvent.click(screen.getByTestId('signup-button'))
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('signup-button'))
+    })
 
     // Check that the input fields have been rendered.
     const signupName = screen.getByTestId('signup-name')
@@ -244,9 +256,12 @@ describe('HomePage Component', () => {
     expect(signupPassword).toBeInTheDocument()
 
     // Simulate typing in input.
-    fireEvent.change(signupName, { target: { value: 'SRP' } })
-    fireEvent.change(signupID, { target: { value: 'jali_batti' } })
-    fireEvent.change(signupPassword, { target: { value: 'Shubham23' } })
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      fireEvent.change(signupName, { target: { value: 'SRP' } })
+      fireEvent.change(signupID, { target: { value: 'jali_batti' } })
+      fireEvent.change(signupPassword, { target: { value: 'Shubham23' } })  
+    })
 
     // Access the states and test the value.
     expect(signupName.value).toBe('SRP')
@@ -254,10 +269,17 @@ describe('HomePage Component', () => {
     expect(signupPassword.value).toBe('Shubham23')
   })
 
-  test('Check loading component visibility on submitting form', async () => {
+  
+  test('Remove error state and error message on form submission', async () => {
     // Mock axios routes.
     axios.get.mockRejectedValueOnce(new Error())
-    axios.post.mockResolvedValue(new Promise((resolve) => setTimeout(() => resolve(), 500)))
+    axios.post.mockRejectedValue({
+      response: {
+        data: {
+          error: 'Some random error.'
+        }
+      }
+    })
     
     // Render the HomePage component on the screen.
     // eslint-disable-next-line testing-library/no-unnecessary-act
@@ -272,53 +294,87 @@ describe('HomePage Component', () => {
     // Check that the homepage component has been rendered.
     expect(screen.getByTestId('homepage')).toBeInTheDocument()
 
-    // Check the spinner class has been rendered.
-    const spinner = screen.getByTestId('spinner')
-    expect(spinner).toBeInTheDocument()
-    expect(spinner).toHaveClass('hidden')
+    // Check the login error class has been rendered.
+    const loginError = screen.getByTestId('login-error')
+    expect(loginError).toBeInTheDocument()
+    expect(loginError).toHaveClass('hidden')
     
     // Simulate typing in input.
-    fireEvent.change(screen.getByTestId('login-id'), { target: { value: 'jali_batti' } })
-    fireEvent.change(screen.getByTestId('login-password'), { target: { value: 'Shubham23' } })
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      fireEvent.change(screen.getByTestId('login-id'), { target: { value: 'jali_batti' } })
+      fireEvent.change(screen.getByTestId('login-password'), { target: { value: 'Shubham23' } })  
+    })
 
     // Click on the submit button.
-    fireEvent.click(screen.getByTestId('login-submit'))
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('login-submit'))
+    })
     
-    // Ensure the spinner doesn't have the hidden class immediately after the button click.
+    // Ensure the error comes after axios request is completed.
     await waitFor(() => {
-      // Giving a time delay to ensure that the state change is rendered properly.
-      setTimeout(() => {
-        expect(spinner).not.toHaveClass('hidden')
-      }, 50)
+      expect(loginError).not.toHaveClass('hidden')
+      // eslint-disable-next-line testing-library/no-wait-for-multiple-assertions
+      expect(loginError).toHaveTextContent('Some random error.')
     })
 
-    // Simulate waiting for axios request to complete.
-    await waitFor(() => {
-      expect(spinner).toHaveClass('hidden')
+    // Fire the request again.
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    act(() => {
+      fireEvent.click(screen.getByTestId('login-submit'))
     })
-    
+
+    // Ensure the error message goes away immediately after the button click.
+    await waitFor(() => {
+      expect(loginError).toHaveClass('hidden')
+      // eslint-disable-next-line testing-library/no-wait-for-multiple-assertions
+      expect(loginError).not.toHaveTextContent('Some random error.')
+    })
+
     // Click on the button to toggle to signup page.
-    fireEvent.click(screen.getByTestId('signup-button'))
-
-    // Simulate typing in input.
-    fireEvent.change(screen.getByTestId('signup-name'), { target: { value: 'SRP' } })
-    fireEvent.change(screen.getByTestId('signup-id'), { target: { value: 'jali_batti' } })
-    fireEvent.change(screen.getByTestId('signup-password'), { target: { value: 'Shubham23' } })
-
-    // Click on the submit button.
-    fireEvent.click(screen.getByTestId('signup-submit'))
-    
-    // Ensure the spinner doesn't have the hidden class immediately after the button click.
-    await waitFor(() => {
-      // Giving a time delay to ensure that the state change is rendered properly.
-      setTimeout(() => {
-        expect(spinner).not.toHaveClass('hidden')
-      }, 50)
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('signup-button'))
     })
 
-    // Simulate waiting for axios request to complete.
+    // Check the signup error class has been rendered.
+    const signupError = screen.getByTestId('signup-error')
+    expect(signupError).toBeInTheDocument()
+    expect(signupError).toHaveClass('hidden')
+    
+    // Simulate typing in input.
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      fireEvent.change(screen.getByTestId('signup-name'), { target: { value: 'SRP' } })
+      fireEvent.change(screen.getByTestId('signup-id'), { target: { value: 'jali_batti' } })
+      fireEvent.change(screen.getByTestId('signup-password'), { target: { value: 'Shubham23' } })  
+    })
+
+    // Click on the submit button.
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('signup-submit'))
+    })
+    
+    // Ensure the error comes after axios request is completed.
     await waitFor(() => {
-      expect(spinner).toHaveClass('hidden')
+      expect(signupError).not.toHaveClass('hidden')
+      // eslint-disable-next-line testing-library/no-wait-for-multiple-assertions
+      expect(signupError).toHaveTextContent('Some random error.')
+    })
+
+    // Fire the request again.
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    act(() => {
+      fireEvent.click(screen.getByTestId('signup-submit'))
+    })
+
+    // Ensure the error message goes away immediately after the button click.
+    await waitFor(() => {
+      expect(signupError).toHaveClass('hidden')
+      // eslint-disable-next-line testing-library/no-wait-for-multiple-assertions
+      expect(signupError).not.toHaveTextContent('Some random error.')
     })
   })
 })

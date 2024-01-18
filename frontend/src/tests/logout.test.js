@@ -31,7 +31,7 @@ describe('Logout Component', () => {
   })
 
 
-  test('Check setLoading call on button click', () => {
+  test('Check setLoading call on button click', async () => {
     // Mock a function.
     const mockSetLoading = jest.fn()
 
@@ -50,7 +50,10 @@ describe('Logout Component', () => {
     const logoutButton = screen.getByTestId('logout')
 
     // Fire the function call by clicking on the button.
-    fireEvent.click(logoutButton)
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      fireEvent.click(logoutButton)
+    })
     expect(mockSetLoading).toHaveBeenCalledWith('')
   })
 
