@@ -70,11 +70,11 @@ const DashBoard = () => {
       <Logout setLoading={setLoading} />
 
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md" data-testid="stats">
-        <h2 className="text-2xl font-semibold text-center">Welcome, {name}!</h2>
+        <h2 className="text-2xl font-semibold text-center" data-testid="name">Welcome, {name}!</h2>
         <p className="text-gray-600 text-center">Here are your stats:</p>
         <ul className="text-gray-700">
-          <li>Total Games Played: {games}</li>
-          <li>Total Games Won: {wins}</li>
+          <li data-testid="games">Total Games Played: {games}</li>
+          <li data-testid="won">Total Games Won: {wins}</li>
         </ul>
         <div className="flex justify-center">
           <button
