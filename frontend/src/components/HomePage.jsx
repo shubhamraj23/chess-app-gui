@@ -96,7 +96,7 @@ const HomePage = () => {
         .then(() => {
           setErrorState('')
           setColor('success-colour')
-          setErrorMessage('User successfully created. Please login')
+          setErrorMessage('User successfully created. Please login.')
           setSignupID('')
           setSignupPassword('')
           setSignupName('')

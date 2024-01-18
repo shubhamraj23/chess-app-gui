@@ -269,7 +269,7 @@ describe('HomePage Component', () => {
     expect(signupPassword.value).toBe('Shubham23')
   })
 
-  
+
   test('Remove error state and error message on form submission', async () => {
     // Mock axios routes.
     axios.get.mockRejectedValueOnce(new Error())
@@ -376,5 +376,241 @@ describe('HomePage Component', () => {
       // eslint-disable-next-line testing-library/no-wait-for-multiple-assertions
       expect(signupError).not.toHaveTextContent('Some random error.')
     })
+  })
+
+
+  test('Successful Login', async () => {
+    // Mock axios routes.
+    axios.get.mockRejectedValueOnce(new Error())
+    axios.post.mockResolvedValueOnce()
+    
+    // Render the HomePage component on the screen.
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      render(
+        <Router>
+          <HomePage />
+        </Router>
+      )
+    })
+
+    // Check that the homepage component has been rendered.
+    expect(screen.getByTestId('homepage')).toBeInTheDocument()
+
+    // Check the login error class has been rendered.
+    const loginError = screen.getByTestId('login-error')
+    expect(loginError).toBeInTheDocument()
+    expect(loginError).toHaveClass('hidden')
+    
+    // Simulate typing in input.
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      fireEvent.change(screen.getByTestId('login-id'), { target: { value: 'jali_batti' } })
+      fireEvent.change(screen.getByTestId('login-password'), { target: { value: 'Shubham23' } })  
+    })
+
+    // Click on the submit button.
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('login-submit'))
+    })
+    
+    // Ensure that no error comes after axios request is completed.
+    await waitFor(() => {
+      expect(loginError).toHaveClass('hidden')
+    })
+
+    // Ensure that the login fields are empty.
+    expect(screen.getByTestId('login-id').value).toBe('')
+    expect(screen.getByTestId('login-password').value).toBe('')
+
+    // Ensure that the page has been redirected.
+    expect(mockNavigate).toHaveBeenCalledWith('/dashboard')
+  })
+
+
+  test('Unsuccessful Login', async () => {
+    // Mock axios routes.
+    axios.get.mockRejectedValueOnce(new Error())
+    axios.post.mockRejectedValueOnce({
+      response: {
+        data: {
+          error: 'Some random error.'
+        }
+      }
+    })
+    
+    // Render the HomePage component on the screen.
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      render(
+        <Router>
+          <HomePage />
+        </Router>
+      )
+    })
+
+    // Check that the homepage component has been rendered.
+    expect(screen.getByTestId('homepage')).toBeInTheDocument()
+
+    // Check the login error class has been rendered.
+    const loginError = screen.getByTestId('login-error')
+    expect(loginError).toBeInTheDocument()
+    expect(loginError).toHaveClass('hidden')
+    
+    // Simulate typing in input.
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      fireEvent.change(screen.getByTestId('login-id'), { target: { value: 'jali_batti' } })
+      fireEvent.change(screen.getByTestId('login-password'), { target: { value: 'Shubham23' } })  
+    })
+
+    // Click on the submit button.
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('login-submit'))
+    })
+    
+    // Ensure the error comes after axios request is completed.
+    await waitFor(() => {
+      expect(loginError).not.toHaveClass('hidden')
+      // eslint-disable-next-line testing-library/no-wait-for-multiple-assertions
+      expect(loginError).toHaveTextContent('Some random error.')
+    })
+
+    // Ensure that the login fields are not empty.
+    expect(screen.getByTestId('login-id').value).toBe('jali_batti')
+    expect(screen.getByTestId('login-password').value).toBe('Shubham23')
+
+    // Ensure that the page has not been redirected.
+    expect(mockNavigate).not.toHaveBeenCalled()
+  })
+
+  test('Successful Signup', async () => {
+    // Mock axios routes.
+    axios.get.mockRejectedValueOnce(new Error())
+    axios.post.mockResolvedValueOnce()
+    
+    // Render the HomePage component on the screen.
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      render(
+        <Router>
+          <HomePage />
+        </Router>
+      )
+    })
+
+    // Check that the homepage component has been rendered.
+    expect(screen.getByTestId('homepage')).toBeInTheDocument()
+
+    // Click on the button to toggle to signup page.
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('signup-button'))
+    })
+
+    // Check the signup error class has been rendered.
+    const signupError = screen.getByTestId('signup-error')
+    expect(signupError).toBeInTheDocument()
+    expect(signupError).toHaveClass('hidden')
+    
+    // Simulate typing in input.
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      fireEvent.change(screen.getByTestId('signup-name'), { target: { value: 'SRP' } })
+      fireEvent.change(screen.getByTestId('signup-id'), { target: { value: 'jali_batti' } })
+      fireEvent.change(screen.getByTestId('signup-password'), { target: { value: 'Shubham23' } })  
+    })
+
+    // Click on the submit button.
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('signup-submit'))
+    })
+    
+    // Ensure the message comes after axios request is completed.
+    await waitFor(() => {
+      expect(signupError).not.toHaveClass('hidden')
+      // eslint-disable-next-line testing-library/no-wait-for-multiple-assertions
+      expect(signupError).toHaveClass('success-colour')
+      // eslint-disable-next-line testing-library/no-wait-for-multiple-assertions
+      expect(signupError).toHaveTextContent('User successfully created. Please login.')
+    })
+
+    // Ensure that the login fields are empty.
+    expect(screen.getByTestId('signup-name').value).toBe('')
+    expect(screen.getByTestId('signup-id').value).toBe('')
+    expect(screen.getByTestId('signup-password').value).toBe('')
+
+    // Ensure that the page has not been redirected.
+    expect(mockNavigate).not.toHaveBeenCalled()
+  })
+
+  test('Unsuccessful Signup', async () => {
+    // Mock axios routes.
+    axios.get.mockRejectedValueOnce(new Error())
+    axios.post.mockRejectedValueOnce({
+      response: {
+        data: {
+          error: 'Some random error.'
+        }
+      }
+    })
+    
+    // Render the HomePage component on the screen.
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      render(
+        <Router>
+          <HomePage />
+        </Router>
+      )
+    })
+
+    // Check that the homepage component has been rendered.
+    expect(screen.getByTestId('homepage')).toBeInTheDocument()
+
+    // Click on the button to toggle to signup page.
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('signup-button'))
+    })
+
+    // Check the signup error class has been rendered.
+    const signupError = screen.getByTestId('signup-error')
+    expect(signupError).toBeInTheDocument()
+    expect(signupError).toHaveClass('hidden')
+    
+    // Simulate typing in input.
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      fireEvent.change(screen.getByTestId('signup-name'), { target: { value: 'SRP' } })
+      fireEvent.change(screen.getByTestId('signup-id'), { target: { value: 'jali_batti' } })
+      fireEvent.change(screen.getByTestId('signup-password'), { target: { value: 'Shubham23' } })  
+    })
+
+    // Click on the submit button.
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('signup-submit'))
+    })
+    
+    // Ensure the error comes after axios request is completed.
+    await waitFor(() => {
+      expect(signupError).not.toHaveClass('hidden')
+      // eslint-disable-next-line testing-library/no-wait-for-multiple-assertions
+      expect(signupError).toHaveClass('error-colour')
+      // eslint-disable-next-line testing-library/no-wait-for-multiple-assertions
+      expect(signupError).toHaveTextContent('Some random error.')
+    })
+
+    // Ensure that the login fields are not empty.
+    expect(screen.getByTestId('signup-name').value).toBe('SRP')
+    expect(screen.getByTestId('signup-id').value).toBe('jali_batti')
+    expect(screen.getByTestId('signup-password').value).toBe('Shubham23')
+
+    // Ensure that the page has not been redirected.
+    expect(mockNavigate).not.toHaveBeenCalled()
   })
 })
