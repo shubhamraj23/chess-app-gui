@@ -18,7 +18,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --transformIgnorePatterns 'node_modules/(?!axios)/'",
+    "test:frontend": "react-scripts test --testPathPattern=src/tests/frontend_tests --transformIgnorePatterns 'node_modules/(?!axios)/'",
+    "test:integration": "react-scripts test --testPathPattern=src/tests/integration_tests --transformIgnorePatterns 'node_modules/(?!axios)/'",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

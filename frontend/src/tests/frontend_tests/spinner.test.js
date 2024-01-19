@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom/extend-expect'
 import {render, screen} from '@testing-library/react'
-import Spinner from '../components/Spinner'
+import Spinner from '../../components/Spinner'
 
 describe('Spinner Component', () => {
   test('Render Spinner without any text', () => {

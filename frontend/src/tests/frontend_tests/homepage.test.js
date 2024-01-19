@@ -3,7 +3,7 @@ import { BrowserRouter as Router } from 'react-router-dom'
 import {render, screen, fireEvent, waitFor} from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
 import axios from 'axios'
-import HomePage from '../components/HomePage'
+import HomePage from '../../components/HomePage'
 
 // Mock axios
 jest.mock('axios')

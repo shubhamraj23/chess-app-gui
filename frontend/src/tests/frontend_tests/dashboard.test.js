@@ -4,7 +4,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
 import axios from 'axios'
 import io from 'socket.io-client'
-import DashBoard from '../components/DashBoard'
+import DashBoard from '../../components/DashBoard'
 
 // Mock axios
 jest.mock('axios')

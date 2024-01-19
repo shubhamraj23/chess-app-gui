@@ -8,13 +8,12 @@
     "build:css": "tailwindcss -i ./frontend/src/input.css -o ./frontend/src/styles.css --watch",
     "client": "npm start --prefix frontend",
     "frontend": "concurrently \"npm run build:css\" \"npm run client\"",
-    "test:frontend": "cd frontend && npm test",
-    "server": "nodemon backend/src/index.js",
-    "jest:watch": "jest --watchAll",
-    "test:backend": "npm run jest:watch",
-    "backend": "concurrently \"npm run server\" \"npm run test:backend\"",
-    "test": "concurrently \"npm run test:frontend\" \"npm run test:backend\"",
-    "dev": "concurrently \"npm run frontend\" \"npm run server\""
+    "backend": "nodemon backend/src/index.js",
+    "test:frontend": "cd frontend && npm run test:frontend",
+    "test:backend": "jest --testPathPattern=backend",
+    "test:integration": "cd frontend && npm run test:integration",
+    "test": "concurrently \"npm run test:frontend\" \"npm run test:backend\" \"npm run test:integration\"",
+    "dev": "concurrently \"npm run frontend\" \"npm run backend\""
   },
   "jest": {
     "testEnvironment": "node",

@@ -3,7 +3,7 @@ import { BrowserRouter as Router } from 'react-router-dom'
 import {render, screen, fireEvent} from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
 import axios from 'axios'
-import Logout from '../components/Logout'
+import Logout from '../../components/Logout'
 
 // Mock axios
 jest.mock('axios')
