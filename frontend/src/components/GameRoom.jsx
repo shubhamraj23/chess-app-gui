@@ -1,6 +1,10 @@
+import ChessBoard from "./ChessBoard"
+
 const GameRoom = () => {
   return (
-    <div>GameRoom</div>
+    <>
+      <ChessBoard />
+    </>
   )
 }
 
