@@ -2,9 +2,12 @@ import ChessBoard from "./ChessBoard"
 
 const GameRoom = () => {
   return (
-    <>
-      <ChessBoard />
-    </>
+    <div className="bg-gray-300">
+      <div className="container mx-auto h-screen" id="game-container">
+        <ChessBoard />
+      </div>  
+    </div>
+    
   )
 }
 

@@ -1,9 +1,10 @@
 import ChessPiece from './ChessPiece'
 
-const ChessCell = ({isDark, children}) => {
+const ChessCell = ({isDark, width}) => {
   return (
-    <div className={`w-8 h-8 flex items-center justify-center ${isDark ? 'bg-dark' : 'bg-light'}`}>
-      {children && <ChessPiece type={children} />}
+    <div className={`flex items-center justify-center ${isDark ? 'bg-black' : 'bg-white'}`} 
+      style={{ width: `${width}px`, height: `${width}px` }}>
+      <ChessPiece />
     </div>
   )
 }

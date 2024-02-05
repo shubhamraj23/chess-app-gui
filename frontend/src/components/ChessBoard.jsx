@@ -1,26 +1,29 @@
+import { useState, useEffect } from 'react'
 import ChessCell from './ChessCell'
 
 const ChessBoard = () => {
-  
-  const generateBoard = () => {
-    const board = []
-    
-    for (let row = 0; row < 8; row++) {
-      for (let col = 0; col < 8; col++) {
-        const isDark = (row + col) % 2 !== 0
-        board.push(
-          <ChessCell key={`${row}-${col}`} isDark={isDark}>
-            
-          </ChessCell>
-        )
-      }
-    }
+  const [width, setWidth] = useState(0)
 
-    return board
-  }
-  
+  useEffect(() => {
+    const containerWidth = document.getElementById('game-container').offsetWidth
+    const screenHeight = window.innerHeight
+    const lower = Math.min(containerWidth, screenHeight)
+    const divWidth = lower - (lower % 8)
+    setWidth(divWidth)
+  }, [])
+
   return (
-    <div className="flex flex-wrap w-64">{generateBoard()}</div>
+    <div className="flex flex-col items-center h-screen">
+      <div className="my-auto" style={{ width: `${width}px`, height: `${width}px` }}>
+        {[...Array(8)].map((_, row) => (
+          <div key={row} className="flex">
+            {[...Array(8)].map((_, col) => (
+              <ChessCell key={`${row}-${col}`} isDark={(row + col) % 2 !== 0} width={width/8} />
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }
 
