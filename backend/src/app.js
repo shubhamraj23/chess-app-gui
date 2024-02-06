@@ -12,6 +12,7 @@ const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const userRouter = require('./routers/userRouter')
 const matchingRouter = require('./routers/matchingRouter')
+const gameRouter = require('./routers/gameRouter')
 const handleSocket = require('./routers/socket')
 
 // Create an express application.
@@ -28,6 +29,7 @@ app.use(cookieParser())
 // Setup the routers
 app.use('/user', userRouter)
 app.use('/match', matchingRouter)
+app.use('/gameDetails', gameRouter)
 
 // Integrate socket handler.
 handleSocket(io)
