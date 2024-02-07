@@ -10,7 +10,7 @@ const router = new express.Router()
 router.get('/playerType', authenticate, async (request, response) => {
   try {
     const userId = request.user._id
-    const { gameId } = request.query
+    const gameId = request.query.gameId
     const game = await Game.findById(gameId)
     
 		if (!game) {
@@ -19,13 +19,13 @@ router.get('/playerType', authenticate, async (request, response) => {
 			})
     }
 
-		if (game.players.white === userId) {
+		if (userId.equals(game.players.white)) {
 			return response.status(200).send({
 				playerType: "white"
 			})
 		}
 
-		if (game.players.black === userId) {
+		if (userId.equals(game.players.black)) {
 			return response.status(200).send({
 				playerType: "black"
 			})
