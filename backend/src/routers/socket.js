@@ -43,6 +43,11 @@ const handleSocket = async (io) => {
         socket.emit('match-found', { id: createdGame._id })
       }
     })
+
+    // Join a room.
+    socket.on('join-room', (roomId) => {
+      socket.join(roomId)
+    })
   })
 }
 
