@@ -1,10 +1,12 @@
 import axios from 'axios'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { connect } from 'react-redux'
+import { initializeChessboard, movePiece } from '../redux/actions/chessboardActions'
 import ChessCell from './ChessCell'
 import ChessPiece from './ChessPiece'
 
-const ChessBoard = () => {
+const ChessBoard = ({ cells, movePiece, initializeChessboard }) => {
   const [width, setWidth] = useState(0)
   const [player, setPlayer] = useState(0)
 
@@ -36,32 +38,23 @@ const ChessBoard = () => {
       })
   }, [])
 
+  // Set the chessboard state on player type load.
+  useEffect(() => {
+    initializeChessboard(player)
+  }, [player])
+
+  const handleCellMove = (fromRow, fromCol, toRow, toCol, piece) => {
+    movePiece(fromRow, fromCol, toRow, toCol, piece);
+  }
+
   return (
     <div className="flex flex-col items-center h-screen">
       <div className="my-auto" style={{ width: `${width}px`, height: `${width}px` }}>
-        {[...Array(8)].map((_, row) => (
-          <div key={row} className="flex">
-            {[...Array(8)].map((_, col) => (
-              <ChessCell key={`${row}-${col}`} isDark={(row + col + player) % 2 !== 0} width={width/8}>
-                { Math.abs(player - row) === 0 && col === 0 && <ChessPiece type='black-rook' />}
-                { Math.abs(player - row) === 0 && col === 1 && <ChessPiece type='black-knight' />}
-                { Math.abs(player - row) === 0 && col === 2 && <ChessPiece type='black-bishop' />}
-                { Math.abs(player - row) === 0 && col === 3 && <ChessPiece type='black-queen' />}
-                { Math.abs(player - row) === 0 && col === 4 && <ChessPiece type='black-king' />}
-                { Math.abs(player - row) === 0 && col === 5 && <ChessPiece type='black-bishop' />}
-                { Math.abs(player - row) === 0 && col === 6 && <ChessPiece type='black-knight' />}
-                { Math.abs(player - row) === 0 && col === 7 && <ChessPiece type='black-rook' />}
-                { Math.abs(player - row) === 1 && <ChessPiece type='black-pawn' />}
-
-                { Math.abs(player - row) === 6 && <ChessPiece type='white-pawn' />}
-                { Math.abs(player - row) === 7 && col === 0 && <ChessPiece type='white-rook' />}
-                { Math.abs(player - row) === 7 && col === 1 && <ChessPiece type='white-knight' />}
-                { Math.abs(player - row) === 7 && col === 2 && <ChessPiece type='white-bishop' />}
-                { Math.abs(player - row) === 7 && col === 3 && <ChessPiece type='white-queen' />}
-                { Math.abs(player - row) === 7 && col === 4 && <ChessPiece type='white-king' />}
-                { Math.abs(player - row) === 7 && col === 5 && <ChessPiece type='white-bishop' />}
-                { Math.abs(player - row) === 7 && col === 6 && <ChessPiece type='white-knight' />}
-                { Math.abs(player - row) === 7 && col === 7 && <ChessPiece type='white-rook' />}
+        {cells.map((row, rowIndex) => (
+          <div key={rowIndex} className="flex">
+            {row.map((cell, colIndex) => (
+              <ChessCell key={`${rowIndex}-${colIndex}`} isDark={(rowIndex + colIndex + player) % 2 !== 0} width={width/8}>
+                { cell && <ChessPiece type={cell} />}
               </ChessCell>
             ))}
           </div>
@@ -71,4 +64,19 @@ const ChessBoard = () => {
   )
 }
 
-export default ChessBoard
+const mapStateToProps = (state) => {
+  return {
+    cells: state.chessboard.cells
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    movePiece: (fromRow, fromCol, toRow, toCol, piece) =>
+      dispatch(movePiece(fromRow, fromCol, toRow, toCol, piece)),
+    initializeChessboard: (player) =>
+      dispatch(initializeChessboard(player))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChessBoard)
