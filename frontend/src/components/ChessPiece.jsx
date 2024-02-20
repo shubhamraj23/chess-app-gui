@@ -28,7 +28,7 @@ const ChessPiece = ({type}) => {
   }
   
   return (
-    <div className='flex items-center justify-center'>
+    <div className={`flex items-center justify-center`}>
       <img src={getSource()} alt={type} className="w-4/5 h-4/5" />
     </div>
   )

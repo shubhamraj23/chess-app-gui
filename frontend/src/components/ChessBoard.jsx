@@ -9,6 +9,7 @@ import ChessPiece from './ChessPiece'
 const ChessBoard = ({ cells, movePiece, initializeChessboard }) => {
   const [width, setWidth] = useState(0)
   const [player, setPlayer] = useState(0)
+  const [turn, setTurn] = useState(false)
 
   // Using the useNavigate hook to navigate
   const navigate = useNavigate()
@@ -41,10 +42,12 @@ const ChessBoard = ({ cells, movePiece, initializeChessboard }) => {
   // Set the chessboard state on player type load.
   useEffect(() => {
     initializeChessboard(player)
+    if (player === 0) setTurn(true)
+    else setTurn(false)
   }, [player])
 
   const handleCellMove = (fromRow, fromCol, toRow, toCol, piece) => {
-    movePiece(fromRow, fromCol, toRow, toCol, piece);
+    movePiece(fromRow, fromCol, toRow, toCol, piece)
   }
 
   return (
@@ -53,7 +56,7 @@ const ChessBoard = ({ cells, movePiece, initializeChessboard }) => {
         {cells.map((row, rowIndex) => (
           <div key={rowIndex} className="flex">
             {row.map((cell, colIndex) => (
-              <ChessCell key={`${rowIndex}-${colIndex}`} isDark={(rowIndex + colIndex + player) % 2 !== 0} width={width/8}>
+              <ChessCell key={`${rowIndex}-${colIndex}`} isDark={(rowIndex + colIndex + player) % 2 !== 0} width={width/8} type={cell} player={player} turn={turn}>
                 { cell && <ChessPiece type={cell} />}
               </ChessCell>
             ))}
