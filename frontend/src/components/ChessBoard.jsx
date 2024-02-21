@@ -56,7 +56,8 @@ const ChessBoard = ({ cells, movePiece, initializeChessboard }) => {
         {cells.map((row, rowIndex) => (
           <div key={rowIndex} className="flex">
             {row.map((cell, colIndex) => (
-              <ChessCell key={`${rowIndex}-${colIndex}`} isDark={(rowIndex + colIndex + player) % 2 !== 0} width={width/8} type={cell} player={player} turn={turn}>
+              <ChessCell key={`${rowIndex}-${colIndex}`} isDark={(rowIndex + colIndex + player) % 2 !== 0}
+                width={width/8} type={cell} player={player} turn={turn} row={rowIndex} col={colIndex}>
                 { cell && <ChessPiece type={cell} />}
               </ChessCell>
             ))}

@@ -1,6 +1,8 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect } from 'react'
+import { connect } from 'react-redux'
+import { getMoves } from '../redux/actions/moveActions'
 
-const ChessCell = ({children, isDark, width, type, player, turn}) => {
+const ChessCell = ({children, isDark, width, type, player, turn, row, col, cells, getMoves}) => {
   const [cursor, setCursor] = useState('')
 
   useEffect(() => {
@@ -14,6 +16,7 @@ const ChessCell = ({children, isDark, width, type, player, turn}) => {
 
   const generateMoves = () => {
     if (cursor !== 'cursor-pointer') return
+    getMoves(cells, row, col)
   }
 
   return (
@@ -24,4 +27,17 @@ const ChessCell = ({children, isDark, width, type, player, turn}) => {
   )
 }
 
-export default ChessCell
+const mapStateToProps = (state) => {
+  return {
+    cells: state.chessboard.cells
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getMoves: (cells, row, col) =>
+      dispatch(getMoves(cells, row, col))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChessCell)
