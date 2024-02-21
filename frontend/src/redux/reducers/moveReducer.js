@@ -1,5 +1,7 @@
+import generateMoves from "../utils/generateMoves"
+
 const initialState = {
-  moves: Array.from({ length: 8 }, () => Array(8).fill(null))
+  moves: Array.from({ length: 8 }, () => Array(8).fill(false))
 }
 
 const moveReducer = (state = initialState, action) => {
@@ -11,9 +13,11 @@ const moveReducer = (state = initialState, action) => {
       }
 
     case 'GET_MOVES':
+      const { cells, row, col } = action.payload
+      const moves = generateMoves(cells, row, col)
       return {
         ...state,
-        moves: initialState.moves
+        moves
       }
 
     default:
