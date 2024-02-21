@@ -37,22 +37,80 @@ const pawnMoves = (cells, row, col, player, moves) => {
 }
 
 const rookMoves = (cells, row, col, player, moves) => {
+  const positions = [[1, 0], [0, 1], [0, -1], [-1, 0]]
+  positions.forEach(([r, c]) => {
+    let i = row + r
+    let j = col + c
+    while (i >= 0 && j >= 0 && i < 8 && j < 8) {
+      if (!isEmpty(cells[i][j])) {
+        if (!isSame(cells[i][j], player)) moves[i][j] = true
+        break;
+      }
+      moves[i][j] = true
+      i = i + r
+      j = j + c
+    }
+  })
   return moves
 }
 
 const knightMoves = (cells, row, col, player, moves) => {
+  const positions = [[1, 2], [1, -2], [2, 1], [2, -1], [-1, 2], [-1, -2], [-2, 1], [-2, -1]]
+  positions.forEach(([r, c]) => {
+    const i = row + r
+    const j = col + c
+    if (i >= 0 && j >= 0 && i < 8 && j < 8) {
+      if (isEmpty(cells[i][j]) || !isSame(cells[i][j], player)) moves[i][j] = true
+    }
+  })
   return moves
 }
 
 const bishopMoves = (cells, row, col, player, moves) => {
+  const positions = [[1, 1], [1, -1], [-1, -1], [-1, 1]]
+  positions.forEach(([r, c]) => {
+    let i = row + r
+    let j = col + c
+    while (i >= 0 && j >= 0 && i < 8 && j < 8) {
+      if (!isEmpty(cells[i][j])) {
+        if (!isSame(cells[i][j], player)) moves[i][j] = true
+        break;
+      }
+      moves[i][j] = true
+      i = i + r
+      j = j + c
+    }
+  })
   return moves
 }
 
 const queenMoves = (cells, row, col, player, moves) => {
+  const positions = [[1, 0], [0, 1], [0, -1], [-1, 0], [1, 1], [1, -1], [-1, -1], [-1, 1]]
+  positions.forEach(([r, c]) => {
+    let i = row + r
+    let j = col + c
+    while (i >= 0 && j >= 0 && i < 8 && j < 8) {
+      if (!isEmpty(cells[i][j])) {
+        if (!isSame(cells[i][j], player)) moves[i][j] = true
+        break;
+      }
+      moves[i][j] = true
+      i = i + r
+      j = j + c
+    }
+  })
   return moves
 }
 
 const kingMoves = (cells, row, col, player, moves) => {
+  const positions = [[1, 0], [0, 1], [-1, 0], [0, -1], [-1, 1], [1, -1], [1, 1], [-1, -1]]
+  positions.forEach(([r, c]) => {
+    const i = row + r
+    const j = col + c
+    if (i >= 0 && j >= 0 && i < 8 && j < 8) {
+      if (isEmpty(cells[i][j]) || !isSame(cells[i][j], player)) moves[i][j] = true
+    }
+  })
   return moves
 }
 
