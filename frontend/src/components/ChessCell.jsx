@@ -19,7 +19,7 @@ const ChessCell = ({
       else setCursor('')
     }
     else setCursor('')
-  }, [player, type, turn])
+  }, [moves, player, type, turn])
 
   const generateMoves = () => {
     if (!moves[row][col] && cursor !== 'cursor-pointer') return
@@ -34,11 +34,11 @@ const ChessCell = ({
   }
 
   return (
-    <div className={`flex items-center justify-center ${isDark ? 'dark-cell' : 'light-cell'} ${cursor}`} 
+    <div className={`relative flex items-center justify-center ${isDark ? 'dark-cell' : 'light-cell'} ${cursor}`} 
       style={{ width: `${width}px`, height: `${width}px` }} onClick={generateMoves}>
         {children}
         {moves[row][col] && (
-          <div className="w-1/4 h-1/4 bg-amber-400 rounded-full opacity-50"></div>
+          <div className="w-1/4 h-1/4 bg-amber-400 rounded-full opacity-70 z-10 absolute"></div>
       )}
     </div>
   )
