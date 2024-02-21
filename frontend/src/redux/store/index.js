@@ -1,9 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit'
-import chessboardReducer from '../reducers/chessboardReducer'
+import cellReducer from '../reducers/cellReducer'
 
 const store = configureStore({
   reducer: {
-    chessboard: chessboardReducer,
+    chessboard: cellReducer,
   }
 })
 

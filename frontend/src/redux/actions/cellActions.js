@@ -38,7 +38,7 @@ const movePiece = (fromRow, fromCol, toRow, toCol, piece) => {
   }
 }
 
-module.exports = {
+export {
   initializeChessboard,
   movePiece
 }

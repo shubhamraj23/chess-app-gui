@@ -2,7 +2,7 @@ import axios from 'axios'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { initializeChessboard, movePiece } from '../redux/actions/chessboardActions'
+import { initializeChessboard, movePiece } from '../redux/actions/cellActions'
 import ChessCell from './ChessCell'
 import ChessPiece from './ChessPiece'
 
