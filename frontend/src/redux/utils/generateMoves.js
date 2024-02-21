@@ -37,23 +37,23 @@ const pawnMoves = (cells, row, col, player, moves) => {
 }
 
 const rookMoves = (cells, row, col, player, moves) => {
-
+  return moves
 }
 
 const knightMoves = (cells, row, col, player, moves) => {
-
+  return moves
 }
 
 const bishopMoves = (cells, row, col, player, moves) => {
-
+  return moves
 }
 
 const queenMoves = (cells, row, col, player, moves) => {
-
+  return moves
 }
 
 const kingMoves = (cells, row, col, player, moves) => {
-
+  return moves
 }
 
 const isEmpty = (cell) => cell === null

@@ -1,12 +1,19 @@
 import { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
-import { getMoves } from '../redux/actions/moveActions'
+import { movePiece, setClick, resetClick } from '../redux/actions/cellActions'
+import { resetMove, getMoves } from '../redux/actions/moveActions'
 
-const ChessCell = ({children, isDark, width, type, player, turn, row, col, cells, moves, getMoves}) => {
+const ChessCell = ({
+    children, isDark, width, type, player, turn, row, col,
+    cells, clickedRow, clickedCol, clickedPiece, moves,
+    movePiece, setClick, resetClick, resetMove, getMoves
+  }) => {
+  
   const [cursor, setCursor] = useState('')
-
+  
   useEffect(() => {
-    if (type && turn) {
+    if (moves[row][col]) setCursor('cursor-pointer')
+    else if (type && turn) {
       const prefix = (player === 0) ? 'white' : 'black'
       if (type.startsWith(prefix)) setCursor('cursor-pointer')
       else setCursor('')
@@ -15,8 +22,15 @@ const ChessCell = ({children, isDark, width, type, player, turn, row, col, cells
   }, [player, type, turn])
 
   const generateMoves = () => {
-    if (cursor !== 'cursor-pointer') return
+    if (!moves[row][col] && cursor !== 'cursor-pointer') return
+    if (moves[row][col]) {
+      movePiece(clickedRow, clickedCol, row, col, clickedPiece)
+      resetMove()
+      resetClick()
+      return
+    }
     getMoves(cells, row, col)
+    setClick(row, col, type)
   }
 
   return (
@@ -33,12 +47,23 @@ const ChessCell = ({children, isDark, width, type, player, turn, row, col, cells
 const mapStateToProps = (state) => {
   return {
     cells: state.chessboard.cells,
+    clickedRow: state.chessboard.clickedRow,
+    clickedCol: state.chessboard.clickedCol,
+    clickedPiece: state.chessboard.clickedPiece,
     moves: state.move.moves
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    movePiece: (fromRow, fromCol, toRow, toCol, piece) =>
+      dispatch(movePiece(fromRow, fromCol, toRow, toCol, piece)),
+    setClick: (row, col, piece) =>
+      dispatch(setClick(row, col, piece)),
+    resetClick: () =>
+      dispatch(resetClick()),
+    resetMove: () =>
+      dispatch(resetMove()),
     getMoves: (cells, row, col) =>
       dispatch(getMoves(cells, row, col))
   }

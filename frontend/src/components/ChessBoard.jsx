@@ -2,11 +2,11 @@ import axios from 'axios'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { initializeChessboard, movePiece } from '../redux/actions/cellActions'
+import { initializeChessboard } from '../redux/actions/cellActions'
 import ChessCell from './ChessCell'
 import ChessPiece from './ChessPiece'
 
-const ChessBoard = ({ cells, movePiece, initializeChessboard }) => {
+const ChessBoard = ({ cells, initializeChessboard }) => {
   const [width, setWidth] = useState(0)
   const [player, setPlayer] = useState(0)
   const [turn, setTurn] = useState(false)
@@ -46,10 +46,6 @@ const ChessBoard = ({ cells, movePiece, initializeChessboard }) => {
     else setTurn(false)
   }, [player])
 
-  const handleCellMove = (fromRow, fromCol, toRow, toCol, piece) => {
-    movePiece(fromRow, fromCol, toRow, toCol, piece)
-  }
-
   return (
     <div className="flex flex-col items-center h-screen">
       <div className="my-auto" style={{ width: `${width}px`, height: `${width}px` }}>
@@ -76,8 +72,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    movePiece: (fromRow, fromCol, toRow, toCol, piece) =>
-      dispatch(movePiece(fromRow, fromCol, toRow, toCol, piece)),
     initializeChessboard: (player) =>
       dispatch(initializeChessboard(player))
   }

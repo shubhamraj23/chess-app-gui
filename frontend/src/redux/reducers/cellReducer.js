@@ -1,8 +1,11 @@
 const initialState = {
-  cells: Array.from({ length: 8 }, () => Array(8).fill(null))
+  cells: Array.from({ length: 8 }, () => Array(8).fill(null)),
+  clickedRow: -1,
+  clickedCol: -1,
+  clickedPiece: null
 }
 
-const chessboardReducer = (state = initialState, action) => {
+const cellReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'INITIALIZE_CHESSBOARD':
       const player = action.payload
@@ -38,18 +41,38 @@ const chessboardReducer = (state = initialState, action) => {
       }
 
     case 'MOVE_PIECE':
-      const { fromRow, fromCol, toRow, toCol, piece } = action.payload
+      const { fromRow, fromCol, toRow, toCol, setPiece } = action.payload
+      console.log(fromRow, fromCol, toRow, toCol, setPiece)
       const updatedCells = state.cells.map((row, rowIndex) =>
         row.map((cell, colIndex) => {
           if (rowIndex === fromRow && colIndex === fromCol) return null
-          if (rowIndex === toRow && colIndex === toCol) return piece
+          if (rowIndex === toRow && colIndex === toCol) return setPiece
           return cell
         })
       )
 
+      console.log(updatedCells)
+
       return {
         ...state,
         cells: updatedCells,
+      }
+    
+    case 'SET_CLICK':
+      const {row, col, piece} = action.payload
+      return {
+        ...state,
+        clickedRow: row,
+        clickedCol: col,
+        clickedPiece: piece
+      }
+
+    case 'RESET_CLICK':
+      return {
+        ...state,
+        clickedRow: -1,
+        clickedCol: -1,
+        clickedPiece: null
       }
     
     default:
@@ -57,4 +80,4 @@ const chessboardReducer = (state = initialState, action) => {
   }
 }
 
-export default chessboardReducer
+export default cellReducer
