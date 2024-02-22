@@ -8,14 +8,14 @@ const initialState = {
 const boardReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'INITIALIZE_CHESSBOARD':
-      const player = action.payload
+      const player = (action.payload === 'white') ? 0 : 7
       const initialChessboardState = [...Array(8)].map((_, row) =>
         [...Array(8)].map((_, col) => {
           if ( Math.abs(player - row) === 0 && col === 0 ) return 'black-rook'
           if ( Math.abs(player - row) === 0 && col === 1 ) return 'black-knight'
           if ( Math.abs(player - row) === 0 && col === 2 ) return 'black-bishop'
-          if ( Math.abs(player - row) === 0 && col === 3 ) return (player == 0) ? 'black-queen' : 'black-king'
-          if ( Math.abs(player - row) === 0 && col === 4 ) return (player == 0) ? 'black-king' : 'black-queen'
+          if ( Math.abs(player - row) === 0 && col === 3 ) return (player === 0) ? 'black-queen' : 'black-king'
+          if ( Math.abs(player - row) === 0 && col === 4 ) return (player === 0) ? 'black-king' : 'black-queen'
           if ( Math.abs(player - row) === 0 && col === 5 ) return 'black-bishop'
           if ( Math.abs(player - row) === 0 && col === 6 ) return 'black-knight'
           if ( Math.abs(player - row) === 0 && col === 7 ) return 'black-rook'
@@ -25,8 +25,8 @@ const boardReducer = (state = initialState, action) => {
           if ( Math.abs(player - row) === 7 && col === 0 ) return 'white-rook'
           if ( Math.abs(player - row) === 7 && col === 1 ) return 'white-knight'
           if ( Math.abs(player - row) === 7 && col === 2 ) return 'white-bishop'
-          if ( Math.abs(player - row) === 7 && col === 3 ) return (player == 0) ? 'white-queen' : 'white-king'
-          if ( Math.abs(player - row) === 7 && col === 4 ) return (player == 0) ? 'white-king' : 'white-queen'
+          if ( Math.abs(player - row) === 7 && col === 3 ) return (player === 0) ? 'white-queen' : 'white-king'
+          if ( Math.abs(player - row) === 7 && col === 4 ) return (player === 0) ? 'white-king' : 'white-queen'
           if ( Math.abs(player - row) === 7 && col === 5 ) return 'white-bishop'
           if ( Math.abs(player - row) === 7 && col === 6 ) return 'white-knight'
           if ( Math.abs(player - row) === 7 && col === 7 ) return 'white-rook'

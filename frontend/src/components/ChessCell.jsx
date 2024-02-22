@@ -4,8 +4,8 @@ import { movePiece, setClick, resetClick } from '../redux/actions/boardActions'
 import { resetMove, getMoves } from '../redux/actions/moveActions'
 
 const ChessCell = ({
-    children, isDark, width, type, player, turn, row, col,
-    cells, clickedRow, clickedCol, clickedPiece, moves,
+    children, isDark, width, type, row, col,
+    cells, clickedRow, clickedCol, clickedPiece, moves, turn, player,
     movePiece, setClick, resetClick, resetMove, getMoves
   }) => {
   
@@ -14,8 +14,7 @@ const ChessCell = ({
   useEffect(() => {
     if (moves[row][col]) setCursor('cursor-pointer')
     else if (type && turn) {
-      const prefix = (player === 0) ? 'white' : 'black'
-      if (type.startsWith(prefix)) setCursor('cursor-pointer')
+      if (type.startsWith(player)) setCursor('cursor-pointer')
       else setCursor('')
     }
     else setCursor('')
@@ -50,7 +49,9 @@ const mapStateToProps = (state) => {
     clickedRow: state.board.clickedRow,
     clickedCol: state.board.clickedCol,
     clickedPiece: state.board.clickedPiece,
-    moves: state.move.moves
+    moves: state.move.moves,
+    turn: state.game.turn,
+    player: state.game.player
   }
 }
 
