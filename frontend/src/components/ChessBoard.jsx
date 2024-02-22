@@ -2,12 +2,17 @@ import axios from 'axios'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { initializeChessboard } from '../redux/actions/boardActions'
+import { initializeChessboard, movePiece } from '../redux/actions/boardActions'
+import { getMoves, resetMove } from '../redux/actions/moveActions'
 import { setPlayer, setTurn } from '../redux/actions/gameActions'
 import ChessCell from './ChessCell'
 import ChessPiece from './ChessPiece'
 
-const ChessBoard = ({ cells, player, initializeChessboard, setPlayer, setTurn }) => {
+const ChessBoard = ({ 
+    cells, moves, click, player, turn,
+    initializeChessboard, movePiece, getMoves, resetMove, setPlayer, setTurn
+  }) => {
+  
   const [width, setWidth] = useState(0)
   
   // Using the useNavigate hook to navigate
@@ -44,6 +49,17 @@ const ChessBoard = ({ cells, player, initializeChessboard, setPlayer, setTurn })
     else setTurn(false)
   }, [player])
 
+  const handleClick = (row, col, type) => {
+    if (!moves[row][col] && !(type && turn && type.startsWith(player))) return
+    if (moves[row][col]) {
+      movePiece(click.row, click.col, row, col, click.piece)
+      resetMove()
+      setTurn(false)
+      return
+    }
+    getMoves(cells, row, col, type)
+  }
+
   return (
     <div className="flex flex-col items-center h-screen">
       <div className="my-auto" style={{ width: `${width}px`, height: `${width}px` }}>
@@ -51,7 +67,7 @@ const ChessBoard = ({ cells, player, initializeChessboard, setPlayer, setTurn })
           <div key={rowIndex} className="flex">
             {row.map((cell, colIndex) => (
               <ChessCell key={`${rowIndex}-${colIndex}`} isDark={(rowIndex + colIndex) % 2 !== 0}
-                width={width/8} type={cell} row={rowIndex} col={colIndex}>
+                width={width/8} type={cell} row={rowIndex} col={colIndex} handleClick={(row, col, type) => handleClick(row, col, type)}>
                 { cell && <ChessPiece type={cell} />}
               </ChessCell>
             ))}
@@ -65,7 +81,10 @@ const ChessBoard = ({ cells, player, initializeChessboard, setPlayer, setTurn })
 const mapStateToProps = (state) => {
   return {
     cells: state.board.cells,
-    player: state.game.player
+    moves: state.move.moves,
+    click: state.move.click,
+    player: state.game.player,
+    turn: state.game.turn
   }
 }
 
@@ -73,6 +92,12 @@ const mapDispatchToProps = (dispatch) => {
   return {
     initializeChessboard: (player) =>
       dispatch(initializeChessboard(player)),
+    movePiece: (fromRow, fromCol, toRow, toCol, piece) =>
+      dispatch(movePiece(fromRow, fromCol, toRow, toCol, piece)),
+    getMoves: (cells, row, col, piece) =>
+      dispatch(getMoves(cells, row, col, piece)),
+    resetMove: () =>
+      dispatch(resetMove()),
     setPlayer: (player) => 
       dispatch(setPlayer(player)),
     setTurn: (turn) =>
