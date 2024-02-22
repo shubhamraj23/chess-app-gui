@@ -48,6 +48,12 @@ const handleSocket = async (io) => {
     socket.on('join-room', (roomId) => {
       socket.join(roomId)
     })
+
+    // Listen to game-move message from the client.
+    socket.on('game-move', (roomId, move) => {
+      // Broadcast to the other player about the move.
+      socket.broadcast.to(roomId).emit('capture-move', move)
+    })
   })
 }
 

@@ -5,12 +5,13 @@ import { connect } from 'react-redux'
 import { initializeChessboard, movePiece } from '../redux/actions/boardActions'
 import { getMoves, resetMove } from '../redux/actions/moveActions'
 import { setPlayer, setTurn } from '../redux/actions/gameActions'
+import { sendMove } from '../redux/utils/socket'
 import ChessCell from './ChessCell'
 import ChessPiece from './ChessPiece'
 
 const ChessBoard = ({
     socket,
-    cells, moves, click, player, turn,
+    cells, moves, click, gameId, player, turn,
     initializeChessboard, movePiece, getMoves, resetMove, setPlayer, setTurn
   }) => {
   
@@ -43,6 +44,16 @@ const ChessBoard = ({
       })
   }, [])
 
+  // Listen for incoming moves from the server on component load.
+  useEffect(() => {
+    if (socket) {
+      socket.on('capture-move', (move) => {
+        movePiece(7 - move.fromRow, 7 - move.fromCol, 7 - move.toRow, 7 - move.toCol, move.piece)
+        setTurn(true)
+      })
+    }
+  }, [socket])
+
   // Set the chessboard state on player type load.
   useEffect(() => {
     initializeChessboard(player)
@@ -57,9 +68,9 @@ const ChessBoard = ({
       movePiece(click.row, click.col, row, col, click.piece)
       resetMove()
       setTurn(false)
-      return
+      sendMove(socket, gameId, click.row, click.col, row, col, click.piece)
     }
-    getMoves(cells, row, col, type)
+    else getMoves(cells, row, col, type)
   }
 
   return (
@@ -85,6 +96,7 @@ const mapStateToProps = (state) => {
     cells: state.board.cells,
     moves: state.move.moves,
     click: state.move.click,
+    gameId: state.game.gameId,
     player: state.game.player,
     turn: state.game.turn
   }
