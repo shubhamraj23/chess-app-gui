@@ -1,4 +1,4 @@
-import generateMoves from "../utils/generateMoves"
+import generateMoves from '../utils/generateMoves'
 
 const initialState = {
   moves: Array.from({ length: 8 }, () => Array(8).fill(false)),

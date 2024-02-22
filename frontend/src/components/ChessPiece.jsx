@@ -12,6 +12,7 @@ import whiteQueenImage from '../images/white-queen.png'
 import whiteRookImage from '../images/white-rook.png'
 
 const ChessPiece = ({type}) => {
+  // Fetch the image to be rendered depending on the type of the piece.
   const getSource = () => {
     if (type === 'black-bishop') return blackBishopImage
     else if (type === 'black-king') return blackKingImage

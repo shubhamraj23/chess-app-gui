@@ -8,7 +8,8 @@ import { setPlayer, setTurn } from '../redux/actions/gameActions'
 import ChessCell from './ChessCell'
 import ChessPiece from './ChessPiece'
 
-const ChessBoard = ({ 
+const ChessBoard = ({
+    socket,
     cells, moves, click, player, turn,
     initializeChessboard, movePiece, getMoves, resetMove, setPlayer, setTurn
   }) => {
@@ -49,6 +50,7 @@ const ChessBoard = ({
     else setTurn(false)
   }, [player])
 
+  // Show moves or move piece depending on the click type.
   const handleClick = (row, col, type) => {
     if (!moves[row][col] && !(type && turn && type.startsWith(player))) return
     if (moves[row][col]) {

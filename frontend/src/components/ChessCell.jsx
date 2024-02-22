@@ -8,6 +8,7 @@ const ChessCell = ({
   
   const [cursor, setCursor] = useState('')
   
+  // Update the cursor state depending on the parameters.
   useEffect(() => {
     if (moves[row][col]) setCursor('cursor-pointer')
     else if (type && turn) {

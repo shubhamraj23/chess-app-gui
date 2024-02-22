@@ -1,3 +1,10 @@
+const setGameId = (gameId) => {
+  return {
+    type: 'SET_GAMEID',
+    payload: gameId
+  }
+}
+
 const setPlayer = (player) => {
   return {
     type: 'SET_PLAYER',
@@ -13,6 +20,7 @@ const setTurn = (turn) => {
 }
 
 export {
+  setGameId,
   setPlayer,
   setTurn
 }
