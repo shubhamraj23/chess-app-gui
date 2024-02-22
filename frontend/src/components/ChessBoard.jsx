@@ -2,7 +2,7 @@ import axios from 'axios'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { initializeChessboard } from '../redux/actions/cellActions'
+import { initializeChessboard } from '../redux/actions/boardActions'
 import ChessCell from './ChessCell'
 import ChessPiece from './ChessPiece'
 
@@ -66,7 +66,7 @@ const ChessBoard = ({ cells, initializeChessboard }) => {
 
 const mapStateToProps = (state) => {
   return {
-    cells: state.chessboard.cells
+    cells: state.board.cells
   }
 }
 

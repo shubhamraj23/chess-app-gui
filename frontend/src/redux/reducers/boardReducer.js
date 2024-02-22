@@ -5,7 +5,7 @@ const initialState = {
   clickedPiece: null
 }
 
-const cellReducer = (state = initialState, action) => {
+const boardReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'INITIALIZE_CHESSBOARD':
       const player = action.payload
@@ -80,4 +80,4 @@ const cellReducer = (state = initialState, action) => {
   }
 }
 
-export default cellReducer
+export default boardReducer

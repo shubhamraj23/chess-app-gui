@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
-import { movePiece, setClick, resetClick } from '../redux/actions/cellActions'
+import { movePiece, setClick, resetClick } from '../redux/actions/boardActions'
 import { resetMove, getMoves } from '../redux/actions/moveActions'
 
 const ChessCell = ({
@@ -46,10 +46,10 @@ const ChessCell = ({
 
 const mapStateToProps = (state) => {
   return {
-    cells: state.chessboard.cells,
-    clickedRow: state.chessboard.clickedRow,
-    clickedCol: state.chessboard.clickedCol,
-    clickedPiece: state.chessboard.clickedPiece,
+    cells: state.board.cells,
+    clickedRow: state.board.clickedRow,
+    clickedCol: state.board.clickedCol,
+    clickedPiece: state.board.clickedPiece,
     moves: state.move.moves
   }
 }
