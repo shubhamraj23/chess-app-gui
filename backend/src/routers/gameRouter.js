@@ -42,4 +42,52 @@ router.get('/playerType', authenticate, async (request, response) => {
   }  
 })
 
+// Route to fetch the current state of chessboard.
+router.get('/board', authenticate, async (request, response) => {
+	try {
+    const gameId = request.query.gameId
+    const game = await Game.findById(gameId)
+    if (!game) {
+			return response.status(400).send({
+				message: "Invalid game id."
+			})
+    }
+
+    return response.status(200).send({
+      board: game.board
+    })
+
+  } catch (error) {
+    response.status(500).send({
+      error: "Something unprecedented happened. Please try again."
+    })
+  }  
+})
+
+// Route to update the current state of chessboard.
+router.post('/board', authenticate, async (request, response) => {
+	try {
+    const gameId = request.query.gameId
+    const game = await Game.findById(gameId)
+    if (!game) {
+			return response.status(400).send({
+				message: "Invalid game id."
+			})
+    }
+
+    const board = request.body
+    game.board = board
+    await board.save() 
+
+    return response.status(200).send({
+      message: "Update successful"
+    })
+
+  } catch (error) {
+    response.status(500).send({
+      error: "Something unprecedented happened. Please try again."
+    })
+  }  
+})
+
 module.exports = router

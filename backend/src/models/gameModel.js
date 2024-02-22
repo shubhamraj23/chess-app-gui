@@ -12,16 +12,12 @@ const gameSchema = mongoose.Schema({
       required: true
     }
   },
-  moves: [{
-    move: {
-      type: String,
-      required: true
+  board: {
+    type: [[String]],
+    validate: {
+      validator: (array) => array.length === 8 && array.every(row => row.length === 8)
     },
-    player: {
-      type: String,
-      required: true
-    }
-  }],
+  },
   result: {
     draw: {
       type: Boolean
