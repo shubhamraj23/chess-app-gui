@@ -1,7 +1,8 @@
 import io from 'socket.io-client'
 import { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
-import { setGameId } from '../redux/actions/gameActions'
+import { resetBoard } from '../redux/actions/boardActions'
+import { setGameId, resetGame } from '../redux/actions/gameActions'
 import ChessBoard from './ChessBoard'
 
 const GameRoom = ({gameId, setGameId}) => {
@@ -15,6 +16,11 @@ const GameRoom = ({gameId, setGameId}) => {
     const urlParts = url.split('/')
     const gameId = urlParts[urlParts.length - 1]
     setGameId(gameId)
+
+    return () => {
+      resetBoard()
+      resetGame()
+    }
   }, [])
 
   // Join the room once the gameId has been set.
@@ -41,8 +47,13 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    resetBoard: () =>
+      dispatch(resetBoard()),
     setGameId: (gameId) =>
-      dispatch(setGameId(gameId))
+      dispatch(setGameId(gameId)),
+    resetGame: () => {
+      dispatch(resetGame())
+    }
   }
 }
 

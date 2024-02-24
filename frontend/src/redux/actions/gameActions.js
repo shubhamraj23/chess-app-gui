@@ -19,8 +19,15 @@ const setTurn = (turn) => {
   }
 }
 
+const resetGame = () => {
+  return {
+    type: 'RESET_GAME'
+  }
+}
+
 export {
   setGameId,
   setPlayer,
-  setTurn
+  setTurn,
+  resetGame
 }

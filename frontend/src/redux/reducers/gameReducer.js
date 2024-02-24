@@ -27,6 +27,9 @@ const gameReducer = (state = initialState, action) => {
         turn
       }
 
+    case 'RESET_GAME':
+      return initialState
+
     default:
       return state
   }

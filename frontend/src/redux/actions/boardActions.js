@@ -12,7 +12,14 @@ const movePiece = (fromRow, fromCol, toRow, toCol, piece) => {
   }
 }
 
+const resetBoard = () => {
+  return {
+    type: 'RESET_BOARD'
+  }
+}
+
 export {
   initializeChessboard,
-  movePiece
+  movePiece,
+  resetBoard
 }

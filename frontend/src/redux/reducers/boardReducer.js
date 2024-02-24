@@ -62,6 +62,9 @@ const boardReducer = (state = initialState, action) => {
         ...state,
         cells: updatedCells,
       }
+
+    case 'RESET_BOARD':
+      return initialState
     
     default:
       return state
