@@ -2,7 +2,6 @@ import io from 'socket.io-client'
 import { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
 import { setGameId } from '../redux/actions/gameActions'
-import { joinRoom } from '../redux/utils/socket'
 import ChessBoard from './ChessBoard'
 
 const GameRoom = ({gameId, setGameId}) => {
@@ -20,7 +19,7 @@ const GameRoom = ({gameId, setGameId}) => {
 
   // Join the room once the gameId has been set.
   useEffect(() => {
-    if (socket && gameId) joinRoom(socket, gameId)
+    if (socket && gameId) socket.emit('join-room', gameId)
   }, [socket, gameId])
 
   return (

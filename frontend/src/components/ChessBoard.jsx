@@ -5,7 +5,6 @@ import { connect } from 'react-redux'
 import { initializeChessboard, movePiece } from '../redux/actions/boardActions'
 import { getMoves, resetMove } from '../redux/actions/moveActions'
 import { setPlayer, setTurn } from '../redux/actions/gameActions'
-import { sendMove } from '../redux/utils/socket'
 import ChessCell from './ChessCell'
 import ChessPiece from './ChessPiece'
 
@@ -68,7 +67,14 @@ const ChessBoard = ({
       movePiece(click.row, click.col, row, col, click.piece)
       resetMove()
       setTurn(false)
-      sendMove(socket, gameId, click.row, click.col, row, col, click.piece)
+      const move = { 
+        fromRow: click.row,
+        fromCol: click.col,
+        toRow: row,
+        toCol: col,
+        piece: click.piece
+       }
+      socket.emit('game-move', gameId, move)
     }
     else getMoves(cells, row, col, type)
   }

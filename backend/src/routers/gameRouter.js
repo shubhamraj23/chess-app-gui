@@ -77,7 +77,7 @@ router.post('/board', authenticate, async (request, response) => {
 
     const board = request.body
     game.board = board
-    await board.save() 
+    await game.save() 
 
     return response.status(200).send({
       message: "Update successful"
