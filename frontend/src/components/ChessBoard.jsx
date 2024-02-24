@@ -28,12 +28,10 @@ const ChessBoard = ({
     setWidth(divWidth)
   }, [])
 
-  // Get the player type on component load.
+  // Get the player type on gameId load.
   useEffect(() => {
-    const url = window.location.href
-    const urlParts = url.split('/')
-    const gameId = urlParts[urlParts.length - 1]
-    axios.get(`/gameDetails/playerType?gameId=${gameId}`)
+    if (gameId) {
+      axios.get(`/gameDetails/playerType?gameId=${gameId}`)
       .then((data) => {
         setPlayer(data.data.playerType)
       })
@@ -41,17 +39,30 @@ const ChessBoard = ({
         if (error.response.status === 401) return navigate('/')
         return navigate('/dashboard')
       })
-  }, [])
+    }
+  }, [gameId])
 
   // Listen for incoming moves from the server on component load.
   useEffect(() => {
     if (socket) {
       socket.on('capture-move', (move) => {
-        movePiece(7 - move.fromRow, 7 - move.fromCol, 7 - move.toRow, 7 - move.toCol, move.piece)
         setTurn(true)
+        movePiece(7 - move.fromRow, 7 - move.fromCol, 7 - move.toRow, 7 - move.toCol, move.piece)
       })
     }
   }, [socket])
+
+  // Set the chessboard state on backend whenever the state changes.
+  useEffect(() => {
+    if (gameId && !turn) {
+      let board
+      if (player === 'white') board = cells
+      else board = cells.map((row, rowIndex) =>
+        row.map((value, colIndex) => cells[7 - rowIndex][7 - colIndex])
+      )
+      axios.post(`/gameDetails/board?gameId=${gameId}`, board)
+    } 
+  }, [cells])
 
   // Set the chessboard state on player type load.
   useEffect(() => {
@@ -64,16 +75,10 @@ const ChessBoard = ({
   const handleClick = (row, col, type) => {
     if (!moves[row][col] && !(type && turn && type.startsWith(player))) return
     if (moves[row][col]) {
+      setTurn(false)
       movePiece(click.row, click.col, row, col, click.piece)
       resetMove()
-      setTurn(false)
-      const move = { 
-        fromRow: click.row,
-        fromCol: click.col,
-        toRow: row,
-        toCol: col,
-        piece: click.piece
-       }
+      const move = { fromRow: click.row, fromCol: click.col, toRow: row, toCol: col, piece: click.piece }
       socket.emit('game-move', gameId, move)
     }
     else getMoves(cells, row, col, type)
