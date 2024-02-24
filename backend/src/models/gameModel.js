@@ -14,9 +14,17 @@ const gameSchema = mongoose.Schema({
   },
   board: {
     type: [[String]],
+    required: true,
     validate: {
       validator: (array) => array.length === 8 && array.every(row => row.length === 8)
     },
+  },
+  turn: {
+    type: String,
+    required: true,
+    validate: {
+      validator: (value) => value === 'white' || value === 'black'
+    }
   },
   result: {
     draw: {

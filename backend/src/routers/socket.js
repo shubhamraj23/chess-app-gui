@@ -36,7 +36,8 @@ const handleSocket = async (io) => {
             white: player1._id,
             black: player2._id
           },
-          board: Array.from({ length: 8 }, () => Array(8).fill(null))
+          board: Array.from({ length: 8 }, () => Array(8).fill(null)),
+          turn: 'white'
         })
         const createdGame = await game.save()
         io.to(matchedUser.socketId).emit('match-found', { id: createdGame._id })

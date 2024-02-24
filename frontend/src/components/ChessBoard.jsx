@@ -60,8 +60,10 @@ const ChessBoard = ({
       else board = cells.map((row, rowIndex) =>
         row.map((_, colIndex) => cells[7 - rowIndex][7 - colIndex])
       )
+      const playerTurn = (player === 'white') ? 'black' : 'white'
+      const data = { board, turn: playerTurn}
 
-      axios.post(`/gameDetails/board?gameId=${gameId}`, board)
+      axios.post(`/gameDetails/board?gameId=${gameId}`, data)
       .catch((error) => {
         if (error.response.status === 401) return navigate('/')
       })
@@ -72,8 +74,9 @@ const ChessBoard = ({
   useEffect(() => {
     axios.get(`/gameDetails/board?gameId=${gameId}`)
     .then((data) => {
+      console.log(data.data.turn, player)
       initializeChessboard(player, data.data.board)
-      if (player === 'white') setTurn(true)
+      if (player === data.data.turn) setTurn(true)
       else setTurn(false)
     })
     .catch((error) => {
