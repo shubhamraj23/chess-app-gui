@@ -1,7 +1,7 @@
-const initializeChessboard = (player) => {
+const initializeChessboard = (player, currentBoard) => {
   return {
     type: 'INITIALIZE_CHESSBOARD',
-    payload: player
+    payload: { player, currentBoard }
   }
 }
 

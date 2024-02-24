@@ -58,22 +58,34 @@ const ChessBoard = ({
       let board
       if (player === 'white') board = cells
       else board = cells.map((row, rowIndex) =>
-        row.map((value, colIndex) => cells[7 - rowIndex][7 - colIndex])
+        row.map((_, colIndex) => cells[7 - rowIndex][7 - colIndex])
       )
+
       axios.post(`/gameDetails/board?gameId=${gameId}`, board)
+      .catch((error) => {
+        if (error.response.status === 401) return navigate('/')
+      })
     } 
   }, [cells])
 
   // Set the chessboard state on player type load.
   useEffect(() => {
-    initializeChessboard(player)
-    if (player === 'white') setTurn(true)
-    else setTurn(false)
+    axios.get(`/gameDetails/board?gameId=${gameId}`)
+    .then((data) => {
+      initializeChessboard(player, data.data.board)
+      if (player === 'white') setTurn(true)
+      else setTurn(false)
+    })
+    .catch((error) => {
+      if (error.response.status === 401) return navigate('/')
+    })
   }, [player])
 
   // Show moves or move piece depending on the click type.
   const handleClick = (row, col, type) => {
     if (!moves[row][col] && !(type && turn && type.startsWith(player))) return
+    
+    // If it is a valid move, move the piece.
     if (moves[row][col]) {
       setTurn(false)
       movePiece(click.row, click.col, row, col, click.piece)
@@ -81,7 +93,8 @@ const ChessBoard = ({
       const move = { fromRow: click.row, fromCol: click.col, toRow: row, toCol: col, piece: click.piece }
       socket.emit('game-move', gameId, move)
     }
-    else getMoves(cells, row, col, type)
+    else // Else get the moves for the selected piece.
+      getMoves(cells, row, col, type)
   }
 
   return (
@@ -115,8 +128,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    initializeChessboard: (player) =>
-      dispatch(initializeChessboard(player)),
+    initializeChessboard: (player, currentBoard) =>
+      dispatch(initializeChessboard(player, currentBoard)),
     movePiece: (fromRow, fromCol, toRow, toCol, piece) =>
       dispatch(movePiece(fromRow, fromCol, toRow, toCol, piece)),
     getMoves: (cells, row, col, piece) =>
