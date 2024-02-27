@@ -4,14 +4,14 @@ import { useNavigate } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { initializeChessboard, movePiece } from '../redux/actions/boardActions'
 import { getMoves, resetMove } from '../redux/actions/moveActions'
-import { setPlayer, setTurn } from '../redux/actions/gameActions'
+import { setPlayer, setTurn, setCheck } from '../redux/actions/gameActions'
 import ChessCell from './ChessCell'
 import ChessPiece from './ChessPiece'
 
 const ChessBoard = ({
     socket,
     cells, moves, click, gameId, player, turn,
-    initializeChessboard, movePiece, getMoves, resetMove, setPlayer, setTurn
+    initializeChessboard, movePiece, getMoves, resetMove, setPlayer, setTurn, setCheck
   }) => {
   
   const [width, setWidth] = useState(0)
@@ -74,10 +74,11 @@ const ChessBoard = ({
   useEffect(() => {
     axios.get(`/gameDetails/board?gameId=${gameId}`)
     .then((data) => {
-      console.log(data.data.turn, player)
       initializeChessboard(player, data.data.board)
       if (player === data.data.turn) setTurn(true)
       else setTurn(false)
+      if (player === data.data.check) setCheck(true)
+      else setCheck(true)
     })
     .catch((error) => {
       if (error.response.status === 401) return navigate('/')
@@ -142,7 +143,9 @@ const mapDispatchToProps = (dispatch) => {
     setPlayer: (player) => 
       dispatch(setPlayer(player)),
     setTurn: (turn) =>
-      dispatch(setTurn(turn))
+      dispatch(setTurn(turn)),
+    setCheck: (check) =>
+      dispatch(setCheck(check))
   }
 }
 

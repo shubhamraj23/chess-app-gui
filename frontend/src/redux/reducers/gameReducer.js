@@ -1,7 +1,8 @@
 const initialState = {
   gameId: null,
   player: null,
-  turn: false
+  turn: false,
+  check: null
 }
 
 const gameReducer = (state = initialState, action) => {
@@ -25,6 +26,13 @@ const gameReducer = (state = initialState, action) => {
       return {
         ...state,
         turn
+      }
+
+    case 'SET_CHECK':
+      const check = action.payload
+      return {
+        ...state,
+        check
       }
 
     case 'RESET_GAME':

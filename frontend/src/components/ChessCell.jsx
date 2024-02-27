@@ -3,10 +3,11 @@ import { connect } from 'react-redux'
 
 const ChessCell = ({
     children, isDark, width, type, row, col, handleClick,
-    moves, turn, player
+    moves, turn, player, check
   }) => {
   
   const [cursor, setCursor] = useState('')
+  const [cellColour, setCellColour] = useState('')
   
   // Update the cursor state depending on the parameters.
   useEffect(() => {
@@ -18,8 +19,17 @@ const ChessCell = ({
     else setCursor('')
   }, [moves, player, type, turn])
 
+  // Update the cell colour whenever check changes.
+  useEffect(() => {
+    if (check && type.contains(player) && type.contains('king')) setCellColour('check-cell')
+    else {
+      if (isDark) setCellColour('dark-cell')
+      else setCellColour('light-cell')
+    }
+  }, [check])
+
   return (
-    <div className={`relative flex items-center justify-center ${isDark ? 'dark-cell' : 'light-cell'} ${cursor}`} 
+    <div className={`relative flex items-center justify-center ${cellColour} ${cursor}`} 
       style={{ width: `${width}px`, height: `${width}px` }} onClick={() => handleClick(row, col, type)}>
         {children}
         {moves[row][col] && (
@@ -33,7 +43,8 @@ const mapStateToProps = (state) => {
   return {
     moves: state.move.moves,
     turn: state.game.turn,
-    player: state.game.player
+    player: state.game.player,
+    check: state.game.check
   }
 }
 
