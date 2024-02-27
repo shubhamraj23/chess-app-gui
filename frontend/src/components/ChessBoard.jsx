@@ -4,14 +4,14 @@ import { useNavigate } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { initializeChessboard, movePiece } from '../redux/actions/boardActions'
 import { getMoves, resetMove } from '../redux/actions/moveActions'
-import { setPlayer, setTurn, moveKing, moveLeftRook, moveRightRook } from '../redux/actions/gameActions'
+import { setPlayer, setTurn } from '../redux/actions/gameActions'
 import ChessCell from './ChessCell'
 import ChessPiece from './ChessPiece'
 
 const ChessBoard = ({
     socket,
     cells, moves, click, gameId, player, turn,
-    initializeChessboard, movePiece, getMoves, resetMove, setPlayer, setTurn, moveKing, moveLeftRook, moveRightRook
+    initializeChessboard, movePiece, getMoves, resetMove, setPlayer, setTurn
   }) => {
   
   const [width, setWidth] = useState(0)
@@ -74,7 +74,8 @@ const ChessBoard = ({
   useEffect(() => {
     axios.get(`/gameDetails/board?gameId=${gameId}`)
     .then((data) => {
-      initializeChessboard(data.data.board)
+      console.log(data.data.turn, player)
+      initializeChessboard(player, data.data.board)
       if (player === data.data.turn) setTurn(true)
       else setTurn(false)
     })
@@ -92,14 +93,11 @@ const ChessBoard = ({
       setTurn(false)
       movePiece(click.row, click.col, row, col, click.piece)
       resetMove()
-      if (click.piece.includes('king')) moveKing()
-      if (click.piece.includes('rook') && click.col === 0) moveLeftRook()
-      if (click.piece.includes('rook') && click.col === 7) moveRightRook()
       const move = { fromRow: click.row, fromCol: click.col, toRow: row, toCol: col, piece: click.piece }
       socket.emit('game-move', gameId, move)
     }
     else // Else get the moves for the selected piece.
-      getMoves(row, col, type)
+      getMoves(cells, row, col, type)
   }
 
   return (
@@ -133,24 +131,18 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    initializeChessboard: (currentBoard) =>
-      dispatch(initializeChessboard(currentBoard)),
+    initializeChessboard: (player, currentBoard) =>
+      dispatch(initializeChessboard(player, currentBoard)),
     movePiece: (fromRow, fromCol, toRow, toCol, piece) =>
       dispatch(movePiece(fromRow, fromCol, toRow, toCol, piece)),
-    getMoves: (row, col, piece) =>
-      dispatch(getMoves(row, col, piece)),
+    getMoves: (cells, row, col, piece) =>
+      dispatch(getMoves(cells, row, col, piece)),
     resetMove: () =>
       dispatch(resetMove()),
     setPlayer: (player) => 
       dispatch(setPlayer(player)),
     setTurn: (turn) =>
-      dispatch(setTurn(turn)),
-    moveKing: () =>
-      dispatch(moveKing()),
-    moveLeftRook: () =>
-      dispatch(moveLeftRook()),
-    moveRightRook: () =>
-      dispatch(moveRightRook())
+      dispatch(setTurn(turn))
   }
 }
 

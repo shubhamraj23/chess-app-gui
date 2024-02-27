@@ -1,10 +1,7 @@
 const initialState = {
   gameId: null,
   player: null,
-  turn: false,
-  kingMoved: false,
-  leftRookMoved: false,
-  rightRookMoved: false
+  turn: false
 }
 
 const gameReducer = (state = initialState, action) => {
@@ -30,24 +27,6 @@ const gameReducer = (state = initialState, action) => {
         turn
       }
 
-    case 'MOVE_KING':
-      return {
-        ...state,
-        kingMoved: true
-      }
-
-    case 'MOVE_LEFT_ROOK':
-      return {
-        ...state,
-        leftRookMoved: true
-      }
-    
-    case 'MOVE_RIGHT_ROOK':
-      return {
-        ...state,
-        rightRookMoved: true
-      }
-    
     case 'RESET_GAME':
       return initialState
 

@@ -1,9 +1,4 @@
-import store from '../store'
-import { selectPlayer } from '../selectors/gameSelector'
-
-const initializeChessboard = (currentBoard) => {
-  const state = store.getState()
-  const player = selectPlayer(state.game)
+const initializeChessboard = (player, currentBoard) => {
   return {
     type: 'INITIALIZE_CHESSBOARD',
     payload: { player, currentBoard }
