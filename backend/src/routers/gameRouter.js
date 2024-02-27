@@ -55,7 +55,8 @@ router.get('/board', authenticate, async (request, response) => {
 
     return response.status(200).send({
       board: game.board,
-      turn: game.turn
+      turn: game.turn,
+      check: game.check
     })
 
   } catch (error) {
@@ -78,8 +79,10 @@ router.post('/board', authenticate, async (request, response) => {
 
     const board = request.body.board
     const turn = request.body.turn
+    const check = request.body.check
     game.board = board
     game.turn = turn
+    game.check = check
     await game.save() 
 
     return response.status(200).send({

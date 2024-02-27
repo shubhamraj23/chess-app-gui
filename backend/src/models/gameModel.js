@@ -26,6 +26,12 @@ const gameSchema = mongoose.Schema({
       validator: (value) => value === 'white' || value === 'black'
     }
   },
+  check: {
+    type: String,
+    validate: {
+      validator: (value) => value === null || value === 'white' || value === 'black'
+    }
+  },
   result: {
     draw: {
       type: Boolean
