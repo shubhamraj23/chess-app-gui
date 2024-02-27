@@ -7,10 +7,11 @@ import { getMoves, resetMove } from '../redux/actions/moveActions'
 import { setPlayer, setTurn, setCheck } from '../redux/actions/gameActions'
 import ChessCell from './ChessCell'
 import ChessPiece from './ChessPiece'
+import checkCheck from '../redux/utils/checkCheck'
 
 const ChessBoard = ({
     socket,
-    cells, moves, click, gameId, player, turn,
+    cells, moves, click, gameId, player, turn, check,
     initializeChessboard, movePiece, getMoves, resetMove, setPlayer, setTurn, setCheck
   }) => {
   
@@ -48,6 +49,15 @@ const ChessBoard = ({
       socket.on('capture-move', (move) => {
         setTurn(true)
         movePiece(7 - move.fromRow, 7 - move.fromCol, 7 - move.toRow, 7 - move.toCol, move.piece)
+      })
+    }
+  }, [socket])
+
+  // Listen to incoming check from the server on component load.
+  useEffect(() => {
+    if (socket) {
+      socket.on('capture-check', () => {
+        setCheck(true)
       })
     }
   }, [socket])
@@ -94,8 +104,11 @@ const ChessBoard = ({
       setTurn(false)
       movePiece(click.row, click.col, row, col, click.piece)
       resetMove()
+      if (check) setCheck(false)
+      const isCheck = checkCheck(cells, player)
       const move = { fromRow: click.row, fromCol: click.col, toRow: row, toCol: col, piece: click.piece }
       socket.emit('game-move', gameId, move)
+      if (isCheck) socket.emit('send-check', gameId)
     }
     else // Else get the moves for the selected piece.
       getMoves(cells, row, col, type)
@@ -126,7 +139,8 @@ const mapStateToProps = (state) => {
     click: state.move.click,
     gameId: state.game.gameId,
     player: state.game.player,
-    turn: state.game.turn
+    turn: state.game.turn,
+    check: state.game.check
   }
 }
 

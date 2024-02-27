@@ -21,7 +21,7 @@ const ChessCell = ({
 
   // Update the cell colour whenever check changes.
   useEffect(() => {
-    if (check && type.contains(player) && type.contains('king')) setCellColour('check-cell')
+    if (check && type && type.includes(player) && type.includes('king')) setCellColour('check-cell')
     else {
       if (isDark) setCellColour('dark-cell')
       else setCellColour('light-cell')

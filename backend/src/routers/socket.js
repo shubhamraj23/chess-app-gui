@@ -55,6 +55,12 @@ const handleSocket = async (io) => {
       // Broadcast to the other player about the move.
       socket.broadcast.to(roomId).emit('capture-move', move)
     })
+
+    // Listen to check message from the client.
+    socket.on('send-check', (roomId) => {
+      // Broadcast to other player about the check.
+      socket.broadcast.to(roomId).emit('capture-check')
+    })
   })
 }
 
