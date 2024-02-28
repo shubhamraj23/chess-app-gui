@@ -80,6 +80,14 @@ const ChessBoard = ({
     } 
   }, [cells])
 
+  // Check if the opponent is in check whenever the state changes.
+  useEffect(() => {
+    if (gameId && !turn) {
+      const isCheck = checkCheck(cells, player)
+      if (isCheck) socket.emit('send-check', gameId)
+    }
+  }, [cells])
+
   // Set the chessboard state on player type load.
   useEffect(() => {
     axios.get(`/gameDetails/board?gameId=${gameId}`)
@@ -88,7 +96,7 @@ const ChessBoard = ({
       if (player === data.data.turn) setTurn(true)
       else setTurn(false)
       if (player === data.data.check) setCheck(true)
-      else setCheck(true)
+      else setCheck(false)
     })
     .catch((error) => {
       if (error.response.status === 401) return navigate('/')
@@ -105,10 +113,8 @@ const ChessBoard = ({
       movePiece(click.row, click.col, row, col, click.piece)
       resetMove()
       if (check) setCheck(false)
-      const isCheck = checkCheck(cells, player)
       const move = { fromRow: click.row, fromCol: click.col, toRow: row, toCol: col, piece: click.piece }
       socket.emit('game-move', gameId, move)
-      if (isCheck) socket.emit('send-check', gameId)
     }
     else // Else get the moves for the selected piece.
       getMoves(cells, row, col, type)

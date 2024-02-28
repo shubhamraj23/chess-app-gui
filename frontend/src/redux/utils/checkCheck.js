@@ -6,7 +6,7 @@ const checkCheck = (cells, player) => {
   const { rowIndex, colIndex } = findKing(cells, opponentKing)
   const check = cells.some((row, i) => {
     return row.some((cell, j) => {
-      if (cell.includes(player)) {
+      if (cell && cell.includes(player)) {
         const moves = generateMoves(cells, i, j)
         return moves[rowIndex][colIndex] === true
       }

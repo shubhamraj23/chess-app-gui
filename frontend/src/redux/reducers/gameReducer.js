@@ -2,7 +2,7 @@ const initialState = {
   gameId: null,
   player: null,
   turn: false,
-  check: null
+  check: false
 }
 
 const gameReducer = (state = initialState, action) => {

@@ -1,4 +1,5 @@
 import generateMoves from '../utils/generateMoves'
+import validateMove from '../utils/validateMove'
 
 const initialState = {
   moves: Array.from({ length: 8 }, () => Array(8).fill(false)),
@@ -21,7 +22,8 @@ const moveReducer = (state = initialState, action) => {
 
     case 'GET_MOVES':
       const { cells, row, col, piece } = action.payload
-      const moves = generateMoves(cells, row, col)
+      const allMoves = generateMoves(cells, row, col)
+      const moves = validateMove(allMoves, cells, row, col)
       return {
         ...state,
         moves,
