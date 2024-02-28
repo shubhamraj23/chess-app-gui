@@ -84,7 +84,12 @@ const ChessBoard = ({
   useEffect(() => {
     if (gameId && !turn) {
       const isCheck = checkCheck(cells, player)
-      if (isCheck) socket.emit('send-check', gameId)
+      if (isCheck) {
+        socket.emit('send-check', gameId)
+        const opponent = (player === 'white') ? 'black' : 'white'
+        const data = { check: opponent }
+        axios.post(`/gameDetails/check?gameId=${gameId}`, data)
+      }
     }
   }, [cells])
 
@@ -109,10 +114,15 @@ const ChessBoard = ({
     
     // If it is a valid move, move the piece.
     if (moves[row][col]) {
+      if (check) {
+        setCheck(false)
+        const data = { check: null }
+        axios.post(`/gameDetails/check?gameId=${gameId}`, data)
+      }
+
       setTurn(false)
       movePiece(click.row, click.col, row, col, click.piece)
       resetMove()
-      if (check) setCheck(false)
       const move = { fromRow: click.row, fromCol: click.col, toRow: row, toCol: col, piece: click.piece }
       socket.emit('game-move', gameId, move)
     }

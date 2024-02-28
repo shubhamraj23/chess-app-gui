@@ -79,9 +79,33 @@ router.post('/board', authenticate, async (request, response) => {
 
     const board = request.body.board
     const turn = request.body.turn
-    const check = request.body.check
     game.board = board
     game.turn = turn
+    await game.save() 
+
+    return response.status(200).send({
+      message: "Update successful"
+    })
+
+  } catch (error) {
+    response.status(500).send({
+      error: "Something unprecedented happened. Please try again."
+    })
+  }  
+})
+
+// Route to update the player in check.
+router.post('/check', authenticate, async (request, response) => {
+	try {
+    const gameId = request.query.gameId
+    const game = await Game.findById(gameId)
+    if (!game) {
+			return response.status(400).send({
+				message: "Invalid game id."
+			})
+    }
+
+    const check = request.body.check
     game.check = check
     await game.save() 
 
