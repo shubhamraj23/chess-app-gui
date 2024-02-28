@@ -9,7 +9,7 @@ const validateMove = (moves, cells, fromRow, fromCol) => {
       const opponent = (player === 'white') ? 'black' : 'white'
       copiedCells[rowIndex][colIndex] = copiedCells[fromRow][fromCol]
       copiedCells[fromRow][fromCol] = null
-      if (checkCheck(copiedCells, opponent)) moves[rowIndex][colIndex] = false
+      if (checkCheck(copiedCells, opponent, true)) moves[rowIndex][colIndex] = false
     })
   })
 

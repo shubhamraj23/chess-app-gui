@@ -1,4 +1,4 @@
-const generateMoves = (cells, row, col) => {
+const generateMoves = (cells, row, col, reversePawn = false) => {
   const moves = Array.from({ length: 8 }, () => Array(8).fill(false))
   const piece = cells[row][col]
   const player = piece.substring(0, 5)
@@ -6,7 +6,7 @@ const generateMoves = (cells, row, col) => {
 
   switch (type) {
     case 'pawn':
-      return pawnMoves(cells, row, col, player, moves)
+      return pawnMoves(cells, row, col, player, moves, reversePawn)
 
     case 'rook':
       return rookMoves(cells, row, col, player, moves)
@@ -28,11 +28,19 @@ const generateMoves = (cells, row, col) => {
   }
 }
 
-const pawnMoves = (cells, row, col, player, moves) => {
-  if (row === 6 && isEmpty(cells[row - 2][col])) moves[row - 2][col] = true
-  if (isEmpty(cells[row - 1][col])) moves[row - 1][col] = true
-  if (col !== 0 && !isEmpty(cells[row - 1][col - 1]) && !isSame(cells[row - 1][col - 1], player)) moves[row - 1][col - 1] = true
-  if (col !== 7 && !isEmpty(cells[row - 1][col + 1]) && !isSame(cells[row - 1][col + 1], player)) moves[row - 1][col + 1] = true
+const pawnMoves = (cells, row, col, player, moves, reversePawn) => {
+  if (!reversePawn) {
+    if (row === 6 && isEmpty(cells[row - 2][col])) moves[row - 2][col] = true
+    if (isEmpty(cells[row - 1][col])) moves[row - 1][col] = true
+    if (col !== 0 && !isEmpty(cells[row - 1][col - 1]) && !isSame(cells[row - 1][col - 1], player)) moves[row - 1][col - 1] = true
+    if (col !== 7 && !isEmpty(cells[row - 1][col + 1]) && !isSame(cells[row - 1][col + 1], player)) moves[row - 1][col + 1] = true
+  }
+  else {
+    if (row === 1 && isEmpty(cells[row + 2][col])) moves[row + 2][col] = true
+    if (isEmpty(cells[row + 1][col])) moves[row + 1][col] = true
+    if (col !== 0 && !isEmpty(cells[row + 1][col - 1]) && !isSame(cells[row + 1][col - 1], player)) moves[row + 1][col - 1] = true
+    if (col !== 7 && !isEmpty(cells[row + 1][col + 1]) && !isSame(cells[row + 1][col + 1], player)) moves[row + 1][col + 1] = true
+  }
   return moves
 }
 
