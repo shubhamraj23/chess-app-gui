@@ -1,13 +1,13 @@
 import generateMoves from './generateMoves'
 
-const checkCheck = (cells, player, reversePawn = false) => {
+const checkCheck = (cells, player, reversePlayer = false) => {
   const opponent = (player === 'white') ? 'black' : 'white'
   const opponentKing = `${opponent}-king`
   const { rowIndex, colIndex } = findKing(cells, opponentKing)
   const check = cells.some((row, i) => {
     return row.some((cell, j) => {
       if (cell && cell.includes(player)) {
-        const moves = generateMoves(cells, i, j, reversePawn)
+        const moves = generateMoves(cells, i, j, reversePlayer)
         return moves[rowIndex][colIndex] === true
       }
       return false

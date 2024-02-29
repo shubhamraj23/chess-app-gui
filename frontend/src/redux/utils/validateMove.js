@@ -1,6 +1,6 @@
 import checkCheck from './checkCheck'
 
-const validateMove = (moves, cells, fromRow, fromCol) => {
+const validateMove = (moves, cells, fromRow, fromCol, reversePlayer = true) => {
   moves.forEach((row, rowIndex) => {
     row.forEach((move, colIndex) => {
       if (!move) return
@@ -9,7 +9,7 @@ const validateMove = (moves, cells, fromRow, fromCol) => {
       const opponent = (player === 'white') ? 'black' : 'white'
       copiedCells[rowIndex][colIndex] = copiedCells[fromRow][fromCol]
       copiedCells[fromRow][fromCol] = null
-      if (checkCheck(copiedCells, opponent, true)) moves[rowIndex][colIndex] = false
+      if (checkCheck(copiedCells, opponent, reversePlayer)) moves[rowIndex][colIndex] = false
     })
   })
 

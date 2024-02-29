@@ -1,4 +1,4 @@
-const generateMoves = (cells, row, col, reversePawn = false) => {
+const generateMoves = (cells, row, col, reversePlayer = false) => {
   const moves = Array.from({ length: 8 }, () => Array(8).fill(false))
   const piece = cells[row][col]
   const player = piece.substring(0, 5)
@@ -6,7 +6,7 @@ const generateMoves = (cells, row, col, reversePawn = false) => {
 
   switch (type) {
     case 'pawn':
-      return pawnMoves(cells, row, col, player, moves, reversePawn)
+      return pawnMoves(cells, row, col, player, moves, reversePlayer)
 
     case 'rook':
       return rookMoves(cells, row, col, player, moves)
@@ -28,8 +28,8 @@ const generateMoves = (cells, row, col, reversePawn = false) => {
   }
 }
 
-const pawnMoves = (cells, row, col, player, moves, reversePawn) => {
-  if (!reversePawn) {
+const pawnMoves = (cells, row, col, player, moves, reversePlayer) => {
+  if (!reversePlayer) {
     if (row === 6 && isEmpty(cells[row - 2][col])) moves[row - 2][col] = true
     if (isEmpty(cells[row - 1][col])) moves[row - 1][col] = true
     if (col !== 0 && !isEmpty(cells[row - 1][col - 1]) && !isSame(cells[row - 1][col - 1], player)) moves[row - 1][col - 1] = true
