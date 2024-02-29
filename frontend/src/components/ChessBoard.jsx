@@ -4,15 +4,16 @@ import { useNavigate } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { initializeChessboard, movePiece } from '../redux/actions/boardActions'
 import { getMoves, resetMove } from '../redux/actions/moveActions'
-import { setPlayer, setTurn, setCheck } from '../redux/actions/gameActions'
+import { setPlayer, setTurn, setCheck, setResult } from '../redux/actions/gameActions'
 import ChessCell from './ChessCell'
 import ChessPiece from './ChessPiece'
 import checkCheck from '../redux/utils/checkCheck'
+import canMove from '../redux/utils/canMove'
 
 const ChessBoard = ({
     socket,
     cells, moves, click, gameId, player, turn, check,
-    initializeChessboard, movePiece, getMoves, resetMove, setPlayer, setTurn, setCheck
+    initializeChessboard, movePiece, getMoves, resetMove, setPlayer, setTurn, setCheck, setResult
   }) => {
   
   const [width, setWidth] = useState(0)
@@ -43,6 +44,28 @@ const ChessBoard = ({
     }
   }, [gameId])
 
+  // Set the chessboard state on player type load.
+  useEffect(() => {
+    axios.get(`/gameDetails/board?gameId=${gameId}`)
+    .then((data) => {
+      initializeChessboard(player, data.data.board)
+      if (player === data.data.turn) setTurn(true)
+      else setTurn(false)
+      
+      if (player === data.data.check) setCheck(true)
+      else setCheck(false)
+      
+      const opponent = (player === 'white') ? 'black' : 'white'
+      if (data.data.result) {
+        if (player === data.data.result) setResult(player)
+        else setResult(opponent)
+      }
+    })
+    .catch((error) => {
+      if (error.response.status === 401) return navigate('/')
+    })
+  }, [player])
+
   // Listen for incoming moves from the server on component load.
   useEffect(() => {
     if (socket) {
@@ -58,6 +81,17 @@ const ChessBoard = ({
     if (socket) {
       socket.on('capture-check', () => {
         setCheck(true)
+      })
+    }
+  }, [socket])
+
+  // Listen to incoming result from the server on component load.
+  useEffect(() => {
+    if (socket) {
+      socket.on('capture-result', (result) => {
+        const opponent = (player === 'white') ? 'black' : 'white'
+        const value = (result === 'checkmate') ? opponent : 'draw'
+        setResult(value)
       })
     }
   }, [socket])
@@ -83,30 +117,24 @@ const ChessBoard = ({
   // Check if the opponent is in check whenever the state changes.
   useEffect(() => {
     if (gameId && !turn) {
+      const opponent = (player === 'white') ? 'black' : 'white'
       const isCheck = checkCheck(cells, player)
-      if (isCheck) {
+      const movePossible = canMove(cells, opponent)
+      if (!movePossible) {
+        const result = (isCheck) ? 'checkmate' : 'stalemate'
+        socket.emit('send-result', gameId, result)
+        const value = (result === 'checkmate') ? player : 'draw'
+        setResult(value)
+        const data = { result: value }
+        axios.post(`/gameDetails/result?gameId=${gameId}`, data)
+      }
+      else if (isCheck) {
         socket.emit('send-check', gameId)
-        const opponent = (player === 'white') ? 'black' : 'white'
         const data = { check: opponent }
         axios.post(`/gameDetails/check?gameId=${gameId}`, data)
       }
     }
   }, [cells])
-
-  // Set the chessboard state on player type load.
-  useEffect(() => {
-    axios.get(`/gameDetails/board?gameId=${gameId}`)
-    .then((data) => {
-      initializeChessboard(player, data.data.board)
-      if (player === data.data.turn) setTurn(true)
-      else setTurn(false)
-      if (player === data.data.check) setCheck(true)
-      else setCheck(false)
-    })
-    .catch((error) => {
-      if (error.response.status === 401) return navigate('/')
-    })
-  }, [player])
 
   // Show moves or move piece depending on the click type.
   const handleClick = (row, col, type) => {
@@ -114,13 +142,13 @@ const ChessBoard = ({
     
     // If it is a valid move, move the piece.
     if (moves[row][col]) {
+      setTurn(false)
       if (check) {
         setCheck(false)
         const data = { check: null}
         axios.post(`/gameDetails/check?gameId=${gameId}`, data)
       }
 
-      setTurn(false)
       movePiece(click.row, click.col, row, col, click.piece)
       resetMove()
       const move = { fromRow: click.row, fromCol: click.col, toRow: row, toCol: col, piece: click.piece }
@@ -175,7 +203,9 @@ const mapDispatchToProps = (dispatch) => {
     setTurn: (turn) =>
       dispatch(setTurn(turn)),
     setCheck: (check) =>
-      dispatch(setCheck(check))
+      dispatch(setCheck(check)),
+    setResult: (result) =>
+      dispatch(setResult(result))
   }
 }
 

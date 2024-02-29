@@ -26,6 +26,13 @@ const setCheck = (check) => {
   }
 }
 
+const setResult = (result) => {
+  return {
+    type: 'SET_RESULT',
+    payload: result
+  }
+}
+
 const resetGame = () => {
   return {
     type: 'RESET_GAME'
@@ -37,5 +44,6 @@ export {
   setPlayer,
   setTurn,
   setCheck,
+  setResult,
   resetGame
 }

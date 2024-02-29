@@ -53,10 +53,18 @@ router.get('/board', authenticate, async (request, response) => {
 			})
     }
 
+    let result = null
+    if (game.result) {
+      if (game.result.draw) result = 'draw'
+      if (game.result.winner && game.result.winner == game.players.white) result = 'white'
+      if (game.result.winner && game.result.winner == game.players.black) result = 'black'
+    } 
+
     return response.status(200).send({
       board: game.board,
       turn: game.turn,
-      check: game.check
+      check: game.check,
+      result
     })
 
   } catch (error) {
@@ -118,6 +126,31 @@ router.post('/check', authenticate, async (request, response) => {
       error: "Something unprecedented happened. Please try again."
     })
   }  
+})
+
+// Router to post the game result.
+router.post('/result', authenticate, async (request, response) => {
+  try {
+    const gameId = request.query.gameId
+    const game = await Game.findById(gameId)
+    if (!game) {
+			return response.status(400).send({
+				message: "Invalid game id."
+			})
+    }
+
+    const result = request.body.result
+    if (result === 'draw') game.result.draw = true
+    else game.result.draw = false
+    if (result === 'black') game.result.winner = game.players.black
+    else if (result === 'white') game.result.winner = game.players.black
+    await game.save()
+
+  } catch (error) {
+    response.status(500).send({
+      error: "Something unprecedented happened. Please try again."
+    })
+  }
 })
 
 module.exports = router

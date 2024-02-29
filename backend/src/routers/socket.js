@@ -61,6 +61,12 @@ const handleSocket = async (io) => {
       // Broadcast to other player about the check.
       socket.broadcast.to(roomId).emit('capture-check')
     })
+
+    // Listen to result message from the client.
+    socket.on('send-result', (roomId, result) => {
+      // Broadcast to the other player about the result.
+      socket.broadcast.to(roomId).emit('capture-result', result)
+    })
   })
 }
 
