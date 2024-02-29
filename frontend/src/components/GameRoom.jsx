@@ -4,10 +4,12 @@ import { connect } from 'react-redux'
 import { resetBoard } from '../redux/actions/boardActions'
 import { setGameId, resetGame } from '../redux/actions/gameActions'
 import ChessBoard from './ChessBoard'
+import Result from './Result'
 
 const GameRoom = ({gameId, setGameId}) => {
   // Create a state for socket
   const [socket, setSocket] = useState()
+  const [result, setResult] = useState('hidden')
 
   // Create the socket connection on component load.
   useEffect(() => {
@@ -32,9 +34,10 @@ const GameRoom = ({gameId, setGameId}) => {
     <div className="bg-gray-300">
       <div className="container mx-auto h-screen" id="game-container">
         <ChessBoard socket={socket} />
-      </div>  
+      </div>
+
+      <Result status={result} text={'You just lost'}/>
     </div>
-    
   )
 }
 

@@ -116,7 +116,7 @@ const ChessBoard = ({
     if (moves[row][col]) {
       if (check) {
         setCheck(false)
-        const data = { check: null }
+        const data = { check: null}
         axios.post(`/gameDetails/check?gameId=${gameId}`, data)
       }
 
