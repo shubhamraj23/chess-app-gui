@@ -6,10 +6,11 @@ import { setGameId, resetGame } from '../redux/actions/gameActions'
 import ChessBoard from './ChessBoard'
 import Result from './Result'
 
-const GameRoom = ({gameId, setGameId}) => {
+const GameRoom = ({gameId, player, result, setGameId}) => {
   // Create a state for socket
   const [socket, setSocket] = useState()
-  const [result, setResult] = useState('hidden')
+  const [resultState, setResult] = useState('hidden')
+  const [text, setText] = useState('')
 
   // Create the socket connection on component load.
   useEffect(() => {
@@ -25,6 +26,16 @@ const GameRoom = ({gameId, setGameId}) => {
     }
   }, [])
 
+  // Set the result text on result load.
+  useEffect(() => {
+    if (result) {
+      setResult('')
+      if (result === 'draw') setText('Game drawn')
+      else if (result === player) setText('You won')
+      else setText('You lost')
+    }
+  }, [result])
+
   // Join the room once the gameId has been set.
   useEffect(() => {
     if (socket && gameId) socket.emit('join-room', gameId)
@@ -36,17 +47,18 @@ const GameRoom = ({gameId, setGameId}) => {
         <ChessBoard socket={socket} />
       </div>
 
-      <Result status={result} text={'You just lost'}/>
+      <Result status={resultState} text={text}/>
     </div>
   )
 }
 
 const mapStateToProps = (state) => {
   return {
-    gameId: state.game.gameId
+    gameId: state.game.gameId,
+    player: state.game.player,
+    result: state.game.result
   }
 }
-
 
 const mapDispatchToProps = (dispatch) => {
   return {
