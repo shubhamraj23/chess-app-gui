@@ -1,6 +1,7 @@
 // Import all the required modules
 const express = require('express')
 const Game = require('../models/gameModel')
+const User = require('../models/userModel')
 const authenticate = require('../middleware/authenticate')
 
 // Create a router
@@ -143,8 +144,22 @@ router.post('/result', authenticate, async (request, response) => {
     if (result === 'draw') game.result.draw = true
     else game.result.draw = false
     if (result === 'black') game.result.winner = game.players.black
-    else if (result === 'white') game.result.winner = game.players.black
+    else if (result === 'white') game.result.winner = game.players.white
     await game.save()
+
+    const whitePlayer = await User.findById(game.players.white)
+    const blackPlayer = await User.findById(game.players.black)
+
+    if (!whitePlayer || !blackPlayer) {
+      return response.status(400).send({
+				message: "Invalid players."
+			})
+    }
+
+    whitePlayer.playStatus = 'not-playing'
+    await whitePlayer.save()
+    blackPlayer.playStatus = 'not-playing'
+    await blackPlayer.save()
 
   } catch (error) {
     response.status(500).send({
