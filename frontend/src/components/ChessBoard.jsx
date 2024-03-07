@@ -116,7 +116,7 @@ const ChessBoard = ({
 
   // Check if the opponent is in check whenever the state changes.
   useEffect(() => {
-    if (gameId && !turn) {
+    if (socket && gameId && !turn) {
       const opponent = (player === 'white') ? 'black' : 'white'
       const isCheck = checkCheck(cells, player)
       const movePossible = canMove(cells, opponent)

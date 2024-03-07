@@ -6,7 +6,7 @@ import { setGameId, resetGame } from '../redux/actions/gameActions'
 import ChessBoard from './ChessBoard'
 import Result from './Result'
 
-const GameRoom = ({gameId, player, result, setGameId}) => {
+const GameRoom = ({gameId, player, result, setGameId, resetBoard, resetGame}) => {
   // Create a state for socket
   const [socket, setSocket] = useState()
   const [resultState, setResult] = useState('hidden')
@@ -21,6 +21,7 @@ const GameRoom = ({gameId, player, result, setGameId}) => {
     setGameId(gameId)
 
     return () => {
+      if (socket) socket.disconnect()
       resetBoard()
       resetGame()
     }
