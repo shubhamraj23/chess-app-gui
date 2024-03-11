@@ -33,6 +33,19 @@ const setResult = (result) => {
   }
 }
 
+const setEnpass = (row, col) => {
+  return {
+    type: 'SET_ENPASS',
+    payload: { row, col }
+  }
+}
+
+const resetEnpass = () => {
+  return {
+    type: 'RESET_ENPASS'
+  }
+}
+
 const resetGame = () => {
   return {
     type: 'RESET_GAME'
@@ -45,5 +58,7 @@ export {
   setTurn,
   setCheck,
   setResult,
+  setEnpass,
+  resetEnpass,
   resetGame
 }

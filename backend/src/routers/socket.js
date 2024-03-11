@@ -62,6 +62,12 @@ const handleSocket = async (io) => {
       socket.broadcast.to(roomId).emit('capture-check')
     })
 
+    // Listen to en pass message from the client.
+    socket.on('enpass', (roomId, cell) => {
+      // Broadcast to the other player about the en pass move.
+      socket.broadcast.to(roomId).emit('capture-enpass', cell)
+    })
+
     // Listen to result message from the client.
     socket.on('send-result', (roomId, result) => {
       // Broadcast to the other player about the result.

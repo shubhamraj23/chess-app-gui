@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { initializeChessboard, movePiece } from '../redux/actions/boardActions'
 import { getMoves, resetMove } from '../redux/actions/moveActions'
-import { setPlayer, setTurn, setCheck, setResult } from '../redux/actions/gameActions'
+import { setPlayer, setTurn, setCheck, setResult, setEnpass, resetEnpass } from '../redux/actions/gameActions'
 import ChessCell from './ChessCell'
 import ChessPiece from './ChessPiece'
 import checkCheck from '../redux/utils/checkCheck'
@@ -12,8 +12,8 @@ import canMove from '../redux/utils/canMove'
 
 const ChessBoard = ({
     socket,
-    cells, moves, click, gameId, player, turn, check,
-    initializeChessboard, movePiece, getMoves, resetMove, setPlayer, setTurn, setCheck, setResult
+    cells, moves, click, gameId, player, turn, check, enpassCell,
+    initializeChessboard, movePiece, getMoves, resetMove, setPlayer, setTurn, setCheck, setEnpass, setResult
   }) => {
   
   const [width, setWidth] = useState(0)
@@ -85,6 +85,15 @@ const ChessBoard = ({
     }
   }, [socket])
 
+  // Listen to incoming enpass from the server on component load.
+  useEffect(() => {
+    if (socket) {
+      socket.on('capture-enpass', (cell) => {
+        setEnpass(7 - cell.row, 7 - cell.col)
+      })
+    }
+  }, [socket])
+
   // Listen to incoming result from the server on component load.
   useEffect(() => {
     if (socket) {
@@ -149,13 +158,20 @@ const ChessBoard = ({
         axios.post(`/gameDetails/check?gameId=${gameId}`, data)
       }
 
-      movePiece(click.row, click.col, row, col, click.piece)
+      movePiece(click.row, click.col, row, col, click.piece, enpassCell)
       resetMove()
+      resetEnpass()
       const move = { fromRow: click.row, fromCol: click.col, toRow: row, toCol: col, piece: click.piece }
       socket.emit('game-move', gameId, move)
+
+      // Send en pass signal.
+      if (click.piece.includes('pawn') && (click.row - row) === 2) {
+        const cell = { row: row + 1, col: col }
+        socket.emit('enpass', gameId, cell)
+      }
     }
     else // Else get the moves for the selected piece.
-      getMoves(cells, row, col, type)
+      getMoves(cells, row, col, type, enpassCell)
   }
 
   return (
@@ -184,7 +200,8 @@ const mapStateToProps = (state) => {
     gameId: state.game.gameId,
     player: state.game.player,
     turn: state.game.turn,
-    check: state.game.check
+    check: state.game.check,
+    enpassCell: state.game.enpassCell
   }
 }
 
@@ -192,10 +209,10 @@ const mapDispatchToProps = (dispatch) => {
   return {
     initializeChessboard: (player, currentBoard) =>
       dispatch(initializeChessboard(player, currentBoard)),
-    movePiece: (fromRow, fromCol, toRow, toCol, piece) =>
-      dispatch(movePiece(fromRow, fromCol, toRow, toCol, piece)),
-    getMoves: (cells, row, col, piece) =>
-      dispatch(getMoves(cells, row, col, piece)),
+    movePiece: (fromRow, fromCol, toRow, toCol, piece, enpassCell) =>
+      dispatch(movePiece(fromRow, fromCol, toRow, toCol, piece, enpassCell)),
+    getMoves: (cells, row, col, piece, enpassCell) =>
+      dispatch(getMoves(cells, row, col, piece, enpassCell)),
     resetMove: () =>
       dispatch(resetMove()),
     setPlayer: (player) => 
@@ -204,6 +221,10 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(setTurn(turn)),
     setCheck: (check) =>
       dispatch(setCheck(check)),
+    setEnpass: (row, col) =>
+      dispatch(setEnpass(row, col)),
+    resetEnpass: () =>
+      dispatch(resetEnpass()),
     setResult: (result) =>
       dispatch(setResult(result))
   }

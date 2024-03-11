@@ -4,10 +4,10 @@ const resetMove = () => {
   }
 }
 
-const getMoves = (cells, row, col, piece) => {
+const getMoves = (cells, row, col, piece, enpassCell) => {
   return {
     type: 'GET_MOVES',
-    payload: { cells, row, col, piece }
+    payload: { cells, row, col, piece, enpassCell }
   }
 }
 
