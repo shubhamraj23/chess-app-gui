@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { initializeChessboard, movePiece } from '../redux/actions/boardActions'
 import { getMoves, resetMove } from '../redux/actions/moveActions'
-import { setPlayer, setTurn, setCheck, setResult, setEnpass, resetEnpass } from '../redux/actions/gameActions'
+import { setPlayer, setTurn, setCheck, setResult, setEnpass, resetEnpass, setSelfEnpass, resetSelfEnpass } from '../redux/actions/gameActions'
 import ChessCell from './ChessCell'
 import ChessPiece from './ChessPiece'
 import checkCheck from '../redux/utils/checkCheck'
@@ -12,8 +12,8 @@ import canMove from '../redux/utils/canMove'
 
 const ChessBoard = ({
     socket,
-    cells, moves, click, gameId, player, turn, check, enpassCell,
-    initializeChessboard, movePiece, getMoves, resetMove, setPlayer, setTurn, setCheck, setEnpass, setResult
+    cells, moves, click, gameId, player, turn, check, enpassCell, enpassCellSelf,
+    initializeChessboard, movePiece, getMoves, resetMove, setPlayer, setTurn, setCheck, setEnpass, setResult, setSelfEnpass, resetSelfEnpass
   }) => {
   
   const [width, setWidth] = useState(0)
@@ -71,6 +71,7 @@ const ChessBoard = ({
     if (socket) {
       socket.on('capture-move', (move) => {
         setTurn(true)
+        resetSelfEnpass()
         movePiece(7 - move.fromRow, 7 - move.fromCol, 7 - move.toRow, 7 - move.toCol, move.piece)
       })
     }
@@ -128,7 +129,7 @@ const ChessBoard = ({
     if (socket && gameId && !turn) {
       const opponent = (player === 'white') ? 'black' : 'white'
       const isCheck = checkCheck(cells, player)
-      const movePossible = canMove(cells, opponent)
+      const movePossible = canMove(cells, opponent, enpassCellSelf)
       if (!movePossible) {
         const result = (isCheck) ? 'checkmate' : 'stalemate'
         socket.emit('send-result', gameId, result)
@@ -158,17 +159,18 @@ const ChessBoard = ({
         axios.post(`/gameDetails/check?gameId=${gameId}`, data)
       }
 
+      // Send en pass signal.
+      if (click.piece.includes('pawn') && (click.row - row) === 2) {
+        const cell = { row: row + 1, col: col }
+        socket.emit('enpass', gameId, cell)
+        setSelfEnpass(cell.row, cell.col)
+      }
+      
       movePiece(click.row, click.col, row, col, click.piece, enpassCell)
       resetMove()
       resetEnpass()
       const move = { fromRow: click.row, fromCol: click.col, toRow: row, toCol: col, piece: click.piece }
       socket.emit('game-move', gameId, move)
-
-      // Send en pass signal.
-      if (click.piece.includes('pawn') && (click.row - row) === 2) {
-        const cell = { row: row + 1, col: col }
-        socket.emit('enpass', gameId, cell)
-      }
     }
     else // Else get the moves for the selected piece.
       getMoves(cells, row, col, type, enpassCell)
@@ -201,7 +203,8 @@ const mapStateToProps = (state) => {
     player: state.game.player,
     turn: state.game.turn,
     check: state.game.check,
-    enpassCell: state.game.enpassCell
+    enpassCell: state.game.enpassCell,
+    enpassCellSelf: state.game.enpassCellSelf
   }
 }
 
@@ -225,6 +228,10 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(setEnpass(row, col)),
     resetEnpass: () =>
       dispatch(resetEnpass()),
+    setSelfEnpass: (row, col) =>
+      dispatch(setSelfEnpass(row, col)),
+    resetSelfEnpass: () =>
+      dispatch(resetSelfEnpass()),
     setResult: (result) =>
       dispatch(setResult(result))
   }

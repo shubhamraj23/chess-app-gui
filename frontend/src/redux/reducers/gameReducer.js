@@ -4,6 +4,7 @@ const initialState = {
   turn: false,
   check: false,
   enpassCell: null,
+  enpassCellSelf: null,
   result: null
 }
 
@@ -55,6 +56,19 @@ const gameReducer = (state = initialState, action) => {
       return {
         ...state,
         enpassCell: null
+      }
+
+    case 'SET_SELF_ENPASS':
+      const selfCell = action.payload
+      return {
+        ...state,
+        enpassCellSelf: selfCell
+      }
+
+    case 'RESET_SELF_ENPASS':
+      return {
+        ...state,
+        enpassCellSelf: null
       }
 
     case 'RESET_GAME':

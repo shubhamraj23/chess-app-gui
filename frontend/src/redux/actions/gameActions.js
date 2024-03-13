@@ -46,6 +46,19 @@ const resetEnpass = () => {
   }
 }
 
+const setSelfEnpass = (row, col) => {
+  return {
+    type: 'SET_SELF_ENPASS',
+    payload: { row, col }
+  }
+}
+
+const resetSelfEnpass = () => {
+  return {
+    type: 'RESET_SELF_ENPASS'
+  }
+}
+
 const resetGame = () => {
   return {
     type: 'RESET_GAME'
@@ -60,5 +73,7 @@ export {
   setResult,
   setEnpass,
   resetEnpass,
+  setSelfEnpass,
+  resetSelfEnpass,
   resetGame
 }
