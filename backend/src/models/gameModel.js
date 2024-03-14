@@ -32,6 +32,18 @@ const gameSchema = mongoose.Schema({
       validator: (value) => value === null || value === 'white' || value === 'black'
     }
   },
+  enpass: {
+    player: {
+      type: String,
+      validate: {
+        validator: (value) => value === null || value === 'white' || value === 'black'
+      }
+    },
+    cell: {
+      row : Number,
+      col : Number
+    }
+  },
   result: {
     draw: {
       type: Boolean

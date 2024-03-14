@@ -59,13 +59,14 @@ router.get('/board', authenticate, async (request, response) => {
       if (game.result.draw) result = 'draw'
       if (game.result.winner && game.result.winner == game.players.white) result = 'white'
       if (game.result.winner && game.result.winner == game.players.black) result = 'black'
-    } 
+    }
 
     return response.status(200).send({
       board: game.board,
       turn: game.turn,
       check: game.check,
-      result
+      result,
+      enpass: game.enpass
     })
 
   } catch (error) {
@@ -116,6 +117,32 @@ router.post('/check', authenticate, async (request, response) => {
 
     const check = request.body.check
     game.check = check
+    await game.save() 
+
+    return response.status(200).send({
+      message: "Update successful"
+    })
+
+  } catch (error) {
+    response.status(500).send({
+      error: "Something unprecedented happened. Please try again."
+    })
+  }  
+})
+
+// Route to update the enpass cell.
+router.post('/enpass', authenticate, async (request, response) => {
+	try {
+    const gameId = request.query.gameId
+    const game = await Game.findById(gameId)
+    if (!game) {
+			return response.status(400).send({
+				message: "Invalid game id."
+			})
+    }
+
+    const enpass = request.body.enpass
+    game.enpass = enpass
     await game.save() 
 
     return response.status(200).send({
