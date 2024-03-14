@@ -59,6 +59,17 @@ const ChessBoard = ({
         if (player === data.data.result) setResult(player)
         else setResult(opponent)
       }
+
+      if (data.data.enpass) {
+        if (player === 'white') {
+          if (opponent === data.data.enpass.player) setEnpass(data.data.enpass.cell.row, data.data.enpass.cell.col)
+          else setSelfEnpass(data.data.enpass.cell.row, data.data.enpass.cell.col)
+        }
+        else {
+          if (opponent === data.data.enpass.player) setEnpass(7 - data.data.enpass.cell.row, 7 - data.data.enpass.cell.col)
+          else setSelfEnpass(7 - data.data.enpass.cell.row, 7 - data.data.enpass.cell.col)
+        }
+      }
     })
     .catch((error) => {
       if (error.response.status === 401) return navigate('/')
@@ -70,7 +81,7 @@ const ChessBoard = ({
     if (socket) {
       socket.on('capture-move', (move) => {
         setTurn(true)
-        resetSelfEnpass()
+        if (enpassCellSelf) resetSelfEnpass()
         movePiece(7 - move.fromRow, 7 - move.fromCol, 7 - move.toRow, 7 - move.toCol, move.piece)
       })
     }
@@ -143,6 +154,23 @@ const ChessBoard = ({
     }
   }, [cells])
 
+  // Send the enpass cell state to backend whenever it changes.
+  useEffect(() => {
+    if (gameId) {
+      let data = { enpass: null }
+      if (enpassCell) {
+        data.enpass = {
+          player: opponent,
+          cell: {
+            row: (player === 'white') ? enpassCell.row : 7 - enpassCell.row,
+            col: (player === 'white') ? enpassCell.col : 7 - enpassCell.col
+          }
+        }
+      }
+      axios.post(`/gameDetails/enpass?gameId=${gameId}`, data)
+    }
+  }, [enpassCell])
+
   // Show moves or move piece depending on the click type.
   const handleClick = (row, col, type) => {
     if (!moves[row][col] && !(type && turn && type.startsWith(player))) return
@@ -152,7 +180,7 @@ const ChessBoard = ({
       setTurn(false)
       if (check) {
         setCheck(false)
-        const data = { check: null}
+        const data = { check: null }
         axios.post(`/gameDetails/check?gameId=${gameId}`, data)
       }
 
