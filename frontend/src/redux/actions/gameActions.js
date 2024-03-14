@@ -6,9 +6,10 @@ const setGameId = (gameId) => {
 }
 
 const setPlayer = (player) => {
+  const opponent = (player === 'white') ? 'black' : 'white'
   return {
     type: 'SET_PLAYER',
-    payload: player
+    payload: { player, opponent }
   }
 }
 

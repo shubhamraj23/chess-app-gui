@@ -1,6 +1,7 @@
 const initialState = {
   gameId: null,
   player: null,
+  opponent: null,
   turn: false,
   check: false,
   enpassCell: null,
@@ -18,10 +19,12 @@ const gameReducer = (state = initialState, action) => {
       }
 
     case 'SET_PLAYER':
-      const player = action.payload
+      const player = action.payload.player
+      const opponent = action.payload.opponent
       return {
         ...state,
-        player
+        player,
+        opponent
       }
 
     case 'SET_TURN':

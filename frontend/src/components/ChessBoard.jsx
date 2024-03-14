@@ -12,7 +12,7 @@ import canMove from '../redux/utils/canMove'
 
 const ChessBoard = ({
     socket,
-    cells, moves, click, gameId, player, turn, check, enpassCell, enpassCellSelf,
+    cells, moves, click, gameId, player, opponent, turn, check, enpassCell, enpassCellSelf,
     initializeChessboard, movePiece, getMoves, resetMove, setPlayer, setTurn, setCheck, setEnpass, setResult, setSelfEnpass, resetSelfEnpass
   }) => {
   
@@ -55,7 +55,6 @@ const ChessBoard = ({
       if (player === data.data.check) setCheck(true)
       else setCheck(false)
       
-      const opponent = (player === 'white') ? 'black' : 'white'
       if (data.data.result) {
         if (player === data.data.result) setResult(player)
         else setResult(opponent)
@@ -99,7 +98,6 @@ const ChessBoard = ({
   useEffect(() => {
     if (socket) {
       socket.on('capture-result', (result) => {
-        const opponent = (player === 'white') ? 'black' : 'white'
         const value = (result === 'checkmate') ? opponent : 'draw'
         setResult(value)
       })
@@ -127,7 +125,6 @@ const ChessBoard = ({
   // Check if the opponent is in check whenever the state changes.
   useEffect(() => {
     if (socket && gameId && !turn) {
-      const opponent = (player === 'white') ? 'black' : 'white'
       const isCheck = checkCheck(cells, player)
       const movePossible = canMove(cells, opponent, enpassCellSelf)
       if (!movePossible) {
@@ -201,6 +198,7 @@ const mapStateToProps = (state) => {
     click: state.move.click,
     gameId: state.game.gameId,
     player: state.game.player,
+    opponent: state.game.opponent,
     turn: state.game.turn,
     check: state.game.check,
     enpassCell: state.game.enpassCell,
