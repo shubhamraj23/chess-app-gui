@@ -82,7 +82,8 @@ const ChessBoard = ({
       socket.on('capture-move', (move) => {
         setTurn(true)
         if (enpassCellSelf) resetSelfEnpass()
-        movePiece(7 - move.fromRow, 7 - move.fromCol, 7 - move.toRow, 7 - move.toCol, move.piece)
+        const cell = (move.enpassCell) ? { row: 7  - move.enpassCell.row, col: 7 - move.enpassCell.col } : null
+        movePiece(7 - move.fromRow, 7 - move.fromCol, 7 - move.toRow, 7 - move.toCol, move.piece, cell, true)
       })
     }
   }, [socket])
@@ -191,10 +192,10 @@ const ChessBoard = ({
         setSelfEnpass(cell.row, cell.col)
       }
       
-      movePiece(click.row, click.col, row, col, click.piece, enpassCell)
+      movePiece(click.row, click.col, row, col, click.piece, enpassCell, false)
       resetMove()
       resetEnpass()
-      const move = { fromRow: click.row, fromCol: click.col, toRow: row, toCol: col, piece: click.piece }
+      const move = { fromRow: click.row, fromCol: click.col, toRow: row, toCol: col, piece: click.piece, enpassCell }
       socket.emit('game-move', gameId, move)
     }
     else // Else get the moves for the selected piece.
@@ -238,8 +239,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     initializeChessboard: (player, currentBoard) =>
       dispatch(initializeChessboard(player, currentBoard)),
-    movePiece: (fromRow, fromCol, toRow, toCol, piece, enpassCell) =>
-      dispatch(movePiece(fromRow, fromCol, toRow, toCol, piece, enpassCell)),
+    movePiece: (fromRow, fromCol, toRow, toCol, piece, enpassCell, reverse) =>
+      dispatch(movePiece(fromRow, fromCol, toRow, toCol, piece, enpassCell, reverse)),
     getMoves: (cells, row, col, piece, enpassCell) =>
       dispatch(getMoves(cells, row, col, piece, enpassCell)),
     resetMove: () =>
