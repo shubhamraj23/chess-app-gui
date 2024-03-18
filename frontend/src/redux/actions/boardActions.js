@@ -5,10 +5,10 @@ const initializeChessboard = (player, currentBoard) => {
   }
 }
 
-const movePiece = (fromRow, fromCol, toRow, toCol, piece, enpassCell, reverse) => {
+const movePiece = (fromRow, fromCol, toRow, toCol, piece, enpassCell, reverse, promotedPiece) => {
   return {
     type: 'MOVE_PIECE',
-    payload: { fromRow, fromCol, toRow, toCol, piece, enpassCell, reverse }
+    payload: { fromRow, fromCol, toRow, toCol, piece, enpassCell, reverse, promotedPiece }
   }
 }
 

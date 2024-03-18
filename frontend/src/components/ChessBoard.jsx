@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { initializeChessboard, movePiece } from '../redux/actions/boardActions'
-import { getMoves, resetMove } from '../redux/actions/moveActions'
+import { getMoves, resetMove, resetClick } from '../redux/actions/moveActions'
 import { setPlayer, setTurn, setCheck, setResult, setEnpass, resetEnpass, setSelfEnpass, resetSelfEnpass } from '../redux/actions/gameActions'
 import ChessCell from './ChessCell'
 import ChessPiece from './ChessPiece'
@@ -14,11 +14,12 @@ import canMove from '../redux/utils/canMove'
 const ChessBoard = ({
     socket,
     cells, moves, click, gameId, player, opponent, turn, check, enpassCell, enpassCellSelf,
-    initializeChessboard, movePiece, getMoves, resetMove, setPlayer, setTurn, setCheck, setEnpass, setResult, setSelfEnpass, resetSelfEnpass
+    initializeChessboard, movePiece, getMoves, resetMove, resetClick, setPlayer, setTurn, setCheck, setEnpass, setResult, setSelfEnpass, resetSelfEnpass
   }) => {
   
   const [width, setWidth] = useState(0)
   const [promotionCol, setPromotionCol] = useState(null)
+  const [promotedMove, setPromotedMove] = useState(null)
   
   // Using the useNavigate hook to navigate
   const navigate = useNavigate()
@@ -174,6 +175,18 @@ const ChessBoard = ({
     }
   }, [enpassCell])
 
+  // Move the piece on pawn promotion.
+  useEffect(() => {
+    if (promotedMove) {
+      const { toRow, toCol, newPiece } = promotedMove
+      setPromotionCol(null)
+      movePiece(click.row, click.col, toRow, toCol, click.piece, enpassCell, false, newPiece)
+      const move = { fromRow: click.row, fromCol: click.col, toRow, toCol, piece: click.piece, enpassCell }
+      socket.emit('game-move', gameId, move)
+      setPromotedMove(null)
+    }
+  }, [promotedMove])
+
   // Show moves or move piece depending on the click type.
   const handleClick = (row, col, type) => {
     if (!moves[row][col] && !(type && turn && type.startsWith(player))) return
@@ -197,14 +210,16 @@ const ChessBoard = ({
       // Display pawn promotion
       if (click.piece.includes('pawn') && row === 0) {
         setPromotionCol(col)
+        resetMove()
         return
       }
       
-      movePiece(click.row, click.col, row, col, click.piece, enpassCell, false)
-      resetMove()
-      resetEnpass()
+      movePiece(click.row, click.col, row, col, click.piece, enpassCell, false, null)
       const move = { fromRow: click.row, fromCol: click.col, toRow: row, toCol: col, piece: click.piece, enpassCell }
       socket.emit('game-move', gameId, move)
+      resetMove()
+      resetClick()
+      resetEnpass()
     }
     else // Else get the moves for the selected piece.
       getMoves(cells, row, col, type, enpassCell)
@@ -219,7 +234,9 @@ const ChessBoard = ({
               <ChessCell key={`${rowIndex}-${colIndex}`} isDark={(rowIndex + colIndex) % 2 !== 0}
                 width={width/8} type={cell} row={rowIndex} col={colIndex} handleClick={(row, col, type) => handleClick(row, col, type)}>
                 { cell && <ChessPiece type={cell} />}
-                { rowIndex === 0 && colIndex === promotionCol && <PawnPromotion width={width/8} />}
+                { rowIndex === 0 && colIndex === promotionCol && 
+                  <PawnPromotion width={width/8} setPromotedMove={setPromotedMove} toRow={rowIndex} toCol={colIndex}/>
+                }
               </ChessCell>
             ))}
           </div>
@@ -248,12 +265,14 @@ const mapDispatchToProps = (dispatch) => {
   return {
     initializeChessboard: (player, currentBoard) =>
       dispatch(initializeChessboard(player, currentBoard)),
-    movePiece: (fromRow, fromCol, toRow, toCol, piece, enpassCell, reverse) =>
-      dispatch(movePiece(fromRow, fromCol, toRow, toCol, piece, enpassCell, reverse)),
+    movePiece: (fromRow, fromCol, toRow, toCol, piece, enpassCell, reverse, promotedPiece) =>
+      dispatch(movePiece(fromRow, fromCol, toRow, toCol, piece, enpassCell, reverse, promotedPiece)),
     getMoves: (cells, row, col, piece, enpassCell) =>
       dispatch(getMoves(cells, row, col, piece, enpassCell)),
     resetMove: () =>
       dispatch(resetMove()),
+    resetClick: () =>
+      dispatch(resetClick()),
     setPlayer: (player) => 
       dispatch(setPlayer(player)),
     setTurn: (turn) =>

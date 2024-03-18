@@ -17,6 +17,11 @@ const moveReducer = (state = initialState, action) => {
       return {
         ...state,
         moves: initialState.moves,
+      }
+
+    case 'RESET_CLICK':
+      return {
+        ...state,
         click: initialState.click
       }
 

@@ -4,6 +4,12 @@ const resetMove = () => {
   }
 }
 
+const resetClick = () => {
+  return {
+    type: 'RESET_CLICK'
+  }
+}
+
 const getMoves = (cells, row, col, piece, enpassCell) => {
   return {
     type: 'GET_MOVES',
@@ -13,5 +19,6 @@ const getMoves = (cells, row, col, piece, enpassCell) => {
 
 export {
   resetMove,
+  resetClick,
   getMoves
 }
