@@ -177,7 +177,12 @@ const ChessBoard = ({
 
   // Move the piece on pawn promotion.
   useEffect(() => {
-    if (promotedMove) {
+    if (promotedMove === 'close') {
+      setPromotionCol(null)
+      setTurn(true)
+      setPromotedMove(null)
+    }
+    else if (promotedMove) {
       const { toRow, toCol, newPiece } = promotedMove
       setPromotionCol(null)
       movePiece(click.row, click.col, toRow, toCol, click.piece, enpassCell, false, newPiece)

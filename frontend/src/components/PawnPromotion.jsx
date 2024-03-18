@@ -21,8 +21,8 @@ const PawnPromotion = ({ width, player, setPromotedMove, toRow, toCol }) => {
           </div>
         ))}
 
-        <div className='bg-white flex justify-center items-center' style={{ width: `${width}px`, height: `${0.3 * width}px` }}
-          onClick={() => setPromotedMove(null)}>
+        <div className='bg-white flex justify-center items-center cursor-pointer' style={{ width: `${width}px`, height: `${0.3 * width}px` }}
+          onClick={() => setPromotedMove('close')}>
             <div className="flex items-center justify-center border border-red-500 rounded-full"
               style={{ width: `${0.25 * width}px`, height: `${0.25 * width}px` }}>
                 <span className="text-red-500">&#10060;</span>
