@@ -7,6 +7,7 @@ import { getMoves, resetMove } from '../redux/actions/moveActions'
 import { setPlayer, setTurn, setCheck, setResult, setEnpass, resetEnpass, setSelfEnpass, resetSelfEnpass } from '../redux/actions/gameActions'
 import ChessCell from './ChessCell'
 import ChessPiece from './ChessPiece'
+import PawnPromotion from './PawnPromotion'
 import checkCheck from '../redux/utils/checkCheck'
 import canMove from '../redux/utils/canMove'
 
@@ -17,6 +18,7 @@ const ChessBoard = ({
   }) => {
   
   const [width, setWidth] = useState(0)
+  const [promotionCol, setPromotionCol] = useState(null)
   
   // Using the useNavigate hook to navigate
   const navigate = useNavigate()
@@ -191,6 +193,12 @@ const ChessBoard = ({
         socket.emit('enpass', gameId, cell)
         setSelfEnpass(cell.row, cell.col)
       }
+
+      // Display pawn promotion
+      if (click.piece.includes('pawn') && row === 0) {
+        setPromotionCol(col)
+        return
+      }
       
       movePiece(click.row, click.col, row, col, click.piece, enpassCell, false)
       resetMove()
@@ -211,6 +219,7 @@ const ChessBoard = ({
               <ChessCell key={`${rowIndex}-${colIndex}`} isDark={(rowIndex + colIndex) % 2 !== 0}
                 width={width/8} type={cell} row={rowIndex} col={colIndex} handleClick={(row, col, type) => handleClick(row, col, type)}>
                 { cell && <ChessPiece type={cell} />}
+                { rowIndex === 0 && colIndex === promotionCol && <PawnPromotion width={width/8} />}
               </ChessCell>
             ))}
           </div>
