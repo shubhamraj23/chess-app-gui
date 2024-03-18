@@ -86,7 +86,7 @@ const ChessBoard = ({
         setTurn(true)
         if (enpassCellSelf) resetSelfEnpass()
         const cell = (move.enpassCell) ? { row: 7  - move.enpassCell.row, col: 7 - move.enpassCell.col } : null
-        movePiece(7 - move.fromRow, 7 - move.fromCol, 7 - move.toRow, 7 - move.toCol, move.piece, cell, true)
+        movePiece(7 - move.fromRow, 7 - move.fromCol, 7 - move.toRow, 7 - move.toCol, move.piece, cell, true, move.newPiece)
       })
     }
   }, [socket])
@@ -186,7 +186,7 @@ const ChessBoard = ({
       const { toRow, toCol, newPiece } = promotedMove
       setPromotionCol(null)
       movePiece(click.row, click.col, toRow, toCol, click.piece, enpassCell, false, newPiece)
-      const move = { fromRow: click.row, fromCol: click.col, toRow, toCol, piece: click.piece, enpassCell }
+      const move = { fromRow: click.row, fromCol: click.col, toRow, toCol, piece: click.piece, enpassCell, newPiece }
       socket.emit('game-move', gameId, move)
       setPromotedMove(null)
     }
