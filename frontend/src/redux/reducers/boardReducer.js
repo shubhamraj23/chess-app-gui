@@ -49,7 +49,7 @@ const boardReducer = (state = initialState, action) => {
       }
 
     case 'MOVE_PIECE':
-      const { fromRow, fromCol, toRow, toCol, piece, enpassCell, reverse, promotedPiece } = action.payload
+      const { fromRow, fromCol, toRow, toCol, piece, enpassCell, reverse, promotedPiece, castling } = action.payload
       const updatedCells = state.cells.map((row, rowIndex) =>
         row.map((cell, colIndex) => {
           if (rowIndex === fromRow && colIndex === fromCol) return null
@@ -60,6 +60,17 @@ const boardReducer = (state = initialState, action) => {
           return cell
         })
       )
+
+      if (castling) {
+        if (toCol > fromCol) {
+          updatedCells[fromRow][toCol - 1] = updatedCells[fromRow][7]
+          updatedCells[fromRow][7] = null
+        }
+        else {
+          updatedCells[fromRow][toCol + 1] = updatedCells[fromRow][0]
+          updatedCells[fromRow][0] = null
+        }
+      }
 
       if (enpassCell && toRow === enpassCell.row && toCol === enpassCell.col) {
         if (!reverse) updatedCells[enpassCell.row + 1][enpassCell.col] = null

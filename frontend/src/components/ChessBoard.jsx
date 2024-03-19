@@ -89,7 +89,11 @@ const ChessBoard = ({
         setTurn(true)
         if (enpassCellSelf) resetSelfEnpass()
         const cell = (move.enpassCell) ? { row: 7  - move.enpassCell.row, col: 7 - move.enpassCell.col } : null
-        movePiece(7 - move.fromRow, 7 - move.fromCol, 7 - move.toRow, 7 - move.toCol, move.piece, cell, true, move.newPiece)
+        if (move.piece.includes('king') && Math.abs(move.fromCol - move.toCol) === 2) {
+          movePiece(7 - move.fromRow, 7 - move.fromCol, 7 - move.toRow, 7 - move.toCol, move.piece, cell, true, move.newPiece, true)
+        }
+        else
+          movePiece(7 - move.fromRow, 7 - move.fromCol, 7 - move.toRow, 7 - move.toCol, move.piece, cell, true, move.newPiece)
       })
     }
   }, [socket])
@@ -257,7 +261,12 @@ const ChessBoard = ({
         setCastle(true, true, true, true)
       }
       
-      movePiece(click.row, click.col, row, col, click.piece, enpassCell, false, null)
+      if (click.piece.includes('king') && Math.abs(col - click.col) === 2) {
+        setCastle(true, true, true, true)
+        movePiece(click.row, click.col, row, col, click.piece, enpassCell, false, null, true)
+      }
+      else
+        movePiece(click.row, click.col, row, col, click.piece, enpassCell, false, null)
       const move = { fromRow: click.row, fromCol: click.col, toRow: row, toCol: col, piece: click.piece, enpassCell }
       socket.emit('game-move', gameId, move)
       resetMove()
@@ -309,8 +318,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     initializeChessboard: (player, currentBoard) =>
       dispatch(initializeChessboard(player, currentBoard)),
-    movePiece: (fromRow, fromCol, toRow, toCol, piece, enpassCell, reverse, promotedPiece) =>
-      dispatch(movePiece(fromRow, fromCol, toRow, toCol, piece, enpassCell, reverse, promotedPiece)),
+    movePiece: (fromRow, fromCol, toRow, toCol, piece, enpassCell, reverse, promotedPiece, castling) =>
+      dispatch(movePiece(fromRow, fromCol, toRow, toCol, piece, enpassCell, reverse, promotedPiece, castling)),
     getMoves: (cells, row, col, piece, enpassCell, check, castling) =>
       dispatch(getMoves(cells, row, col, piece, enpassCell, check, castling)),
     resetMove: () =>
