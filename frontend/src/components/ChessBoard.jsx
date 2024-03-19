@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { initializeChessboard, movePiece } from '../redux/actions/boardActions'
 import { getMoves, resetMove, resetClick } from '../redux/actions/moveActions'
-import { setPlayer, setTurn, setCheck, setResult, setEnpass, resetEnpass, setSelfEnpass, resetSelfEnpass } from '../redux/actions/gameActions'
+import { setPlayer, setTurn, setCheck, setResult, setEnpass, resetEnpass, setSelfEnpass, resetSelfEnpass, setCastle } from '../redux/actions/gameActions'
 import ChessCell from './ChessCell'
 import ChessPiece from './ChessPiece'
 import PawnPromotion from './PawnPromotion'
@@ -14,7 +14,7 @@ import canMove from '../redux/utils/canMove'
 const ChessBoard = ({
     socket,
     cells, moves, click, gameId, player, opponent, turn, check, enpassCell, enpassCellSelf,
-    initializeChessboard, movePiece, getMoves, resetMove, resetClick, setPlayer, setTurn, setCheck, setEnpass, setResult, setSelfEnpass, resetSelfEnpass
+    initializeChessboard, movePiece, getMoves, resetMove, resetClick, setPlayer, setTurn, setCheck, setEnpass, setResult, setSelfEnpass, resetSelfEnpass, setCastle
   }) => {
   
   const [width, setWidth] = useState(0)
@@ -73,6 +73,9 @@ const ChessBoard = ({
           else setSelfEnpass(7 - data.data.enpass.cell.row, 7 - data.data.enpass.cell.col)
         }
       }
+      
+      const { castled, king, leftRook, rightRook } = data.data.castle[player]
+      setCastle(castled, king, leftRook, rightRook)
     })
     .catch((error) => {
       if (error.response.status === 401) return navigate('/')
@@ -292,6 +295,8 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(setSelfEnpass(row, col)),
     resetSelfEnpass: () =>
       dispatch(resetSelfEnpass()),
+    setCastle: (castled, king, leftRook, rightRook) =>
+      dispatch(setCastle(castled, king, leftRook, rightRook)),
     setResult: (result) =>
       dispatch(setResult(result))
   }

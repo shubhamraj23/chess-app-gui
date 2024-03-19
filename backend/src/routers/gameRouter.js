@@ -66,7 +66,8 @@ router.get('/board', authenticate, async (request, response) => {
       turn: game.turn,
       check: game.check,
       result,
-      enpass: game.enpass
+      enpass: game.enpass,
+      castle: game.castling
     })
 
   } catch (error) {
@@ -117,6 +118,33 @@ router.post('/check', authenticate, async (request, response) => {
 
     const check = request.body.check
     game.check = check
+    await game.save() 
+
+    return response.status(200).send({
+      message: "Update successful"
+    })
+
+  } catch (error) {
+    response.status(500).send({
+      error: "Something unprecedented happened. Please try again."
+    })
+  }  
+})
+
+// Route to update the castling information.
+router.post('/castle', authenticate, async (request, response) => {
+	try {
+    const gameId = request.query.gameId
+    const game = await Game.findById(gameId)
+    if (!game) {
+			return response.status(400).send({
+				message: "Invalid game id."
+			})
+    }
+
+    const player = request.body.player
+    const castle = request.body.castle
+    game['castling'][player] = castle
     await game.save() 
 
     return response.status(200).send({
