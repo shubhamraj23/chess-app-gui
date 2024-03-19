@@ -13,7 +13,7 @@ import canMove from '../redux/utils/canMove'
 
 const ChessBoard = ({
     socket,
-    cells, moves, click, gameId, player, opponent, turn, check, enpassCell, enpassCellSelf,
+    cells, moves, click, gameId, player, opponent, turn, check, enpassCell, enpassCellSelf, castling,
     initializeChessboard, movePiece, getMoves, resetMove, resetClick, setPlayer, setTurn, setCheck, setEnpass, setResult, setSelfEnpass, resetSelfEnpass, setCastle
   }) => {
   
@@ -152,11 +152,17 @@ const ChessBoard = ({
         setResult(value)
         const data = { result: value }
         axios.post(`/gameDetails/result?gameId=${gameId}`, data)
+        .catch((error) => {
+          if (error.response.status === 401) return navigate('/')
+        })
       }
       else if (isCheck) {
         socket.emit('send-check', gameId)
         const data = { check: opponent }
         axios.post(`/gameDetails/check?gameId=${gameId}`, data)
+        .catch((error) => {
+          if (error.response.status === 401) return navigate('/')
+        })
       }
     }
   }, [cells])
@@ -175,6 +181,9 @@ const ChessBoard = ({
         }
       }
       axios.post(`/gameDetails/enpass?gameId=${gameId}`, data)
+      .catch((error) => {
+        if (error.response.status === 401) return navigate('/')
+      })
     }
   }, [enpassCell])
 
@@ -195,6 +204,15 @@ const ChessBoard = ({
     }
   }, [promotedMove])
 
+  // Send the castling state to backend whenever it changes.
+  useEffect(() => {
+    const data = { player, castle: castling }
+    axios.post(`/gameDetails/castle?gameId=${gameId}`, data)
+    .catch((error) => {
+      if (error.response.status === 401) return navigate('/')
+    })
+  }, [castling])
+
   // Show moves or move piece depending on the click type.
   const handleClick = (row, col, type) => {
     if (!moves[row][col] && !(type && turn && type.startsWith(player))) return
@@ -206,6 +224,9 @@ const ChessBoard = ({
         setCheck(false)
         const data = { check: null }
         axios.post(`/gameDetails/check?gameId=${gameId}`, data)
+        .catch((error) => {
+          if (error.response.status === 401) return navigate('/')
+        })
       }
 
       // Send en pass signal.
@@ -220,6 +241,17 @@ const ChessBoard = ({
         setPromotionCol(col)
         resetMove()
         return
+      }
+
+      // Castling updates
+      if (click.row === 7 && click.col === 0 && click.piece.includes('rook') && !castling.leftRook) {
+        setCastle(castling.castled, castling.king, true, castling.rightRook)
+      }
+      else if (click.row === 7 && click.col === 7 && click.piece.includes('rook') && !castling.rightRook) {
+        setCastle(castling.castled, castling.king, castling.leftRook, true)
+      }
+      else if (click.piece.includes('king') && !castling.king) {
+        setCastle(castling.castled, true, castling.leftRook, castling.castled)
       }
       
       movePiece(click.row, click.col, row, col, click.piece, enpassCell, false, null)
@@ -265,7 +297,8 @@ const mapStateToProps = (state) => {
     turn: state.game.turn,
     check: state.game.check,
     enpassCell: state.game.enpassCell,
-    enpassCellSelf: state.game.enpassCellSelf
+    enpassCellSelf: state.game.enpassCellSelf,
+    castling: state.game.castling
   }
 }
 
