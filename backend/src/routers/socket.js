@@ -31,13 +31,23 @@ const handleSocket = async (io) => {
         await player2.save()
 
         // Create a game and send the id to the client.
+        const castle = {
+          castled: false,
+          king: false,
+          leftRook: false,
+          rightRook: false
+        }
         const game = new Game({
           players: {
             white: player1._id,
             black: player2._id
           },
           board: Array.from({ length: 8 }, () => Array(8).fill(null)),
-          turn: 'white'
+          turn: 'white',
+          castling: {
+            white: castle,
+            black: castle
+          }
         })
         const createdGame = await game.save()
         io.to(matchedUser.socketId).emit('match-found', { id: createdGame._id })

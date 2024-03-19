@@ -60,6 +60,13 @@ const resetSelfEnpass = () => {
   }
 }
 
+const setCastle = (castled, king, leftRook, rightRook) => {
+  return {
+    type: 'SET_CASTLE',
+    payload: { castled, king, leftRook, rightRook }
+  }
+}
+
 const resetGame = () => {
   return {
     type: 'RESET_GAME'
@@ -76,5 +83,6 @@ export {
   resetEnpass,
   setSelfEnpass,
   resetSelfEnpass,
+  setCastle,
   resetGame
 }

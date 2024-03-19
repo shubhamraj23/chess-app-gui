@@ -44,6 +44,44 @@ const gameSchema = mongoose.Schema({
       col : Number
     }
   },
+  castling: {
+    white: {
+      castled: {
+        type: Boolean,
+        required: true
+      },
+      king: {
+        type: Boolean,
+        required: true
+      },
+      leftRook: {
+        type: Boolean,
+        required: true
+      },
+      rightRook: {
+        type: Boolean,
+        required: true
+      }
+    },
+    black: {
+      castled: {
+        type: Boolean,
+        required: true
+      },
+      king: {
+        type: Boolean,
+        required: true
+      },
+      leftRook: {
+        type: Boolean,
+        required: true
+      },
+      rightRook: {
+        type: Boolean,
+        required: true
+      }
+    }
+  },
   result: {
     draw: {
       type: Boolean

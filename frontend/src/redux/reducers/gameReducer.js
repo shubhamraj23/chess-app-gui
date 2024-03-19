@@ -6,6 +6,12 @@ const initialState = {
   check: false,
   enpassCell: null,
   enpassCellSelf: null,
+  castling: {
+    castled: false,
+    king: false,
+    leftRook: false,
+    rightRook: false
+  },
   result: null
 }
 
@@ -72,6 +78,13 @@ const gameReducer = (state = initialState, action) => {
       return {
         ...state,
         enpassCellSelf: null
+      }
+
+    case 'SET_CASTLE':
+      const castle = action.payload
+      return {
+        ...state,
+        castling: castle
       }
 
     case 'RESET_GAME':
