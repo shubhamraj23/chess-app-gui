@@ -47,8 +47,8 @@ const pawnMoves = (cells, row, col, player, moves, reversePlayer, enpassCell, en
     if (col !== 0 && !isEmpty(cells[row + 1][col - 1]) && !isSame(cells[row + 1][col - 1], player)) moves[row + 1][col - 1] = true
     if (col !== 7 && !isEmpty(cells[row + 1][col + 1]) && !isSame(cells[row + 1][col + 1], player)) moves[row + 1][col + 1] = true
     if (enpassCellSelf) {
-      if (col !== 0 && enpassCell.row === row - 1 && enpassCell.col === col - 1) moves[row + 1][col - 1] = true
-      if (col !== 7 && enpassCell.row === row - 1 && enpassCell.col === col + 1) moves[row + 1][col + 1] = true
+      if (col !== 0 && enpassCellSelf.row === row - 1 && enpassCellSelf.col === col - 1) moves[row + 1][col - 1] = true
+      if (col !== 7 && enpassCellSelf.row === row - 1 && enpassCellSelf.col === col + 1) moves[row + 1][col + 1] = true
     }
   }
   return moves

@@ -32,7 +32,7 @@ const GameRoom = ({gameId, player, result, setGameId, resetBoard, resetGame}) =>
     if (result) {
       setResult('')
       if (result === 'draw') setText('Game drawn')
-      else if (result === player) setText('You won')
+      else if (result === 'won') setText('You won')
       else setText('You lost')
     }
   }, [result])

@@ -59,7 +59,8 @@ const ChessBoard = ({
       else setCheck(false)
       
       if (data.data.result) {
-        if (player === data.data.result) setResult(player)
+        if (data.data.result === 'draw') setResult('draw')
+        else if (player === data.data.result) setResult(player)
         else setResult(opponent)
       }
 
@@ -120,7 +121,7 @@ const ChessBoard = ({
   useEffect(() => {
     if (socket) {
       socket.on('capture-result', (result) => {
-        const value = (result === 'checkmate') ? opponent : 'draw'
+        const value = (result === 'checkmate') ? 'lost' : 'draw'
         setResult(value)
       })
     }
@@ -152,9 +153,10 @@ const ChessBoard = ({
       if (!movePossible) {
         const result = (isCheck) ? 'checkmate' : 'stalemate'
         socket.emit('send-result', gameId, result)
-        const value = (result === 'checkmate') ? player : 'draw'
+        const value = (result === 'checkmate') ? 'won' : 'draw'
         setResult(value)
-        const data = { result: value }
+        const winner = (result === 'checkmate') ? player : 'draw'
+        const data = { result: winner }
         axios.post(`/gameDetails/result?gameId=${gameId}`, data)
         .catch((error) => {
           if (error.response.status === 401) return navigate('/')

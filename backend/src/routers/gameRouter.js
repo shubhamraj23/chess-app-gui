@@ -57,8 +57,8 @@ router.get('/board', authenticate, async (request, response) => {
     let result = null
     if (game.result) {
       if (game.result.draw) result = 'draw'
-      if (game.result.winner && game.result.winner == game.players.white) result = 'white'
-      if (game.result.winner && game.result.winner == game.players.black) result = 'black'
+      if (game.result.winner && game.result.winner.toString() === game.players.white.toString()) result = 'white'
+      if (game.result.winner && game.result.winner.toString() === game.players.black.toString()) result = 'black'
     }
 
     return response.status(200).send({
