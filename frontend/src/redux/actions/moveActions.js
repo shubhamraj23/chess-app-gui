@@ -10,10 +10,10 @@ const resetClick = () => {
   }
 }
 
-const getMoves = (cells, row, col, piece, enpassCell) => {
+const getMoves = (cells, row, col, piece, enpassCell, check, castling) => {
   return {
     type: 'GET_MOVES',
-    payload: { cells, row, col, piece, enpassCell }
+    payload: { cells, row, col, piece, enpassCell, check, castling }
   }
 }
 

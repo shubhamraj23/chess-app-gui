@@ -26,8 +26,8 @@ const moveReducer = (state = initialState, action) => {
       }
 
     case 'GET_MOVES':
-      const { cells, row, col, piece, enpassCell } = action.payload
-      const allMoves = generateMoves(cells, row, col, false, enpassCell)
+      const { cells, row, col, piece, enpassCell, check, castling } = action.payload
+      const allMoves = generateMoves(cells, row, col, false, enpassCell, null, check, castling)
       const moves = validateMove(allMoves, cells, row, col)
       return {
         ...state,

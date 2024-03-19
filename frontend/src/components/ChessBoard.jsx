@@ -253,6 +253,9 @@ const ChessBoard = ({
       else if (click.piece.includes('king') && !castling.king) {
         setCastle(castling.castled, true, castling.leftRook, castling.castled)
       }
+      else if (click.piece.includes('king') && Math.abs(row - click.row) === 2) {
+        setCastle(true, true, true, true)
+      }
       
       movePiece(click.row, click.col, row, col, click.piece, enpassCell, false, null)
       const move = { fromRow: click.row, fromCol: click.col, toRow: row, toCol: col, piece: click.piece, enpassCell }
@@ -262,7 +265,7 @@ const ChessBoard = ({
       resetEnpass()
     }
     else // Else get the moves for the selected piece.
-      getMoves(cells, row, col, type, enpassCell)
+      getMoves(cells, row, col, type, enpassCell, check, castling)
   }
 
   return (
@@ -308,8 +311,8 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(initializeChessboard(player, currentBoard)),
     movePiece: (fromRow, fromCol, toRow, toCol, piece, enpassCell, reverse, promotedPiece) =>
       dispatch(movePiece(fromRow, fromCol, toRow, toCol, piece, enpassCell, reverse, promotedPiece)),
-    getMoves: (cells, row, col, piece, enpassCell) =>
-      dispatch(getMoves(cells, row, col, piece, enpassCell)),
+    getMoves: (cells, row, col, piece, enpassCell, check, castling) =>
+      dispatch(getMoves(cells, row, col, piece, enpassCell, check, castling)),
     resetMove: () =>
       dispatch(resetMove()),
     resetClick: () =>

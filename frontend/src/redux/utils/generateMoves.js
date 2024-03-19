@@ -1,4 +1,6 @@
-const generateMoves = (cells, row, col, reversePlayer = false, enpassCell = null, enpassCellSelf = null) => {
+import canCastle from './canCastle'
+
+const generateMoves = (cells, row, col, reversePlayer = false, enpassCell = null, enpassCellSelf = null, check = true, castling = null) => {
   const moves = Array.from({ length: 8 }, () => Array(8).fill(false))
   const piece = cells[row][col]
   const player = piece.substring(0, 5)
@@ -21,7 +23,7 @@ const generateMoves = (cells, row, col, reversePlayer = false, enpassCell = null
       return queenMoves(cells, row, col, player, moves)
 
     case 'king':
-      return kingMoves(cells, row, col, player, moves)
+      return kingMoves(cells, row, col, player, moves, check, castling)
     
     default:
       return moves
@@ -118,7 +120,7 @@ const queenMoves = (cells, row, col, player, moves) => {
   return moves
 }
 
-const kingMoves = (cells, row, col, player, moves) => {
+const kingMoves = (cells, row, col, player, moves, check, castling) => {
   const positions = [[1, 0], [0, 1], [-1, 0], [0, -1], [-1, 1], [1, -1], [1, 1], [-1, -1]]
   positions.forEach(([r, c]) => {
     const i = row + r
@@ -127,6 +129,8 @@ const kingMoves = (cells, row, col, player, moves) => {
       if (isEmpty(cells[i][j]) || !isSame(cells[i][j], player)) moves[i][j] = true
     }
   })
+  if (canCastle(cells, col, castling, check, 'left')) moves[row][col-2] = true
+  if (canCastle(cells, col, castling, check, 'right')) moves[row][col+2] = true
   return moves
 }
 
