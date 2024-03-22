@@ -1,5 +1,7 @@
+import axios from 'axios'
 import io from 'socket.io-client'
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { resetBoard } from '../redux/actions/boardActions'
 import { setGameId, resetGame } from '../redux/actions/gameActions'
@@ -11,6 +13,9 @@ const GameRoom = ({gameId, player, result, setGameId, resetBoard, resetGame}) =>
   const [socket, setSocket] = useState()
   const [resultState, setResult] = useState('hidden')
   const [text, setText] = useState('')
+
+  // Using the useNavigate hook to navigate
+  const navigate = useNavigate()
 
   // Create the socket connection on component load.
   useEffect(() => {
@@ -25,6 +30,16 @@ const GameRoom = ({gameId, player, result, setGameId, resetBoard, resetGame}) =>
       resetBoard()
       resetGame()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Validate the cookies on component load.
+  useEffect(() => {
+    axios.get('/user/validateCookie')
+      .catch(() => {
+        return navigate('/')
+      })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Set the result text on result load.
@@ -35,6 +50,7 @@ const GameRoom = ({gameId, player, result, setGameId, resetBoard, resetGame}) =>
       else if (result === 'won') setText('You won')
       else setText('You lost')
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result])
 
   // Join the room once the gameId has been set.

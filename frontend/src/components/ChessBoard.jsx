@@ -31,6 +31,7 @@ const ChessBoard = ({
     const lower = Math.min(containerWidth, screenHeight)
     const divWidth = lower - (lower % 8)
     setWidth(divWidth)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Get the player type on gameId load.
@@ -42,9 +43,10 @@ const ChessBoard = ({
       })
       .catch((error) => {
         if (error.response.status === 401) return navigate('/')
-        return navigate('/dashboard')
+        if (error.response.status === 400) return navigate('/dashboard')
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameId])
 
   // Set the chessboard state on player type load.
@@ -80,7 +82,9 @@ const ChessBoard = ({
     })
     .catch((error) => {
       if (error.response.status === 401) return navigate('/')
+      if (error.response.status === 400) return navigate('/dashboard')
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [player])
 
   // Listen for incoming moves from the server on component load.
@@ -96,35 +100,21 @@ const ChessBoard = ({
         else
           movePiece(7 - move.fromRow, 7 - move.fromCol, 7 - move.toRow, 7 - move.toCol, move.piece, cell, true, move.newPiece)
       })
-    }
-  }, [socket])
 
-  // Listen to incoming check from the server on component load.
-  useEffect(() => {
-    if (socket) {
       socket.on('capture-check', () => {
         setCheck(true)
       })
-    }
-  }, [socket])
 
-  // Listen to incoming enpass from the server on component load.
-  useEffect(() => {
-    if (socket) {
       socket.on('capture-enpass', (cell) => {
         setEnpass(7 - cell.row, 7 - cell.col)
       })
-    }
-  }, [socket])
 
-  // Listen to incoming result from the server on component load.
-  useEffect(() => {
-    if (socket) {
       socket.on('capture-result', (result) => {
         const value = (result === 'checkmate') ? 'lost' : 'draw'
         setResult(value)
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket])
 
   // Set the chessboard state on backend whenever the state changes.
@@ -141,8 +131,10 @@ const ChessBoard = ({
       axios.post(`/gameDetails/board?gameId=${gameId}`, data)
       .catch((error) => {
         if (error.response.status === 401) return navigate('/')
+        if (error.response.status === 400) return navigate('/dashboard')
       })
-    } 
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cells])
 
   // Check if the opponent is in check whenever the state changes.
@@ -160,6 +152,7 @@ const ChessBoard = ({
         axios.post(`/gameDetails/result?gameId=${gameId}`, data)
         .catch((error) => {
           if (error.response.status === 401) return navigate('/')
+          if (error.response.status === 400) return navigate('/dashboard')
         })
       }
       else if (isCheck) {
@@ -168,9 +161,11 @@ const ChessBoard = ({
         axios.post(`/gameDetails/check?gameId=${gameId}`, data)
         .catch((error) => {
           if (error.response.status === 401) return navigate('/')
+          if (error.response.status === 400) return navigate('/dashboard')
         })
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cells])
 
   // Send the enpass cell state to backend whenever it changes.
@@ -189,8 +184,10 @@ const ChessBoard = ({
       axios.post(`/gameDetails/enpass?gameId=${gameId}`, data)
       .catch((error) => {
         if (error.response.status === 401) return navigate('/')
+        if (error.response.status === 400) return navigate('/dashboard')
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enpassCell])
 
   // Move the piece on pawn promotion.
@@ -208,6 +205,7 @@ const ChessBoard = ({
       socket.emit('game-move', gameId, move)
       setPromotedMove(null)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [promotedMove])
 
   // Send the castling state to backend whenever it changes.
@@ -216,7 +214,9 @@ const ChessBoard = ({
     axios.post(`/gameDetails/castle?gameId=${gameId}`, data)
     .catch((error) => {
       if (error.response.status === 401) return navigate('/')
+      if (error.response.status === 400) return navigate('/dashboard')
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [castling])
 
   // Show moves or move piece depending on the click type.
@@ -232,6 +232,7 @@ const ChessBoard = ({
         axios.post(`/gameDetails/check?gameId=${gameId}`, data)
         .catch((error) => {
           if (error.response.status === 401) return navigate('/')
+          if (error.response.status === 400) return navigate('/dashboard')
         })
       }
 

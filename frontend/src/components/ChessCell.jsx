@@ -17,6 +17,7 @@ const ChessCell = ({
       else setCursor('')
     }
     else setCursor('')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [moves, player, type, turn])
 
   // Update the cell colour whenever check changes.
@@ -26,6 +27,7 @@ const ChessCell = ({
       if (isDark) setCellColour('dark-cell')
       else setCellColour('light-cell')
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [check])
 
   return (
