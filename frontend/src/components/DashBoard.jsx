@@ -52,6 +52,13 @@ const DashBoard = () => {
           socket.disconnect()
           navigate(`/game/${data.id}`)
         })
+
+        // Throw an error if match is not found.
+        socket.on('match-not-found', () => {
+          setFindingMatch('hidden')
+          setErrorState('')
+          setErrorMessage("Unable to find a match. Please try again later.")
+        })
       })
       .catch((error) => {
         setFindingMatch('hidden')

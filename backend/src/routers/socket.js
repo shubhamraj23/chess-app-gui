@@ -18,6 +18,16 @@ const handleSocket = async (io) => {
           socketId: socket.id
         })
         await oldUser.save()
+
+        // Set timeout to check if match has been found or not.
+        setTimeout(async() => {
+          const matches = await Match.find(oldUser)
+          if (matches.length !== 0) {
+            player1.playStatus = 'not-playing'
+            player1.save()
+            io.to(oldUser.socketId).emit('match-not-found')
+          }
+        }, 60000)
       }
       else {
         // Delete the match request
