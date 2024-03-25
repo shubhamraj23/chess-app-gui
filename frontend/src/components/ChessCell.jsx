@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 const ChessCell = ({
     children, isDark, width, type, row, col, handleClick,
-    moves, turn, player, check
+    moves, turn, player, opponent, check, oppCheck
   }) => {
   
   const [cursor, setCursor] = useState('')
@@ -23,12 +23,13 @@ const ChessCell = ({
   // Update the cell colour whenever check changes.
   useEffect(() => {
     if (check && type && type.includes(player) && type.includes('king')) setCellColour('check-cell')
+    else if (oppCheck && type && type.includes(opponent) && type.includes('king')) setCellColour('check-cell')
     else {
       if (isDark) setCellColour('dark-cell')
       else setCellColour('light-cell')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [check])
+  }, [check, oppCheck])
 
   return (
     <div className={`relative flex items-center justify-center ${cellColour} ${cursor}`} 
@@ -46,7 +47,9 @@ const mapStateToProps = (state) => {
     moves: state.move.moves,
     turn: state.game.turn,
     player: state.game.player,
-    check: state.game.check
+    opponent: state.game.opponent,
+    check: state.game.check,
+    oppCheck: state.game.oppCheck
   }
 }
 

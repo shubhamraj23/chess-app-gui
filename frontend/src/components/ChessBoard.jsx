@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { initializeChessboard, movePiece } from '../redux/actions/boardActions'
 import { getMoves, resetMove, resetClick } from '../redux/actions/moveActions'
-import { setPlayer, setTurn, setCheck, setResult, setEnpass, resetEnpass, setSelfEnpass, resetSelfEnpass, setCastle } from '../redux/actions/gameActions'
+import { setPlayer, setTurn, setCheck, setOppCheck, setResult, setEnpass, resetEnpass, setSelfEnpass, resetSelfEnpass, setCastle } from '../redux/actions/gameActions'
 import ChessCell from './ChessCell'
 import ChessPiece from './ChessPiece'
 import PawnPromotion from './PawnPromotion'
@@ -14,7 +14,7 @@ import canMove from '../redux/utils/canMove'
 const ChessBoard = ({
     socket,
     cells, moves, click, gameId, player, opponent, turn, check, enpassCell, enpassCellSelf, castling,
-    initializeChessboard, movePiece, getMoves, resetMove, resetClick, setPlayer, setTurn, setCheck, setEnpass, setResult, setSelfEnpass, resetSelfEnpass, setCastle
+    initializeChessboard, movePiece, getMoves, resetMove, resetClick, setPlayer, setTurn, setCheck, setOppCheck, setEnpass, setResult, setSelfEnpass, resetSelfEnpass, setCastle
   }) => {
   
   const [width, setWidth] = useState(0)
@@ -59,6 +59,9 @@ const ChessBoard = ({
       
       if (player === data.data.check) setCheck(true)
       else setCheck(false)
+
+      if (opponent === data.data.check) setOppCheck(true)
+      else setOppCheck(false)
       
       if (data.data.result) {
         if (data.data.result === 'draw') setResult('draw')
@@ -92,6 +95,7 @@ const ChessBoard = ({
     if (socket) {
       socket.on('capture-move', (move) => {
         setTurn(true)
+        setOppCheck(false)
         if (enpassCellSelf) resetSelfEnpass()
         const cell = (move.enpassCell) ? { row: 7  - move.enpassCell.row, col: 7 - move.enpassCell.col } : null
         if (move.piece.includes('king') && Math.abs(move.fromCol - move.toCol) === 2) {
@@ -157,6 +161,7 @@ const ChessBoard = ({
       }
       else if (isCheck) {
         socket.emit('send-check', gameId)
+        setOppCheck(true)
         const data = { check: opponent }
         axios.post(`/gameDetails/check?gameId=${gameId}`, data)
         .catch((error) => {
@@ -335,6 +340,8 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(setTurn(turn)),
     setCheck: (check) =>
       dispatch(setCheck(check)),
+    setOppCheck: (check) =>
+      dispatch(setOppCheck(check)),
     setEnpass: (row, col) =>
       dispatch(setEnpass(row, col)),
     resetEnpass: () =>

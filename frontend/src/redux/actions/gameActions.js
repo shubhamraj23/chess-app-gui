@@ -27,6 +27,13 @@ const setCheck = (check) => {
   }
 }
 
+const setOppCheck = (check) => {
+  return {
+    type: 'SET_OPPCHECK',
+    payload: check
+  }
+}
+
 const setResult = (result) => {
   return {
     type: 'SET_RESULT',
@@ -78,6 +85,7 @@ export {
   setPlayer,
   setTurn,
   setCheck,
+  setOppCheck,
   setResult,
   setEnpass,
   resetEnpass,

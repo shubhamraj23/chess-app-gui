@@ -4,6 +4,7 @@ const initialState = {
   opponent: null,
   turn: false,
   check: false,
+  oppCheck: false,
   enpassCell: null,
   enpassCellSelf: null,
   castling: {
@@ -45,6 +46,13 @@ const gameReducer = (state = initialState, action) => {
       return {
         ...state,
         check
+      }
+
+    case 'SET_OPPCHECK':
+      const oppCheck = action.payload
+      return {
+        ...state,
+        oppCheck
       }
 
     case 'SET_RESULT':
