@@ -1,7 +1,7 @@
 // Import all the required modules
 const express = require('express')
 const axios = require('axios')
-axios.defaults.baseURL = 'http://localhost:8080/'
+axios.defaults.baseURL = process.env.BASE_URL
 const authenticate = require('../middleware/authenticate')
 
 // Create a router
