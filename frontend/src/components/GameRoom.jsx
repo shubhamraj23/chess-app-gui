@@ -7,10 +7,12 @@ import { resetBoard } from '../redux/actions/boardActions'
 import { setGameId, resetGame } from '../redux/actions/gameActions'
 import ChessBoard from './ChessBoard'
 import Result from './Result'
+import Spinner from './Spinner'
 
-const GameRoom = ({gameId, player, result, setGameId, resetBoard, resetGame}) => {
+const GameRoom = ({gameId, result, setGameId, resetBoard, resetGame}) => {
   // Create a state for socket
   const [socket, setSocket] = useState()
+  const [connecting, setConnecting] = useState('')
   const [resultState, setResult] = useState('hidden')
   const [text, setText] = useState('')
 
@@ -53,9 +55,23 @@ const GameRoom = ({gameId, player, result, setGameId, resetBoard, resetGame}) =>
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result])
 
-  // Join the room once the gameId has been set.
+  // Create and handle socket connection once the gameId has been set.
   useEffect(() => {
-    if (socket && gameId) socket.emit('join-room', gameId)
+    if (socket)  {
+      socket.on('connect', () => {
+        setConnecting('hidden')
+      })
+
+      socket.on('disconnect', () => {
+        setConnecting('')
+      })
+
+      socket.on('reconnect', () => {
+        setConnecting('hidden')
+      })
+
+      if (gameId) socket.emit('join-room', gameId)
+    }
   }, [socket, gameId])
 
   return (
@@ -65,6 +81,7 @@ const GameRoom = ({gameId, player, result, setGameId, resetBoard, resetGame}) =>
       </div>
 
       <Result status={resultState} text={text}/>
+      <Spinner status={connecting} text="Connection lost. Retrying..." />
     </div>
   )
 }
@@ -72,7 +89,6 @@ const GameRoom = ({gameId, player, result, setGameId, resetBoard, resetGame}) =>
 const mapStateToProps = (state) => {
   return {
     gameId: state.game.gameId,
-    player: state.game.player,
     result: state.game.result
   }
 }
