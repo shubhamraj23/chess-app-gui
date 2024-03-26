@@ -1,5 +1,7 @@
 // Import all the required modules
 const express = require('express')
+const axios = require('axios')
+axios.defaults.baseURL = 'http://localhost:8080/'
 const authenticate = require('../middleware/authenticate')
 
 // Create a router
@@ -24,6 +26,15 @@ router.post('/', authenticate, async (request, response) => {
     // Save the player status and send a response to initiate a WebSocket connection from client side.
     player.playStatus = 'requested'
     await player.save()
+    
+    // Make an axios request to update the token of the player.
+    const res = await axios.post('user/refresh', { id: player._id, currToken: request.cookies.jwt })
+    response.cookie('jwt', res.data.token, {
+      expires: new Date(Date.now() + 3600*1000),
+      secure: process.env.SECURE_COOKIE,
+      httpOnly: true
+    })
+
     response.status(200).send({ id: player._id })
 
   } catch (error) {

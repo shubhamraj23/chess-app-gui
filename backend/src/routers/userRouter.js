@@ -135,4 +135,29 @@ router.get('/stats', authenticate, async (request, response) => {
   }
 })
 
+// Route to refresh a user token.
+router.post('/refresh', async (request, response) => {
+  try {
+    const { id, currToken } = request.body
+    const user = await User.findById(id)
+
+    // Remove the old token
+    user.tokens = user.tokens.filter((token) => token !== currToken)
+
+    // Create a new token
+    const secret = process.env.JWT_SECRET
+    const payload = { userId: user.userId }
+    const token = jwt.sign(payload, secret, { expiresIn: '1h' })
+    user.tokens.push(token)
+    await user.save()
+
+    response.status(200).send({token})
+    
+  } catch (error) {
+    response.status(500).send({
+      error: "Something unprecedented happened. Please try again."
+    })
+  }
+})
+
 module.exports = router
