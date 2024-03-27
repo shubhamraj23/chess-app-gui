@@ -12,6 +12,8 @@ import Spinner from './Spinner'
 const GameRoom = ({gameId, result, setGameId, resetBoard, resetGame}) => {
   // Create a state for socket
   const [socket, setSocket] = useState()
+  const [width, setWidth] = useState(0)
+  const [divHeight, setDivHeight] = useState(0)
   const [connecting, setConnecting] = useState('')
   const [resultState, setResult] = useState('hidden')
   const [text, setText] = useState('')
@@ -41,6 +43,26 @@ const GameRoom = ({gameId, result, setGameId, resetBoard, resetGame}) => {
       .catch(() => {
         return navigate('/')
       })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Decide the width and height of the ChessBoard component on load.
+  useEffect(() => {
+    const screenWidth = document.getElementById('game-container').offsetWidth
+    const screenHeight = window.innerHeight
+    if (screenWidth > screenHeight) {
+      const lower = 0.9*screenHeight
+      const divWidth = lower - (lower % 8)
+      setWidth(divWidth)
+      setDivHeight((screenHeight - divWidth)/2)
+    }
+    else {
+      const lower = Math.min(screenWidth, 0.9*screenHeight)
+      const divWidth = lower - (lower % 8)
+      setWidth(divWidth)
+      setDivHeight(divWidth/16)
+    }
+    console.log(screenHeight, screenWidth)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -76,8 +98,20 @@ const GameRoom = ({gameId, result, setGameId, resetBoard, resetGame}) => {
 
   return (
     <div className="bg-gray-300">
-      <div className="container mx-auto h-screen" id="game-container">
-        <ChessBoard socket={socket} />
+      <div className="container mx-auto h-screen flex flex-col items-center" id="game-container">
+        <div className="my-auto" style={{ width: `${width}px`, height: `${2*divHeight + width}px` }}>
+          <div style={{ width: `${width}px`, height: `${divHeight}px` }}>
+            <h2 className="text-lg font-semibold mb-4">Player's Name: XYZ</h2>
+          </div>
+          
+          <div>
+            <ChessBoard socket={socket} width={width}/>
+          </div>
+          
+          <div style={{ width: `${width}px`, height: `${divHeight}px` }}>
+            <h2 className="text-lg font-semibold mb-4">Player's Name: XYZ</h2>
+          </div>
+        </div>
       </div>
 
       <Result status={resultState} text={text}/>

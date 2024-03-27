@@ -12,27 +12,16 @@ import checkCheck from '../redux/utils/checkCheck'
 import canMove from '../redux/utils/canMove'
 
 const ChessBoard = ({
-    socket,
+    socket, width,
     cells, moves, click, gameId, player, opponent, turn, check, enpassCell, enpassCellSelf, castling,
     initializeChessboard, movePiece, getMoves, resetMove, resetClick, setPlayer, setTurn, setCheck, setOppCheck, setEnpass, setResult, setSelfEnpass, resetSelfEnpass, setCastle
   }) => {
   
-  const [width, setWidth] = useState(0)
   const [promotionCol, setPromotionCol] = useState(null)
   const [promotedMove, setPromotedMove] = useState(null)
   
   // Using the useNavigate hook to navigate
   const navigate = useNavigate()
-
-  // Fix the width on component load.
-  useEffect(() => {
-    const containerWidth = document.getElementById('game-container').offsetWidth
-    const screenHeight = window.innerHeight
-    const lower = Math.min(containerWidth, screenHeight)
-    const divWidth = lower - (lower % 8)
-    setWidth(divWidth)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   // Get the player type on gameId load.
   useEffect(() => {
@@ -286,7 +275,7 @@ const ChessBoard = ({
   }
 
   return (
-    <div className="flex flex-col items-center h-screen">
+    <div className="flex flex-col items-center">
       <div className="my-auto" style={{ width: `${width}px`, height: `${width}px` }}>
         {cells.map((row, rowIndex) => (
           <div key={rowIndex} className="flex">
