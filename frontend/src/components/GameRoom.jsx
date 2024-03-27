@@ -8,6 +8,7 @@ import { setGameId, setPlayer, resetGame } from '../redux/actions/gameActions'
 import ChessBoard from './ChessBoard'
 import Result from './Result'
 import Spinner from './Spinner'
+import Timer from './Timer'
 
 const GameRoom = ({gameId, result, setGameId, resetBoard, setPlayer, resetGame}) => {
   // Create a state for socket
@@ -64,9 +65,8 @@ const GameRoom = ({gameId, result, setGameId, resetBoard, setPlayer, resetGame})
       const lower = Math.min(screenWidth, 0.9*screenHeight)
       const divWidth = lower - (lower % 8)
       setWidth(divWidth)
-      setDivHeight(divWidth/16)
+      setDivHeight(Math.max(40, divWidth/16))
     }
-    console.log(screenHeight, screenWidth)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -124,8 +124,14 @@ const GameRoom = ({gameId, result, setGameId, resetBoard, setPlayer, resetGame})
       <div className="container mx-auto h-screen flex flex-col items-center" id="game-container">
         <div className="my-auto" style={{ width: `${width}px`, height: `${2*divHeight + width}px` }}>
           <div style={{ width: `${width}px`, height: `${divHeight}px` }}>
-            <p className="text-sm">{opponentId}</p>
-            <p className="text-sm">{opponentName}</p>
+            <div className="flex flex-row h-full">
+              <div className="w-1/3">
+                <p className="text-sm">{opponentId}</p>
+                <p className="text-sm">{opponentName}</p>
+              </div>
+
+              <div className="w-1/3"><Timer /></div>
+            </div>
           </div>
           
           <div>
@@ -133,8 +139,15 @@ const GameRoom = ({gameId, result, setGameId, resetBoard, setPlayer, resetGame})
           </div>
           
           <div style={{ width: `${width}px`, height: `${divHeight}px` }}>
-            <p className="text-sm text-right">{playerId}</p>
-            <p className="text-sm text-right">{playerName}</p>
+            <div className="flex flex-row h-full">
+              <div className="w-1/3"></div>
+              <div className="w-1/3"><Timer /></div>
+
+              <div className="w-1/3">
+                <p className="text-sm text-right">{playerId}</p>
+                <p className="text-sm text-right">{playerName}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
