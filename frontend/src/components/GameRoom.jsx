@@ -4,12 +4,12 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { resetBoard } from '../redux/actions/boardActions'
-import { setGameId, resetGame } from '../redux/actions/gameActions'
+import { setGameId, setPlayer, resetGame } from '../redux/actions/gameActions'
 import ChessBoard from './ChessBoard'
 import Result from './Result'
 import Spinner from './Spinner'
 
-const GameRoom = ({gameId, result, setGameId, resetBoard, resetGame}) => {
+const GameRoom = ({gameId, result, setGameId, resetBoard, setPlayer, resetGame}) => {
   // Create a state for socket
   const [socket, setSocket] = useState()
   const [width, setWidth] = useState(0)
@@ -17,6 +17,10 @@ const GameRoom = ({gameId, result, setGameId, resetBoard, resetGame}) => {
   const [connecting, setConnecting] = useState('')
   const [resultState, setResult] = useState('hidden')
   const [text, setText] = useState('')
+  const [playerId, setPlayerId] = useState('User 1')
+  const [playerName, setPlayerName] = useState('Name 1')
+  const [opponentId, setOpponentId] = useState('User 2')
+  const [opponentName, setOpponentName] = useState('Name 2')
 
   // Using the useNavigate hook to navigate
   const navigate = useNavigate()
@@ -77,6 +81,25 @@ const GameRoom = ({gameId, result, setGameId, resetBoard, resetGame}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result])
 
+  // Get the player type on gameId load.
+  useEffect(() => {
+    if (gameId) {
+      axios.get(`/gameDetails/playerType?gameId=${gameId}`)
+      .then((data) => {
+        setPlayer(data.data.playerType)
+        setPlayerId(data.data.player.id)
+        setPlayerName(data.data.player.name)
+        setOpponentId(data.data.opponent.id)
+        setOpponentName(data.data.opponent.name)
+      })
+      .catch((error) => {
+        if (error.response.status === 401) return navigate('/')
+        if (error.response.status === 400) return navigate('/dashboard')
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameId])
+
   // Create and handle socket connection once the gameId has been set.
   useEffect(() => {
     if (socket)  {
@@ -101,7 +124,8 @@ const GameRoom = ({gameId, result, setGameId, resetBoard, resetGame}) => {
       <div className="container mx-auto h-screen flex flex-col items-center" id="game-container">
         <div className="my-auto" style={{ width: `${width}px`, height: `${2*divHeight + width}px` }}>
           <div style={{ width: `${width}px`, height: `${divHeight}px` }}>
-            <h2 className="text-lg font-semibold mb-4">Player's Name: XYZ</h2>
+            <p className="text-sm">{opponentId}</p>
+            <p className="text-sm">{opponentName}</p>
           </div>
           
           <div>
@@ -109,7 +133,8 @@ const GameRoom = ({gameId, result, setGameId, resetBoard, resetGame}) => {
           </div>
           
           <div style={{ width: `${width}px`, height: `${divHeight}px` }}>
-            <h2 className="text-lg font-semibold mb-4">Player's Name: XYZ</h2>
+            <p className="text-sm text-right">{playerId}</p>
+            <p className="text-sm text-right">{playerName}</p>
           </div>
         </div>
       </div>
@@ -133,6 +158,8 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(resetBoard()),
     setGameId: (gameId) =>
       dispatch(setGameId(gameId)),
+    setPlayer: (player) => 
+      dispatch(setPlayer(player)),
     resetGame: () => {
       dispatch(resetGame())
     }

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { initializeChessboard, movePiece } from '../redux/actions/boardActions'
 import { getMoves, resetMove, resetClick } from '../redux/actions/moveActions'
-import { setPlayer, setTurn, setCheck, setOppCheck, setResult, setEnpass, resetEnpass, setSelfEnpass, resetSelfEnpass, setCastle } from '../redux/actions/gameActions'
+import { setTurn, setCheck, setOppCheck, setResult, setEnpass, resetEnpass, setSelfEnpass, resetSelfEnpass, setCastle } from '../redux/actions/gameActions'
 import ChessCell from './ChessCell'
 import ChessPiece from './ChessPiece'
 import PawnPromotion from './PawnPromotion'
@@ -14,7 +14,7 @@ import canMove from '../redux/utils/canMove'
 const ChessBoard = ({
     socket, width,
     cells, moves, click, gameId, player, opponent, turn, check, enpassCell, enpassCellSelf, castling,
-    initializeChessboard, movePiece, getMoves, resetMove, resetClick, setPlayer, setTurn, setCheck, setOppCheck, setEnpass, setResult, setSelfEnpass, resetSelfEnpass, setCastle
+    initializeChessboard, movePiece, getMoves, resetMove, resetClick, setTurn, setCheck, setOppCheck, setEnpass, setResult, setSelfEnpass, resetSelfEnpass, setCastle
   }) => {
   
   const [promotionCol, setPromotionCol] = useState(null)
@@ -22,21 +22,6 @@ const ChessBoard = ({
   
   // Using the useNavigate hook to navigate
   const navigate = useNavigate()
-
-  // Get the player type on gameId load.
-  useEffect(() => {
-    if (gameId) {
-      axios.get(`/gameDetails/playerType?gameId=${gameId}`)
-      .then((data) => {
-        setPlayer(data.data.playerType)
-      })
-      .catch((error) => {
-        if (error.response.status === 401) return navigate('/')
-        if (error.response.status === 400) return navigate('/dashboard')
-      })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gameId])
 
   // Set the chessboard state on player type load.
   useEffect(() => {
@@ -323,8 +308,6 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(resetMove()),
     resetClick: () =>
       dispatch(resetClick()),
-    setPlayer: (player) => 
-      dispatch(setPlayer(player)),
     setTurn: (turn) =>
       dispatch(setTurn(turn)),
     setCheck: (check) =>

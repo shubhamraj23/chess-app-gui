@@ -13,15 +13,22 @@ router.get('/playerType', authenticate, gameValidation, async (request, response
   try {
     const userId = request.user._id
     const game = request.game
+    const whitePlayer = await User.findById(game.players.white)
+    const blackPlayer = await User.findById(game.players.black)
+
 		if (userId.equals(game.players.white)) {
 			return response.status(200).send({
-				playerType: "white"
+				playerType: "white",
+        player: { id: whitePlayer.userId, name: whitePlayer.name },
+        opponent: { id: blackPlayer.userId, name: blackPlayer.name }
 			})
 		}
 
 		if (userId.equals(game.players.black)) {
 			return response.status(200).send({
-				playerType: "black"
+				playerType: "black",
+        player: { id: blackPlayer.userId, name: blackPlayer.name },
+        opponent: { id: whitePlayer.userId, name: whitePlayer.name }
 			})
 		}
 
