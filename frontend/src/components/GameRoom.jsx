@@ -19,6 +19,7 @@ const GameRoom = ({gameId, opponent, result, setGameId, resetBoard, setPlayer, s
   const [width, setWidth] = useState(0)
   const [divHeight, setDivHeight] = useState(0)
   const [connecting, setConnecting] = useState('')
+  const [connectingText, setConnectingText] = useState('Connecting...')
   const [resultState, setResultState] = useState('hidden')
   const [text, setText] = useState('')
   const [playerId, setPlayerId] = useState('User 1')
@@ -79,7 +80,6 @@ const GameRoom = ({gameId, opponent, result, setGameId, resetBoard, setPlayer, s
   useEffect(() => {
     if (result) {
       setResultState('')
-      console.log(result)
       if (result === 'draw') setText('Game drawn')
       else if (result === 'won') setText('You won')
       else if (result === 'forfeit') setText('Your opponent forfeited. You won.')
@@ -112,18 +112,34 @@ const GameRoom = ({gameId, opponent, result, setGameId, resetBoard, setPlayer, s
     if (socket)  {
       socket.on('connect', () => {
         setConnecting('hidden')
+        setConnectingText('')
       })
 
       socket.on('disconnect', () => {
         setConnecting('')
+        setConnectingText('Connection lost. Retrying...')
       })
 
       socket.on('reconnect', () => {
         setConnecting('hidden')
+        setConnectingText('')
+      })
+
+      socket.on('capture-draw-request', () => {
+        setMessageStatus('')
+        setMessageText('Your opponent is requesting for a draw. Accept?')
+      })
+
+      socket.on('capture-draw-response', (status) => {
+        setConnecting('hidden')
+        setConnectingText('')
+        if (status) setResult('draw')
+        else alert('Your opponent has rejected the draw request.')
       })
 
       if (gameId) socket.emit('join-room', gameId)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket, gameId])
 
   const handleRequest = (request) => {
@@ -133,6 +149,7 @@ const GameRoom = ({gameId, opponent, result, setGameId, resetBoard, setPlayer, s
   }
 
   const handleClick = (status) => {
+    if (!status && messageText.includes('Accept?')) socket.emit('draw-response', gameId, false)
     if (status) {
       if (messageText.includes('forfeit')) {
         socket.emit('send-result', gameId, 'forfeit')
@@ -142,6 +159,20 @@ const GameRoom = ({gameId, opponent, result, setGameId, resetBoard, setPlayer, s
           if (error.response.status === 401) return navigate('/')
           if (error.response.status === 400) return navigate('/dashboard')
         })
+      }
+      else if (messageText.includes('Accept?')) {
+        socket.emit('draw-response', gameId, true)
+        setResult('draw')
+        axios.post(`/gameDetails/result?gameId=${gameId}`, { result: 'draw' })
+        .catch((error) => {
+          if (error.response.status === 401) return navigate('/')
+          if (error.response.status === 400) return navigate('/dashboard')
+        })
+      }
+      else {
+        socket.emit('draw-request', gameId)
+        setConnecting('')
+        setConnectingText('Waiting for the response...')
       }
     }
     setMessageText('')
@@ -194,7 +225,7 @@ const GameRoom = ({gameId, opponent, result, setGameId, resetBoard, setPlayer, s
 
       <Result status={resultState} text={text}/>
       <Message status={messageStatus} text={messageText} handleClick={handleClick}/>
-      <Spinner status={connecting} text="Connection lost. Retrying..." />
+      <Spinner status={connecting} text={connectingText} />
     </div>
   )
 }

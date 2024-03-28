@@ -95,6 +95,17 @@ const handleSocket = async (io) => {
       // Broadcast to the other player about the result.
       socket.broadcast.to(roomId).emit('capture-result', result)
     })
+
+    // Listen to draw request from the client.
+    socket.on('draw-request', (roomId) => {
+      // Broadcast to the other player about the request.
+      socket.broadcast.to(roomId).emit('capture-draw-request')
+    })
+
+    socket.on('draw-response', (roomId, status) => {
+      // Broadcast to the other player about the response.
+      socket.broadcast.to(roomId).emit('capture-draw-response', status)
+    })
   })
 }
 
