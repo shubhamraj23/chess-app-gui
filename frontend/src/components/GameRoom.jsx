@@ -16,19 +16,30 @@ import Timer from './Timer'
 const GameRoom = ({gameId, opponent, result, setGameId, resetBoard, setPlayer, setResult, resetGame}) => {
   // Create a state for socket
   const [socket, setSocket] = useState()
+
+  // Create states to align the contents
   const [width, setWidth] = useState(0)
   const [divHeight, setDivHeight] = useState(0)
+
+  // Create states for spinners
   const [connecting, setConnecting] = useState('')
   const [connectingText, setConnectingText] = useState('Connecting...')
+  
+  // Create states for result
   const [resultState, setResultState] = useState('hidden')
   const [text, setText] = useState('')
-  const [playerId, setPlayerId] = useState('User 1')
-  const [playerName, setPlayerName] = useState('Name 1')
-  const [opponentId, setOpponentId] = useState('User 2')
-  const [opponentName, setOpponentName] = useState('Name 2')
+  
+  // Create states for messages
   const [messageStatus, setMessageStatus] = useState('hidden')
   const [messageText, setMessageText] = useState('Are you sure?')
+  const [messageTimer, setMessageTimer] = useState(false)
 
+  // Create states for player and opponent details
+  const [playerId, setPlayerId] = useState('Your opponent')
+  const [playerName, setPlayerName] = useState('Your opponent')
+  const [opponentId, setOpponentId] = useState('Your opponent')
+  const [opponentName, setOpponentName] = useState('Your opponent')
+  
   // Using the useNavigate hook to navigate
   const navigate = useNavigate()
 
@@ -82,7 +93,7 @@ const GameRoom = ({gameId, opponent, result, setGameId, resetBoard, setPlayer, s
       setResultState('')
       if (result === 'draw') setText('Game drawn')
       else if (result === 'won') setText('You won')
-      else if (result === 'forfeit') setText('Your opponent forfeited. You won.')
+      else if (result === 'forfeit') setText(`${opponentId} forfeited. You won.`)
       else setText('You lost')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -127,20 +138,21 @@ const GameRoom = ({gameId, opponent, result, setGameId, resetBoard, setPlayer, s
 
       socket.on('capture-draw-request', () => {
         setMessageStatus('')
-        setMessageText('Your opponent is requesting for a draw. Accept?')
+        setMessageText(`${opponentId} is requesting for a draw. Accept?`)
+        setMessageTimer(true)
       })
 
       socket.on('capture-draw-response', (status) => {
         setConnecting('hidden')
         setConnectingText('')
         if (status) setResult('draw')
-        else alert('Your opponent has rejected the draw request.')
+        else alert(`${opponentId} has rejected the draw request.`)
       })
 
       if (gameId) socket.emit('join-room', gameId)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socket, gameId])
+  }, [socket, gameId, opponentId])
 
   const handleRequest = (request) => {
     setMessageStatus('')
@@ -149,6 +161,7 @@ const GameRoom = ({gameId, opponent, result, setGameId, resetBoard, setPlayer, s
   }
 
   const handleClick = (status) => {
+    if (messageTimer) setMessageTimer(false)
     if (!status && messageText.includes('Accept?')) socket.emit('draw-response', gameId, false)
     if (status) {
       if (messageText.includes('forfeit')) {
@@ -224,7 +237,7 @@ const GameRoom = ({gameId, opponent, result, setGameId, resetBoard, setPlayer, s
       </div>
 
       <Result status={resultState} text={text}/>
-      <Message status={messageStatus} text={messageText} handleClick={handleClick}/>
+      <Message status={messageStatus} text={messageText} handleClick={handleClick} messageTimer={messageTimer}/>
       <Spinner status={connecting} text={connectingText} />
     </div>
   )
