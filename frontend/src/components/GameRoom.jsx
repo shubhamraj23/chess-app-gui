@@ -8,6 +8,7 @@ import { connect } from 'react-redux'
 import { resetBoard } from '../redux/actions/boardActions'
 import { setGameId, setPlayer, resetGame } from '../redux/actions/gameActions'
 import ChessBoard from './ChessBoard'
+import Message from './Message'
 import Result from './Result'
 import Spinner from './Spinner'
 import Timer from './Timer'
@@ -164,6 +165,7 @@ const GameRoom = ({gameId, result, setGameId, resetBoard, setPlayer, resetGame})
       </div>
 
       <Result status={resultState} text={text}/>
+      {/* <Message status={''} text={'Do you want to forfeit?'}/> */}
       <Spinner status={connecting} text="Connection lost. Retrying..." />
     </div>
   )
