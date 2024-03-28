@@ -9,7 +9,7 @@ const Result = ({status, text}) => {
   }
   
   return (
-    <div className={`${status} absolute top-0`} data-testid="result">
+    <div className={`${status} absolute top-0`}>
       <div className="h-screen w-screen bg-gray-100 bg-opacity-70 flex flex-col items-center justify-center">
         <div className="bg-white p-8 rounded-md shadow-md text-center">
           <h2 className="text-2xl font-bold mb-4">Game Over</h2>

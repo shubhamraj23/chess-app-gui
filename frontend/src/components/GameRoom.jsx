@@ -1,5 +1,7 @@
 import axios from 'axios'
 import io from 'socket.io-client'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faHandshake, faFlag } from '@fortawesome/free-solid-svg-icons'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { connect } from 'react-redux'
@@ -140,7 +142,16 @@ const GameRoom = ({gameId, result, setGameId, resetBoard, setPlayer, resetGame})
           
           <div style={{ width: `${width}px`, height: `${divHeight}px` }}>
             <div className="flex flex-row h-full">
-              <div className="w-1/3"></div>
+              <div className="w-1/3 flex items-center h-full">
+                <button className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded" title="Request Draw">
+                  <FontAwesomeIcon icon={faHandshake} />
+                </button>
+
+                <button className="bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded" title="Forfeit">
+                  <FontAwesomeIcon icon={faFlag} />
+                </button>
+              </div>
+              
               <div className="w-1/3"><Timer /></div>
 
               <div className="w-1/3">
