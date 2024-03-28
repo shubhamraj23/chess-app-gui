@@ -6,25 +6,27 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { resetBoard } from '../redux/actions/boardActions'
-import { setGameId, setPlayer, resetGame } from '../redux/actions/gameActions'
+import { setGameId, setPlayer, setResult, resetGame } from '../redux/actions/gameActions'
 import ChessBoard from './ChessBoard'
 import Message from './Message'
 import Result from './Result'
 import Spinner from './Spinner'
 import Timer from './Timer'
 
-const GameRoom = ({gameId, result, setGameId, resetBoard, setPlayer, resetGame}) => {
+const GameRoom = ({gameId, opponent, result, setGameId, resetBoard, setPlayer, setResult, resetGame}) => {
   // Create a state for socket
   const [socket, setSocket] = useState()
   const [width, setWidth] = useState(0)
   const [divHeight, setDivHeight] = useState(0)
   const [connecting, setConnecting] = useState('')
-  const [resultState, setResult] = useState('hidden')
+  const [resultState, setResultState] = useState('hidden')
   const [text, setText] = useState('')
   const [playerId, setPlayerId] = useState('User 1')
   const [playerName, setPlayerName] = useState('Name 1')
   const [opponentId, setOpponentId] = useState('User 2')
   const [opponentName, setOpponentName] = useState('Name 2')
+  const [messageStatus, setMessageStatus] = useState('hidden')
+  const [messageText, setMessageText] = useState('Are you sure?')
 
   // Using the useNavigate hook to navigate
   const navigate = useNavigate()
@@ -76,9 +78,11 @@ const GameRoom = ({gameId, result, setGameId, resetBoard, setPlayer, resetGame})
   // Set the result text on result load.
   useEffect(() => {
     if (result) {
-      setResult('')
+      setResultState('')
+      console.log(result)
       if (result === 'draw') setText('Game drawn')
       else if (result === 'won') setText('You won')
+      else if (result === 'forfeit') setText('Your opponent forfeited. You won.')
       else setText('You lost')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -122,6 +126,28 @@ const GameRoom = ({gameId, result, setGameId, resetBoard, setPlayer, resetGame})
     }
   }, [socket, gameId])
 
+  const handleRequest = (request) => {
+    setMessageStatus('')
+    if (request === 'draw') setMessageText('Are you sure you want to request a draw?')
+    else setMessageText('Are you sure you want to forfeit?')
+  }
+
+  const handleClick = (status) => {
+    if (status) {
+      if (messageText.includes('forfeit')) {
+        socket.emit('send-result', gameId, 'forfeit')
+        setResult('lost')
+        axios.post(`/gameDetails/result?gameId=${gameId}`, { result: opponent })
+        .catch((error) => {
+          if (error.response.status === 401) return navigate('/')
+          if (error.response.status === 400) return navigate('/dashboard')
+        })
+      }
+    }
+    setMessageText('')
+    setMessageStatus('hidden')
+  }
+
   return (
     <div className="bg-gray-300">
       <div className="container mx-auto h-screen flex flex-col items-center" id="game-container">
@@ -144,11 +170,13 @@ const GameRoom = ({gameId, result, setGameId, resetBoard, setPlayer, resetGame})
           <div style={{ width: `${width}px`, height: `${divHeight}px` }}>
             <div className="flex flex-row h-full">
               <div className="w-1/3 flex items-center h-full">
-                <button className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded" title="Request Draw">
-                  <FontAwesomeIcon icon={faHandshake} />
+                <button className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded" title="Request Draw"
+                  onClick={() => handleRequest('draw')}>
+                    <FontAwesomeIcon icon={faHandshake} />
                 </button>
 
-                <button className="bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded" title="Forfeit">
+                <button className="bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded" title="Forfeit"
+                  onClick={() => handleRequest('forfeit')}>
                   <FontAwesomeIcon icon={faFlag} />
                 </button>
               </div>
@@ -165,7 +193,7 @@ const GameRoom = ({gameId, result, setGameId, resetBoard, setPlayer, resetGame})
       </div>
 
       <Result status={resultState} text={text}/>
-      {/* <Message status={''} text={'Do you want to forfeit?'}/> */}
+      <Message status={messageStatus} text={messageText} handleClick={handleClick}/>
       <Spinner status={connecting} text="Connection lost. Retrying..." />
     </div>
   )
@@ -174,6 +202,7 @@ const GameRoom = ({gameId, result, setGameId, resetBoard, setPlayer, resetGame})
 const mapStateToProps = (state) => {
   return {
     gameId: state.game.gameId,
+    opponent: state.game.opponent,
     result: state.game.result
   }
 }
@@ -186,9 +215,10 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(setGameId(gameId)),
     setPlayer: (player) => 
       dispatch(setPlayer(player)),
-    resetGame: () => {
-      dispatch(resetGame())
-    }
+    resetGame: () =>
+      dispatch(resetGame()),
+    setResult: (result) =>
+      dispatch(setResult(result))
   }
 }
 

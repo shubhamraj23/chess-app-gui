@@ -88,7 +88,10 @@ const ChessBoard = ({
       })
 
       socket.on('capture-result', (result) => {
-        const value = (result === 'checkmate') ? 'lost' : 'draw'
+        let value
+        if (result === 'checkmate') value = 'lost'
+        else if (result === 'stalemate') value = 'draw'
+        else if (result === 'forfeit') value = 'forfeit'
         setResult(value)
       })
     }
