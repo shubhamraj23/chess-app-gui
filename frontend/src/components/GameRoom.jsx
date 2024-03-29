@@ -7,13 +7,18 @@ import { useNavigate } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { resetBoard } from '../redux/actions/boardActions'
 import { setGameId, setPlayer, setResult, resetGame } from '../redux/actions/gameActions'
+import { resetTimer } from '../redux/actions/timeActions'
 import ChessBoard from './ChessBoard'
 import Message from './Message'
 import Result from './Result'
 import Spinner from './Spinner'
 import Timer from './Timer'
 
-const GameRoom = ({gameId, opponent, result, setGameId, resetBoard, setPlayer, setResult, resetGame}) => {
+const GameRoom = ({
+    gameId, opponent, result, playerTime, playerTimerRunning, opponentTime, opponentTimerRunning,
+    setGameId, resetBoard, setPlayer, setResult, resetGame
+  }) => {
+  
   // Create a state for socket
   const [socket, setSocket] = useState()
 
@@ -39,7 +44,7 @@ const GameRoom = ({gameId, opponent, result, setGameId, resetBoard, setPlayer, s
   const [playerName, setPlayerName] = useState('Your opponent')
   const [opponentId, setOpponentId] = useState('Your opponent')
   const [opponentName, setOpponentName] = useState('Your opponent')
-  
+
   // Using the useNavigate hook to navigate
   const navigate = useNavigate()
 
@@ -55,6 +60,7 @@ const GameRoom = ({gameId, opponent, result, setGameId, resetBoard, setPlayer, s
       if (socket) socket.disconnect()
       resetBoard()
       resetGame()
+      resetTimer()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -203,7 +209,9 @@ const GameRoom = ({gameId, opponent, result, setGameId, resetBoard, setPlayer, s
                 <p className="text-sm">{opponentName}</p>
               </div>
 
-              <div className="w-1/3"><Timer /></div>
+              <div className="w-1/3">
+                <Timer running={opponentTimerRunning} initialTime={opponentTime} />
+              </div>
             </div>
           </div>
           
@@ -221,11 +229,13 @@ const GameRoom = ({gameId, opponent, result, setGameId, resetBoard, setPlayer, s
 
                 <button className="bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded" title="Forfeit"
                   onClick={() => handleRequest('forfeit')}>
-                  <FontAwesomeIcon icon={faFlag} />
+                    <FontAwesomeIcon icon={faFlag} />
                 </button>
               </div>
               
-              <div className="w-1/3"><Timer /></div>
+              <div className="w-1/3">
+                <Timer running={playerTimerRunning} initialTime={playerTime} />
+              </div>
 
               <div className="w-1/3">
                 <p className="text-sm text-right">{playerId}</p>
@@ -247,7 +257,11 @@ const mapStateToProps = (state) => {
   return {
     gameId: state.game.gameId,
     opponent: state.game.opponent,
-    result: state.game.result
+    result: state.game.result,
+    playerTime: state.time.playerTime,
+    playerTimerRunning: state.time.playerTimerRunning,
+    opponentTime: state.time.opponentTime,
+    opponentTimerRunning: state.time.opponentTimerRunning
   }
 }
 
@@ -262,7 +276,9 @@ const mapDispatchToProps = (dispatch) => {
     resetGame: () =>
       dispatch(resetGame()),
     setResult: (result) =>
-      dispatch(setResult(result))
+      dispatch(setResult(result)),
+    resetTimer: () =>
+      dispatch(resetTimer())
   }
 }
 
