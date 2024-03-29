@@ -46,4 +46,4 @@ The repository contains the following files and folders.
   ```
   Make sure that you correctly insert the URL of your MongoDB instance and your own JWT Secret.
 - Move to the root folder and run the application using the command ```npm run dev```
-- You can now view the application on your browser on http://localhost:8080/
+- You can now view the application on your browser on http://localhost:3000/
