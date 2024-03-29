@@ -5,9 +5,9 @@ const gameValidation = async (request, response, next) => {
     const gameId = request.query.gameId
     const game = await Game.findById(gameId)
     if (!game) {
-			return response.status(400).send({
-				message: "Invalid game id."
-			})
+      return response.status(400).send({
+        message: "Invalid game id."
+      })
     }
 
     request.game = game
