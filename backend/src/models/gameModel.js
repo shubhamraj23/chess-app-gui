@@ -82,6 +82,28 @@ const gameSchema = mongoose.Schema({
       }
     }
   },
+  timer: {
+    white: {
+      time: {
+        type: Number,
+        required: true
+      },
+      timestamp: {
+        type: Number,
+        required: true
+      }
+    },
+    black: {
+      time: {
+        type: Number,
+        required: true
+      },
+      timestamp: {
+        type: Number,
+        required: true
+      }
+    }
+  },
   result: {
     draw: {
       type: Boolean

@@ -59,8 +59,19 @@ const handleSocket = async (io) => {
           castling: {
             white: castle,
             black: castle
+          },
+          timer: {
+            white: {
+              time: 600000,
+              timestamp: new Date().getTime()
+            },
+            black: {
+              time: 600000,
+              timestamp: new Date().getTime()
+            }
           }
         })
+        
         const createdGame = await game.save()
         io.to(matchedUser.socketId).emit('match-found', { id: createdGame._id })
         socket.emit('match-found', { id: createdGame._id })
