@@ -42,8 +42,8 @@ const ChessBoard = ({
       
       if (data.data.result) {
         if (data.data.result === 'draw') setResult('draw')
-        else if (player === data.data.result) setResult(player)
-        else setResult(opponent)
+        else if (player === data.data.result) setResult('won')
+        else setResult('lost')
       }
 
       if (data.data.enpass) {
