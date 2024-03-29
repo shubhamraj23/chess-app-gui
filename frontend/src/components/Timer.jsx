@@ -16,9 +16,20 @@ const Timer = ({running, initialTime}) => {
     }
   }, [running, timerValue])
 
+  const generateTime = (value) => {
+    const seconds = Math.round(value/1000)%60
+    const minutes = Math.floor(Math.round(value/1000)/60)
+    return `${setOffset(minutes)}:${setOffset(seconds)}`
+  }
+
+  const setOffset = (time) => {
+    if (time < 10) return `0${time}`
+    return time
+  }
+
   return (
     <div className="mx-auto flex justify-center items-center h-full">
-      <p className="bg-white rounded-lg text-red-500 font-courier inline-block py-1 px-3 font-bold">10:00</p>
+      <p className="bg-white rounded-lg text-red-500 font-courier inline-block py-1 px-3 font-bold">{generateTime(timerValue)}</p>
     </div>
   )
 }

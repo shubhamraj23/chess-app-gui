@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { resetBoard } from '../redux/actions/boardActions'
 import { setGameId, setPlayer, setResult, resetGame } from '../redux/actions/gameActions'
-import { resetTimer } from '../redux/actions/timeActions'
+import { setPlayerTimerStatus, setOpponentTimerStatus, resetTimer } from '../redux/actions/timeActions'
 import ChessBoard from './ChessBoard'
 import Message from './Message'
 import Result from './Result'
@@ -15,8 +15,8 @@ import Spinner from './Spinner'
 import Timer from './Timer'
 
 const GameRoom = ({
-    gameId, opponent, result, playerTime, playerTimerRunning, opponentTime, opponentTimerRunning,
-    setGameId, resetBoard, setPlayer, setResult, resetGame
+    gameId, opponent, turn, result, playerTime, playerTimerRunning, opponentTime, opponentTimerRunning,
+    setGameId, resetBoard, setPlayer, setResult, setPlayerTimerStatus, setOpponentTimerStatus, resetGame
   }) => {
   
   // Create a state for socket
@@ -93,10 +93,25 @@ const GameRoom = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // Update the timer whenever turn changes.
+  useEffect(() => {
+    if (turn) {
+      setPlayerTimerStatus(true)
+      setOpponentTimerStatus(false)
+    }
+    else {
+      setOpponentTimerStatus(true)
+      setPlayerTimerStatus(false)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [turn])
+
   // Set the result text on result load.
   useEffect(() => {
     if (result) {
       setResultState('')
+      setPlayerTimerStatus(false)
+      setOpponentTimerStatus(false)
       if (result === 'draw') setText('Game drawn')
       else if (result === 'won') setText('You won')
       else if (result === 'forfeit') setText(`${opponentId} forfeited. You won.`)
@@ -257,6 +272,7 @@ const mapStateToProps = (state) => {
   return {
     gameId: state.game.gameId,
     opponent: state.game.opponent,
+    turn: state.game.turn,
     result: state.game.result,
     playerTime: state.time.playerTime,
     playerTimerRunning: state.time.playerTimerRunning,
@@ -277,6 +293,10 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(resetGame()),
     setResult: (result) =>
       dispatch(setResult(result)),
+    setPlayerTimerStatus: (status) =>
+      dispatch(setPlayerTimerStatus(status)),
+    setOpponentTimerStatus: (status) =>
+      dispatch(setOpponentTimerStatus(status)),
     resetTimer: () =>
       dispatch(resetTimer())
   }
