@@ -16,25 +16,25 @@ router.get('/playerType', authenticate, gameValidation, async (request, response
     const whitePlayer = await User.findById(game.players.white)
     const blackPlayer = await User.findById(game.players.black)
 
-		if (userId.equals(game.players.white)) {
-			return response.status(200).send({
-				playerType: "white",
+    if (userId.equals(game.players.white)) {
+      return response.status(200).send({
+        playerType: "white",
         player: { id: whitePlayer.userId, name: whitePlayer.name },
         opponent: { id: blackPlayer.userId, name: blackPlayer.name }
-			})
-		}
+      })
+    }
 
-		if (userId.equals(game.players.black)) {
-			return response.status(200).send({
-				playerType: "black",
+    if (userId.equals(game.players.black)) {
+      return response.status(200).send({
+        playerType: "black",
         player: { id: blackPlayer.userId, name: blackPlayer.name },
         opponent: { id: whitePlayer.userId, name: whitePlayer.name }
-			})
-		}
+      })
+    }
 
-		return response.status(400).send({
-			message: "Invalid user details."
-		})
+    return response.status(400).send({
+      message: "Invalid user details."
+    })
 
   } catch (error) {
     response.status(500).send({
@@ -45,7 +45,7 @@ router.get('/playerType', authenticate, gameValidation, async (request, response
 
 // Route to fetch the current state of chessboard.
 router.get('/board', authenticate, gameValidation, async (request, response) => {
-	try {
+  try {
     const game = request.game
     let result = null
     if (game.result) {
@@ -72,7 +72,7 @@ router.get('/board', authenticate, gameValidation, async (request, response) => 
 
 // Route to update the current state of chessboard.
 router.post('/board', authenticate, gameValidation, async (request, response) => {
-	try {
+  try {
     const game = request.game
     const board = request.body.board
     const turn = request.body.turn
@@ -93,7 +93,7 @@ router.post('/board', authenticate, gameValidation, async (request, response) =>
 
 // Route to update the player in check.
 router.post('/check', authenticate, gameValidation, async (request, response) => {
-	try {
+  try {
     const game = request.game
     const check = request.body.check
     game.check = check
@@ -112,7 +112,7 @@ router.post('/check', authenticate, gameValidation, async (request, response) =>
 
 // Route to update the castling information.
 router.post('/castle', authenticate, gameValidation, async (request, response) => {
-	try {
+  try {
     const game = request.game
     const player = request.body.player
     const castle = request.body.castle
@@ -132,7 +132,7 @@ router.post('/castle', authenticate, gameValidation, async (request, response) =
 
 // Route to update the enpass cell.
 router.post('/enpass', authenticate, gameValidation, async (request, response) => {
-	try {
+  try {
     const game = request.game
     const enpass = request.body.enpass
     game.enpass = enpass
@@ -165,8 +165,8 @@ router.post('/result', authenticate, gameValidation, async (request, response) =
 
     if (!whitePlayer || !blackPlayer) {
       return response.status(400).send({
-				message: "Invalid players."
-			})
+        message: "Invalid players."
+      })
     }
 
     whitePlayer.playStatus = 'not-playing'
