@@ -1,8 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 
-const Timer = ({running, initialTime}) => {
-  const [timerValue, setTimerValue] = useState(initialTime)
-
+const Timer = ({ running, timerValue, setTimerValue }) => {
   useEffect(() => {
     if (running && timerValue > 0) {
       const startTime = new Date().getTime()
@@ -14,6 +12,7 @@ const Timer = ({running, initialTime}) => {
 
       return () => clearTimeout(timer)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [running, timerValue])
 
   const generateTime = (value) => {
@@ -29,7 +28,7 @@ const Timer = ({running, initialTime}) => {
 
   return (
     <div className="mx-auto flex justify-center items-center h-full">
-      <p className="bg-white rounded-lg text-red-500 font-courier inline-block py-1 px-3 font-bold">{generateTime(timerValue)}</p>
+      <p className="bg-white rounded-lg text-red-500 font-mono inline-block py-1 px-3 font-bold">{generateTime(timerValue)}</p>
     </div>
   )
 }

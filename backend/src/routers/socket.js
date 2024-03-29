@@ -106,6 +106,11 @@ const handleSocket = async (io) => {
       // Broadcast to the other player about the response.
       socket.broadcast.to(roomId).emit('capture-draw-response', status)
     })
+
+    socket.on('send-time', (roomId, time) => {
+      // Broadcast to the other player about the time.
+      socket.broadcast.to(roomId).emit('capture-time', time)
+    })
   })
 }
 

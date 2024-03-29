@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import { initializeChessboard, movePiece } from '../redux/actions/boardActions'
 import { getMoves, resetMove, resetClick } from '../redux/actions/moveActions'
 import { setTurn, setCheck, setOppCheck, setResult, setEnpass, resetEnpass, setSelfEnpass, resetSelfEnpass, setCastle } from '../redux/actions/gameActions'
+import { setPlayerTime, setOpponentTime } from '../redux/actions/timeActions'
 import ChessCell from './ChessCell'
 import ChessPiece from './ChessPiece'
 import PawnPromotion from './PawnPromotion'
@@ -13,8 +14,10 @@ import canMove from '../redux/utils/canMove'
 
 const ChessBoard = ({
     socket, width,
-    cells, moves, click, gameId, player, opponent, turn, check, enpassCell, enpassCellSelf, castling,
-    initializeChessboard, movePiece, getMoves, resetMove, resetClick, setTurn, setCheck, setOppCheck, setEnpass, setResult, setSelfEnpass, resetSelfEnpass, setCastle
+    cells, moves, click, gameId, player, opponent, turn, check, enpassCell, enpassCellSelf, castling, playerTime,
+    initializeChessboard, movePiece, getMoves, resetMove,
+    resetClick, setTurn, setCheck, setOppCheck, setEnpass, setResult, setSelfEnpass, resetSelfEnpass, setCastle,
+    setPlayerTime, setOpponentTime
   }) => {
   
   const [promotionCol, setPromotionCol] = useState(null)
@@ -92,11 +95,30 @@ const ChessBoard = ({
         if (result === 'checkmate') value = 'lost'
         else if (result === 'stalemate') value = 'draw'
         else if (result === 'forfeit') value = 'forfeit'
+        else if (result === 'timeout') value = 'timeout'
         setResult(value)
+      })
+
+      socket.on('capture-time', (time) => {
+        setOpponentTime(time)
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket])
+
+  // End the game if player timer becomes zero.
+  useEffect(() => {
+    if (playerTime <= 0) {
+      socket.emit('send-result', gameId, 'timeout')
+      setResult('lost')
+      axios.post(`/gameDetails/result?gameId=${gameId}`, { result: opponent })
+      .catch((error) => {
+        if (error.response.status === 401) return navigate('/')
+        if (error.response.status === 400) return navigate('/dashboard')
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playerTime])
 
   // Set the chessboard state on backend whenever the state changes.
   useEffect(() => {
@@ -208,6 +230,11 @@ const ChessBoard = ({
     // If it is a valid move, move the piece.
     if (moves[row][col]) {
       setTurn(false)
+
+      // Time manipulations
+      socket.emit('send-time', gameId, playerTime+5000)
+      setPlayerTime(playerTime+5000)
+
       if (check) {
         setCheck(false)
         const data = { check: null }
@@ -295,7 +322,8 @@ const mapStateToProps = (state) => {
     check: state.game.check,
     enpassCell: state.game.enpassCell,
     enpassCellSelf: state.game.enpassCellSelf,
-    castling: state.game.castling
+    castling: state.game.castling,
+    playerTime: state.time.playerTime
   }
 }
 
@@ -328,7 +356,11 @@ const mapDispatchToProps = (dispatch) => {
     setCastle: (castled, king, leftRook, rightRook) =>
       dispatch(setCastle(castled, king, leftRook, rightRook)),
     setResult: (result) =>
-      dispatch(setResult(result))
+      dispatch(setResult(result)),
+    setPlayerTime: (time) =>
+      dispatch(setPlayerTime(time)),
+    setOpponentTime: (time) =>
+      dispatch(setOpponentTime(time))
   }
 }
 

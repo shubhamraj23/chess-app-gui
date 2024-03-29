@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { resetBoard } from '../redux/actions/boardActions'
 import { setGameId, setPlayer, setResult, resetGame } from '../redux/actions/gameActions'
-import { setPlayerTimerStatus, setOpponentTimerStatus, resetTimer } from '../redux/actions/timeActions'
+import { setPlayerTime, setPlayerTimerStatus, setOpponentTime, setOpponentTimerStatus, resetTimer } from '../redux/actions/timeActions'
 import ChessBoard from './ChessBoard'
 import Message from './Message'
 import Result from './Result'
@@ -16,7 +16,7 @@ import Timer from './Timer'
 
 const GameRoom = ({
     gameId, opponent, turn, result, playerTime, playerTimerRunning, opponentTime, opponentTimerRunning,
-    setGameId, resetBoard, setPlayer, setResult, setPlayerTimerStatus, setOpponentTimerStatus, resetGame
+    setGameId, resetBoard, setPlayer, setResult, setPlayerTime, setPlayerTimerStatus, setOpponentTime, setOpponentTimerStatus, resetGame, resetTimer
   }) => {
   
   // Create a state for socket
@@ -115,6 +115,7 @@ const GameRoom = ({
       if (result === 'draw') setText('Game drawn')
       else if (result === 'won') setText('You won')
       else if (result === 'forfeit') setText(`${opponentId} forfeited. You won.`)
+      else if (result === 'timeout') setText(`${opponentId} ran out of time. You won.`)
       else setText('You lost')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -225,7 +226,7 @@ const GameRoom = ({
               </div>
 
               <div className="w-1/3">
-                <Timer running={opponentTimerRunning} initialTime={opponentTime} />
+                <Timer running={opponentTimerRunning} timerValue={opponentTime} setTimerValue={setOpponentTime} />
               </div>
             </div>
           </div>
@@ -249,7 +250,7 @@ const GameRoom = ({
               </div>
               
               <div className="w-1/3">
-                <Timer running={playerTimerRunning} initialTime={playerTime} />
+                <Timer running={playerTimerRunning} timerValue={playerTime} setTimerValue={setPlayerTime} />
               </div>
 
               <div className="w-1/3">
@@ -293,8 +294,12 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(resetGame()),
     setResult: (result) =>
       dispatch(setResult(result)),
+    setPlayerTime: (time) =>
+      dispatch(setPlayerTime(time)),
     setPlayerTimerStatus: (status) =>
       dispatch(setPlayerTimerStatus(status)),
+    setOpponentTime: (time) =>
+      dispatch(setOpponentTime(time)),
     setOpponentTimerStatus: (status) =>
       dispatch(setOpponentTimerStatus(status)),
     resetTimer: () =>
