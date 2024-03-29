@@ -2,7 +2,7 @@ const initialState = {
   gameId: null,
   player: null,
   opponent: null,
-  turn: false,
+  turn: null,
   check: false,
   oppCheck: false,
   enpassCell: null,

@@ -56,6 +56,20 @@ const ChessBoard = ({
           else setSelfEnpass(7 - data.data.enpass.cell.row, 7 - data.data.enpass.cell.col)
         }
       }
+
+      // Update the timer.
+      const timer = data.data.timer
+      const currTime = new Date().getTime()
+      if (player === data.data.turn) {
+        const elapsedTime = currTime - timer[opponent]['timestamp']
+        setPlayerTime(timer[player]['time'] - elapsedTime)
+        setOpponentTime(timer[opponent]['time'])
+      }
+      else {
+        const elapsedTime = currTime - timer[player]['timestamp']
+        setPlayerTime(timer[player]['time'])
+        setOpponentTime(timer[opponent]['time'] - elapsedTime)
+      }
       
       const { castled, king, leftRook, rightRook } = data.data.castle[player]
       setCastle(castled, king, leftRook, rightRook)
@@ -122,7 +136,7 @@ const ChessBoard = ({
 
   // Set the chessboard state on backend whenever the state changes.
   useEffect(() => {
-    if (gameId && !turn) {
+    if (gameId && turn === false) {
       let board
       if (player === 'white') board = cells
       else board = cells.map((row, rowIndex) =>
@@ -233,6 +247,12 @@ const ChessBoard = ({
 
       // Time manipulations
       socket.emit('send-time', gameId, playerTime+5000)
+      const data = { player, time: playerTime+5000, timestamp: new Date().getTime()}
+      axios.post(`/gameDetails/timer?gameId=${gameId}`, data)
+      .catch((error) => {
+        if (error.response.status === 401) return navigate('/')
+        if (error.response.status === 400) return navigate('/dashboard')
+      })
       setPlayerTime(playerTime+5000)
 
       if (check) {

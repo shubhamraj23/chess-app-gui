@@ -59,6 +59,7 @@ router.get('/board', authenticate, gameValidation, async (request, response) => 
       turn: game.turn,
       check: game.check,
       result,
+      timer: game.timer,
       enpass: game.enpass,
       castle: game.castling
     })
@@ -149,6 +150,27 @@ router.post('/enpass', authenticate, gameValidation, async (request, response) =
   }  
 })
 
+// Router to post the time details.
+router.post('/timer', authenticate, gameValidation, async (request, response) => {
+  try {
+    const game = request.game
+    const player = request.body.player
+    game['timer'][player]['time'] = request.body.time
+    game['timer'][player]['timestamp'] = request.body.timestamp
+    await game.save()
+
+    return response.status(200).send({
+      message: "Update successful"
+    })
+
+  } catch (error) {
+    console.log(error)
+    response.status(500).send({
+      error: "Something unprecedented happened. Please try again."
+    })
+  }
+})
+
 // Router to post the game result.
 router.post('/result', authenticate, gameValidation, async (request, response) => {
   try {
@@ -173,6 +195,10 @@ router.post('/result', authenticate, gameValidation, async (request, response) =
     await whitePlayer.save()
     blackPlayer.playStatus = 'not-playing'
     await blackPlayer.save()
+
+    return response.status(200).send({
+      message: "Update successful"
+    })
 
   } catch (error) {
     response.status(500).send({
